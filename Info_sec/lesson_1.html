@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Introduction to Information Security | Week 1: Threats, Vulnerabilities & Attacks</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom Tailwind Configuration Override -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-flow': 'borderFlow 3s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 15px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #00aaff, 0 0 40px #00aaff' },
+                        },
+                        borderFlow: {
+                            '0%': { borderColor: '#00ffff', boxShadow: '0 0 10px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                            '100%': { borderColor: '#00ffff', boxShadow: '0 0 10px #00ffff' },
+                        }
+                    },
+                    backdropBlur: {
+                        xs: '2px',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Additional custom 3D and glassmorphism effects */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* Improves swipe feel on mobile */
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow-x: hidden;
+        }
+
+        /* 3D Slide Container */
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+        }
+
+        /* Slide transition animations */
+        .slide-enter {
+            opacity: 0;
+            transform: rotateY(25deg) translateZ(-50px) scale(0.95);
+        }
+        .slide-active {
+            opacity: 1;
+            transform: rotateY(0deg) translateZ(0px) scale(1);
+        }
+        .slide-exit {
+            opacity: 0;
+            transform: rotateY(-25deg) translateZ(-50px) scale(0.95);
+        }
+
+        /* Glowing glass effect */
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.45);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+
+        /* Floating particles simulation (CSS grid layer) */
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        /* 3D floating lock animation */
+        .lock-3d {
+            animation: float3d 4s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        @keyframes float3d {
+            0% { transform: translateZ(0px) rotateY(0deg); }
+            50% { transform: translateZ(30px) rotateY(15deg); }
+            100% { transform: translateZ(0px) rotateY(0deg); }
+        }
+
+        /* Shield glow effect */
+        .shield-glow {
+            animation: shieldPulse 2s infinite alternate;
+        }
+        @keyframes shieldPulse {
+            0% { filter: drop-shadow(0 0 5px #00ffff); opacity: 0.8; }
+            100% { filter: drop-shadow(0 0 25px #00aaff); opacity: 1; }
+        }
+
+        /* Progress bar animated */
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        /* custom scroll hide */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a2a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 4px;
+        }
+
+        /* swipe hint */
+        @media (max-width: 768px) {
+            .swipe-hint {
+                display: flex;
+            }
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <!-- Animated Digital Grid Background (Parallax layers) -->
+        <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+        
+        <!-- Floating 3D Orbs (CSS simulated depth) -->
+        <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <!-- MAIN SLIDE CONTAINER -->
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar: progress + controls -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/60 to-transparent backdrop-blur-sm">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex gap-3">
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 4</span>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 25%"></div>
+                </div>
+                <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ INFORMATION SECURITY MODULE ✦</p>
+            </div>
+
+            <!-- Slide Dynamic Content Area with 3D transition -->
+            <div class="flex-1 flex items-center justify-center p-4 md:p-8 mt-16 slide-container">
+                <div id="slidesWrapper" class="relative w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;">
+                    <!-- Slides will be injected here via JS -->
+                </div>
+            </div>
+
+            <!-- Navigation & Lesson Controls (removed: Previous Lesson, Back to Course, Next Lesson Buttons) -->
+            <!-- Only minimal status and swipe hint remains -->
+            <div class="fixed bottom-0 left-0 right-0 p-3 bg-black/30 backdrop-blur-sm border-t border-white/5 z-30">
+                <div class="flex justify-center items-center gap-2">
+                    <div class="flex items-center gap-2 text-white/40 text-[10px] font-mono">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M12 3v18"/></svg>
+                        <span>SWIPE LEFT/RIGHT  •  ARROW KEYS</span>
+                    </div>
+                </div>
+                <p class="text-center text-[9px] text-white/20 mt-1 font-mono">3D Secure Presentation • Glassmorphism Core</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ----------------------------- SLIDE DATA (lesson content) -------------------------
+        const slidesData = [
+            {
+                id: 0,
+                title: "Week 1: Information Security Threats, Vulnerabilities, and Attacks",
+                subtitle: "Understanding Cybersecurity Risks in Modern Organizations",
+                content: () => `
+                    <div class="flex flex-col items-center justify-center min-h-[60vh] text-center relative">
+                        <div class="lock-3d absolute -top-16 left-1/2 transform -translate-x-1/2 w-32 h-32 opacity-40 blur-2xl bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-8">
+                                <div class="relative">
+                                    <div class="w-28 h-28 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                        <svg class="w-16 h-16 text-cyan-400 shield-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z" stroke="currentColor" fill="rgba(0,255,255,0.1)"/><path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2"/></svg>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="text-4xl md:text-6xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-4 drop-shadow-2xl">${slidesData[0].title}</h1>
+                            <p class="text-xl md:text-2xl text-white/80 tracking-wide">${slidesData[0].subtitle}</p>
+                            <div class="flex gap-6 justify-center mt-12">
+                                <div class="w-10 h-10 border border-cyan-400/40 rounded-full flex items-center justify-center animate-float"><svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>
+                                <div class="w-10 h-10 border border-purple-400/40 rounded-full flex items-center justify-center animate-float" style="animation-delay: 0.2s;"><svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+                                <div class="w-10 h-10 border border-cyan-400/40 rounded-full flex items-center justify-center animate-float" style="animation-delay: 0.4s;"><svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.657 0 3 .895 3 2s-1.343 2-3 2-3 .895-3 2 1.343 2 3 2"/></svg></div>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-6 text-cyan-500/40 text-sm animate-pulse">⚡ 3D Cyber Shield Active</div>
+                    </div>
+                `
+            },
+            {
+                id: 1,
+                title: "Threats & Vulnerabilities",
+                subtitle: "Core Concepts",
+                content: () => `
+                    <div class="grid md:grid-cols-2 gap-8 items-center p-4">
+                        <div class="space-y-6">
+                            <div class="glass-card-deep p-5 rounded-2xl border-l-8 border-l-cyan-400 transition hover:scale-[1.02] hover:shadow-2xl">
+                                <div class="flex items-center gap-3"><svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg><h3 class="text-2xl font-bold text-white">Threat</h3></div>
+                                <p class="text-white/70 mt-2">Anything capable of causing harm to an information system, organization, or data asset.</p>
+                            </div>
+                            <div class="glass-card-deep p-5 rounded-2xl border-l-8 border-l-purple-500 transition hover:scale-[1.02] hover:shadow-2xl">
+                                <div class="flex items-center gap-3"><svg class="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg><h3 class="text-2xl font-bold text-white">Vulnerability</h3></div>
+                                <p class="text-white/70 mt-2">Weakness that can be exploited by a threat — gaps in security controls.</p>
+                            </div>
+                            <div class="glass-card-deep p-5 rounded-2xl border-l-8 border-l-orange-500 transition hover:scale-[1.02] hover:shadow-2xl">
+                                <div class="flex items-center gap-3"><svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg><h3 class="text-2xl font-bold text-white">Risk</h3></div>
+                                <p class="text-white/70 mt-2">Potential damage or loss when a threat exploits a vulnerability.</p>
+                            </div>
+                            <div class="mt-4 p-4 bg-cyan-950/40 rounded-xl border border-cyan-400 backdrop-blur shadow-lg">
+                                <p class="text-sm text-cyan-300 font-mono">🇰🇪 <span class="font-bold">Kenyan Context Example:</span> "A company using outdated antivirus becomes vulnerable to malware attacks leading to data breach."</p>
+                            </div>
+                        </div>
+                        <div class="relative flex justify-center items-center min-h-[300px]">
+                            <div class="relative w-full h-64 bg-black/30 rounded-2xl flex flex-col items-center justify-center border border-cyan-500/30 backdrop-blur-sm">
+                                <div class="flex flex-wrap gap-4 justify-center">
+                                    <div class="animate-pulse text-center"><div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center"><span class="text-red-400 text-3xl">⚠️</span></div><p class="text-xs">Threat</p></div>
+                                    <div class="text-3xl text-cyan-400 self-center">→</div>
+                                    <div class="animate-bounce text-center"><div class="w-16 h-16 rounded-full bg-yellow-500/20 flex items-center justify-center"><span class="text-yellow-400 text-3xl">🔓</span></div><p class="text-xs">Vulnerability</p></div>
+                                    <div class="text-3xl text-cyan-400 self-center">→</div>
+                                    <div class="animate-pulse text-center"><div class="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center"><span class="text-orange-400 text-3xl">💀</span></div><p class="text-xs">Risk</p></div>
+                                </div>
+                                <div class="absolute -bottom-5 text-[10px] font-mono text-white/40">Threat → Vulnerability → Risk Chain</div>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 2,
+                title: "The Risk Equation",
+                subtitle: "Threat + Vulnerability = Risk",
+                content: () => `
+                    <div class="flex flex-col items-center justify-center space-y-10 py-4">
+                        <div class="text-center">
+                            <h2 class="text-5xl md:text-7xl font-black bg-gradient-to-r from-red-400 to-pink-500 bg-clip-text text-transparent drop-shadow-xl">THREAT + VULNERABILITY = RISK</h2>
+                            <p class="text-white/50 mt-3 tracking-wider">The Fundamental Cybersecurity Formula</p>
+                        </div>
+                        <div class="flex flex-wrap justify-center gap-6 items-center">
+                            <div class="glass-card-deep p-6 rounded-2xl w-48 text-center border border-red-500/60 transition-all hover:scale-105">
+                                <div class="text-5xl mb-2">👾</div>
+                                <h3 class="font-bold text-xl">Hackers</h3>
+                                <p class="text-xs text-white/60">External Threat Actor</p>
+                            </div>
+                            <div class="text-4xl font-bold text-cyan-400 animate-pulse">+</div>
+                            <div class="glass-card-deep p-6 rounded-2xl w-48 text-center border border-yellow-500/60 transition-all hover:scale-105">
+                                <div class="text-5xl mb-2">🔓</div>
+                                <h3 class="font-bold text-xl">Weak Passwords</h3>
+                                <p class="text-xs text-white/60">Vulnerability</p>
+                            </div>
+                            <div class="text-4xl font-bold text-cyan-400 animate-pulse">=</div>
+                            <div class="glass-card-deep p-6 rounded-2xl w-48 text-center border border-red-700 shadow-[0_0_15px_red] bg-red-950/30 transition-all hover:scale-105">
+                                <div class="text-5xl mb-2 animate-pulse">💣</div>
+                                <h3 class="font-bold text-xl text-red-400">Unauthorized Access</h3>
+                                <p class="text-xs text-white/60">Critical Risk</p>
+                            </div>
+                        </div>
+                        <div class="w-full max-w-md p-4 bg-black/50 rounded-xl border border-cyan-500 shadow-lg backdrop-blur animate-pulse">
+                            <p class="text-center text-cyan-300 font-mono">⚠️ ACTIVE THREAT SCENARIO: Data Breach Imminent without Controls ⚠️</p>
+                        </div>
+                        <div class="relative w-full h-12 overflow-hidden">
+                            <div class="absolute inset-x-0 h-0.5 bg-gradient-to-r from-transparent via-red-500 to-transparent animate-pulse"></div>
+                        </div>
+                    </div>
+                `
+            },
+            {
+                id: 3,
+                title: "Risk Mitigation & Security Controls",
+                subtitle: "Protecting Digital Assets",
+                content: () => `
+                    <div class="space-y-8">
+                        <h2 class="text-4xl md:text-5xl font-bold text-center bg-gradient-to-r from-green-300 to-cyan-400 bg-clip-text text-transparent">Security Controls & Defense Layers</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div class="glass-card-deep p-5 rounded-xl text-center hover:scale-105 transition-all duration-300 border border-cyan-500/40 hover:border-cyan-400">
+                                <div class="text-4xl mb-2">🔥</div><h3 class="text-xl font-bold">Firewalls</h3><p class="text-sm text-white/60">Network barrier against intrusions</p>
+                                <div class="mt-3 text-green-400 text-xs font-mono">PROTECTED</div>
+                            </div>
+                            <div class="glass-card-deep p-5 rounded-xl text-center hover:scale-105 transition-all duration-300 border border-purple-500/40 hover:border-purple-400">
+                                <div class="text-4xl mb-2">🔑</div><h3 class="text-xl font-bold">Strong Passwords</h3><p class="text-sm text-white/60">MFA & Complexity policies</p>
+                                <div class="mt-3 text-green-400 text-xs font-mono">ENCRYPTED</div>
+                            </div>
+                            <div class="glass-card-deep p-5 rounded-xl text-center hover:scale-105 transition-all duration-300 border border-blue-500/40 hover:border-blue-400">
+                                <div class="text-4xl mb-2">🎓</div><h3 class="text-xl font-bold">User Training</h3><p class="text-sm text-white/60">Security awareness programs</p>
+                                <div class="mt-3 text-green-400 text-xs font-mono">AWARENESS</div>
+                            </div>
+                            <div class="glass-card-deep p-5 rounded-xl text-center hover:scale-105 transition-all duration-300 border border-indigo-500/40 hover:border-indigo-400">
+                                <div class="text-4xl mb-2">📜</div><h3 class="text-xl font-bold">Security Policies</h3><p class="text-sm text-white/60">Governance & compliance</p>
+                                <div class="mt-3 text-green-400 text-xs font-mono">ACTIVE</div>
+                            </div>
+                        </div>
+                        <div class="flex justify-center mt-6">
+                            <div class="relative flex items-center gap-4 p-4 rounded-full bg-green-950/40 backdrop-blur border border-green-500 shadow-lg animate-pulse">
+                                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                <span class="text-green-300 font-mono font-bold">SYSTEM SECURE • ZERO TRUST ARCHITECTURE</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+            }
+        ];
+
+        // Slide management
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            // 3D transition effect: add class for animation
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                const slideHtml = slidesData[currentIndex].content();
+                slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700 glass-card-deep rounded-3xl p-6 md:p-10 shadow-2xl border border-white/20">${slideHtml}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                updateProgressAndCounter();
+            }, 150);
+        }
+
+        function updateProgressAndCounter() {
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            const percent = ((currentIndex + 1) / slidesData.length) * 100;
+            progressFill.style.width = `${percent}%`;
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) {
+                currentIndex++;
+                renderSlide();
+            } else {
+                // visual feedback at end of presentation
+                progressFill.style.boxShadow = '0 0 8px cyan';
+                setTimeout(()=> progressFill.style.boxShadow = '', 300);
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderSlide();
+            }
+        }
+
+        // Keyboard navigation
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        // Swipe Support (Touch)
+        let touchStartX = 0;
+        let touchEndX = 0;
+        function handleTouchStart(e) {
+            touchStartX = e.changedTouches[0].screenX;
+        }
+        function handleTouchEnd(e) {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchEndX < touchStartX - 50) nextSlide();
+            if (touchEndX > touchStartX + 50) prevSlide();
+        }
+        document.addEventListener('touchstart', handleTouchStart);
+        document.addEventListener('touchend', handleTouchEnd);
+
+        // button listeners
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        // Initial render
+        renderSlide();
+    </script>
+</body>
+</html>
