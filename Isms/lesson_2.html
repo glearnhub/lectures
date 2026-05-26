@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ISMS | Week 2: Information Security Threats, Vulnerabilities, and Attacks</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .code-block {
+            background: #0a0a1a;
+            border-left: 4px solid #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .threat-card {
+            transition: all 0.3s ease;
+        }
+        .threat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 26</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 3.8%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ ISMS: INFORMATION SECURITY THREATS, VULNERABILITIES & ATTACKS ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 2: INFORMATION SECURITY THREATS, VULNERABILITIES, AND ATTACKS
+    // Complete 26-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 2: Information Security Threats, Vulnerabilities, and Attacks</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Understanding Cybersecurity Risks in Modern Organizations</p>
+                        <div class="mt-8 flex gap-4 justify-center flex-wrap">
+                            <div class="px-4 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-sm">⚠️ Threats</div>
+                            <div class="px-4 py-1 rounded-full bg-orange-500/20 border border-orange-400/40 text-sm">🔓 Vulnerabilities</div>
+                            <div class="px-4 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">💀 Attacks</div>
+                            <div class="px-4 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">🛡️ Countermeasures</div>
+                        </div>
+                        <p class="text-white/50 text-sm mt-6">Contextualized within Kenyan organizations, businesses, schools, banks, and government institutions</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Introduction to Security Threats and Vulnerabilities
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">📖 Introduction to Security Threats and Vulnerabilities</h2>
+                    <p class="text-white/70 leading-relaxed">Organizations rely heavily on information systems to support daily operations. However, these systems face many threats and vulnerabilities that may compromise security.</p>
+                    <div class="grid md:grid-cols-3 gap-4 mt-6">
+                        <div class="p-4 bg-red-500/10 rounded-xl border-l-4 border-red-400 threat-card">
+                            <p class="font-bold text-red-300 text-lg">Threat</p>
+                            <p class="text-sm text-white/70">Anything capable of causing harm to information systems.</p>
+                        </div>
+                        <div class="p-4 bg-orange-500/10 rounded-xl border-l-4 border-orange-400 threat-card">
+                            <p class="font-bold text-orange-300 text-lg">Vulnerability</p>
+                            <p class="text-sm text-white/70">A weakness that can be exploited by a threat.</p>
+                        </div>
+                        <div class="p-4 bg-yellow-500/10 rounded-xl border-l-4 border-yellow-400 threat-card">
+                            <p class="font-bold text-yellow-300 text-lg">Risk</p>
+                            <p class="text-sm text-white/70">Occurs when a threat exploits a vulnerability and causes damage.</p>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm text-white/70">A company using outdated antivirus software becomes vulnerable to malware attacks.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 3 - Relationship Between Threats, Vulnerabilities, and Risks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🔗 Relationship: Threat + Vulnerability = Risk</h2>
+                    <div class="flex flex-wrap justify-center gap-4 items-center my-6">
+                        <div class="p-4 bg-red-500/20 rounded-xl text-center w-40"><span class="text-3xl">👾</span><p class="font-bold">Hackers</p><p class="text-xs">Threat</p></div>
+                        <div class="text-3xl text-cyan-400">+</div>
+                        <div class="p-4 bg-orange-500/20 rounded-xl text-center w-40"><span class="text-3xl">🔓</span><p class="font-bold">Weak Passwords</p><p class="text-xs">Vulnerability</p></div>
+                        <div class="text-3xl text-cyan-400">=</div>
+                        <div class="p-4 bg-yellow-500/20 rounded-xl text-center w-40"><span class="text-3xl">⚠️</span><p class="font-bold">Unauthorized Access</p><p class="text-xs">Risk</p></div>
+                    </div>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Organizations reduce risks by implementing security controls:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Firewalls</li><li>Strong passwords</li><li>User training</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Types of Information Security Threats (Overview)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">⚠️ Types of Information Security Threats</h2>
+                    <p class="text-white/70 mb-4">Threats can be classified into human threats, technical threats, and environmental threats.</p>
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="p-3 bg-red-500/10 rounded-lg text-center threat-card"><span class="text-3xl">👤</span><p class="font-bold mt-2">Human Threats</p><p class="text-xs">Intentional or accidental</p></div>
+                        <div class="p-3 bg-blue-500/10 rounded-lg text-center threat-card"><span class="text-3xl">💻</span><p class="font-bold mt-2">Technical Threats</p><p class="text-xs">Failures in technology</p></div>
+                        <div class="p-3 bg-green-500/10 rounded-lg text-center threat-card"><span class="text-3xl">🌍</span><p class="font-bold mt-2">Environmental Threats</p><p class="text-xs">Natural events</p></div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Human Threats
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-red-300 mb-4">👤 Human Threats</h2>
+                    <p class="text-white/70 mb-3">Human threats are caused by people either intentionally or accidentally.</p>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <ul class="bulleted-list">
+                            <li>Hackers</li><li>Cybercriminals</li><li>Insider threats</li><li>Employee negligence</li><li>Social engineering attackers</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">Fraudsters sending fake M-PESA messages to trick users into sharing their PINs.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Technical Threats
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-blue-300 mb-4">💻 Technical Threats</h2>
+                    <p class="text-white/70 mb-3">Technical threats result from failures or weaknesses in technology.</p>
+                    <ul class="bulleted-list">
+                        <li>Software bugs</li><li>Hardware failures</li><li>Network failures</li><li>System misconfigurations</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">A poorly configured school management system exposing student records online.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Environmental and Natural Threats
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-green-300 mb-4">🌍 Environmental and Natural Threats</h2>
+                    <p class="text-white/70 mb-3">Environmental threats are caused by natural events or environmental conditions.</p>
+                    <ul class="bulleted-list">
+                        <li>Floods</li><li>Fire outbreaks</li><li>Earthquakes</li><li>Power outages</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">Power interruptions affecting business systems in some regions can cause loss of unsaved data.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - Cyber Attacks Overview & Malware
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-red-300 mb-4">💀 Cyber Attacks & Malware</h2>
+                    <p class="text-white/70 mb-3">Cyberattacks are deliberate attempts to gain unauthorized access to systems, disrupt services, or steal data.</p>
+                    <p class="font-bold text-cyan-300">Malware (Malicious Software):</p>
+                    <div class="flex flex-wrap gap-2 my-3">
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Viruses</span>
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Worms</span>
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Trojan Horses</span>
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Spyware</span>
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Ransomware</span>
+                        <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">Rootkits</span>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">A cybercriminal sends an infected email attachment to employees in a SACCO, causing ransomware infection.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Viruses, Worms, Trojan Horses, Ransomware Details
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🦠 Malware Types Explained</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg"><span class="font-bold text-red-300">Virus:</span> Attaches to files, spreads when executed. Corrupts files, slows systems.</div>
+                        <div class="p-3 bg-blue-500/10 rounded-lg"><span class="font-bold text-blue-300">Worm:</span> Spreads automatically across networks. Consumes bandwidth, slows performance.</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg"><span class="font-bold text-yellow-300">Trojan Horse:</span> Disguises as legitimate software. Example: Downloading fake software updates.</div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg"><span class="font-bold text-purple-300">Ransomware:</span> Encrypts files, demands payment. Kenyan Example: Hospital system encrypted.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Social Engineering Attacks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-orange-300 mb-4">🎭 Social Engineering Attacks</h2>
+                    <p class="text-white/70 mb-3">Social engineering involves manipulating people into revealing confidential information.</p>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-white/5 rounded-lg"><span class="font-bold text-cyan-300">Phishing:</span> Fake emails/messages. 🇰🇪 Fake KRA emails.</div>
+                        <div class="p-3 bg-white/5 rounded-lg"><span class="font-bold text-cyan-300">Spear Phishing:</span> Targets specific individuals.</div>
+                        <div class="p-3 bg-white/5 rounded-lg"><span class="font-bold text-cyan-300">Vishing:</span> Voice calls. Scammers calling bank customers.</div>
+                        <div class="p-3 bg-white/5 rounded-lg"><span class="font-bold text-cyan-300">Smishing:</span> SMS messages.</div>
+                        <div class="p-3 bg-white/5 rounded-lg"><span class="font-bold text-cyan-300">Tailgating:</span> Following authorized individuals. Entering server rooms without ID.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - Phishing Example
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-yellow-300 mb-4">🎣 Phishing Example (Kenya)</h2>
+                    <div class="bg-black/50 p-4 rounded-xl border border-red-500 font-mono text-sm">
+                        <p class="text-red-400 font-bold">URGENT: Update Your KRA Account</p>
+                        <p class="text-white/60 text-xs mt-2">"Dear Taxpayer, We detected unusual activity on your KRA account. Please click the link below to verify your credentials:<br/>http://kra-security-verify.com"</p>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">⚠️ Goal:</p>
+                        <p class="text-sm">To steal: Passwords, PINs, Banking information, Personal data</p>
+                    </div>
+                    <div class="mt-3 p-2 bg-red-500/10 rounded-lg"><p class="text-sm">Never click suspicious links! Always verify sender email addresses.</p></div>
+                </div>
+            `
+        },
+        { // Slide 12 - Network-Based Attacks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🌐 Network-Based Attacks</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg"><span class="font-bold text-red-300">DoS / DDoS:</span> Overloads systems with traffic. Effects: Website downtime, slow services, loss of revenue.</div>
+                        <div class="p-3 bg-orange-500/10 rounded-lg"><span class="font-bold text-orange-300">Man-in-the-Middle (MITM):</span> Attackers intercept communication. Example: Unsecured public Wi-Fi.</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg"><span class="font-bold text-yellow-300">Spoofing:</span> Disguising as trusted entities. Email spoofing, IP spoofing.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Password and Authentication Attacks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-purple-300 mb-4">🔑 Password and Authentication Attacks</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">Brute Force Attacks:</span> Trying many password combinations.</li>
+                        <li><span class="text-cyan-300 font-bold">Dictionary Attacks:</span> Using common words and passwords.</li>
+                        <li><span class="text-cyan-300 font-bold">Credential Stuffing:</span> Using stolen credentials on other systems.</li>
+                        <li><span class="text-cyan-300 font-bold">Keylogging:</span> Recording keyboard activity to capture passwords.</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 14 - Web Application Attacks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🌐 Web Application Attacks</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg"><span class="font-bold text-red-300">SQL Injection:</span> Inserting malicious SQL commands to access databases.</div>
+                        <div class="p-3 bg-orange-500/10 rounded-lg"><span class="font-bold text-orange-300">Cross-Site Scripting (XSS):</span> Injecting malicious scripts into websites.</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg"><span class="font-bold text-yellow-300">Session Hijacking:</span> Stealing session information to impersonate users.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - Common Security Vulnerabilities
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-orange-300 mb-4">🔓 Common Security Vulnerabilities</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <ul class="bulleted-list">
+                            <li>Weak passwords</li><li>Outdated software</li><li>Lack of software updates</li><li>Poor access control</li>
+                        </ul>
+                        <ul class="bulleted-list">
+                            <li>Unsecured Wi-Fi</li><li>Lack of employee awareness</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">A cyber café using default router passwords exposes users to attacks.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Impacts of Cyber Attacks
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-red-300 mb-4">💥 Impacts of Cyber Attacks</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg text-center">💰 Financial losses</div>
+                        <div class="p-3 bg-blue-500/10 rounded-lg text-center">📂 Data theft</div>
+                        <div class="p-3 bg-orange-500/10 rounded-lg text-center">⏸️ Service interruptions</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg text-center">📉 Reputation damage</div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg text-center">⚖️ Legal penalties</div>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Example:</p>
+                        <p class="text-sm">A bank experiencing a data breach may lose customer trust and face regulatory investigations.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - Basic Security Countermeasures
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-green-300 mb-4">🛡️ Basic Security Countermeasures</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <ul class="bulleted-list">
+                            <li>Install antivirus software</li><li>Use firewalls</li><li>Apply software updates regularly</li><li>Use strong passwords</li>
+                        </ul>
+                        <ul class="bulleted-list">
+                            <li>Conduct employee awareness training</li><li>Backup important data</li><li>Use multi-factor authentication</li>
+                        </ul>
+                    </div>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">🇰🇪 Kenyan Example:</p>
+                        <p class="text-sm">Banks in Kenya use OTP authentication to improve account security.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📌 Summary</h2>
+                    <p class="text-white/70">Threats, vulnerabilities, and cyberattacks continue to increase as organizations adopt digital systems. Understanding these risks helps organizations implement appropriate controls to protect information assets.</p>
+                    <div class="mt-4 p-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg text-center">
+                        <p class="text-lg font-bold">Key Takeaway: Threat + Vulnerability = Risk</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Class Discussion Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">💬 Class Discussion Questions</h2>
+                    <ol class="numbered-list">
+                        <li>Identify common cyber threats affecting organizations in Kenya.</li>
+                        <li>Discuss how phishing attacks target M-PESA users.</li>
+                        <li>Differentiate between malware and social engineering attacks.</li>
+                        <li>Analyze a recent cyberattack reported in Kenya.</li>
+                        <li>Suggest ways schools and businesses can improve cybersecurity.</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-cyan-900/30 rounded-lg">
+                        <p class="text-sm">👩‍🏫 Lecturer Notes: Allow learners to share experiences and practical examples from Kenyan context.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Short Quiz
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-yellow-300 mb-4">📝 Short Quiz</h2>
+                    <ol class="numbered-list">
+                        <li>Define a threat and a vulnerability.</li>
+                        <li>State four examples of malware.</li>
+                        <li>Explain phishing and give a Kenyan example.</li>
+                        <li>What is ransomware?</li>
+                        <li>List three security countermeasures used in organizations.</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">📌 Submit answers at the end of the session.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - Additional Discussion: Recent Kenyan Cyber Incidents
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🇰🇪 Recent Kenyan Cyber Incidents (Discussion)</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300">Equity Bank (2021):</span> Phishing attempts targeting customer accounts.</li>
+                        <li><span class="text-cyan-300">KRA Portal:</span> Fake websites impersonating KRA for tax fraud.</li>
+                        <li><span class="text-cyan-300">eCitizen:</span> Attempted service disruptions.</li>
+                        <li><span class="text-cyan-300">SACCOs:</span> Ransomware attacks on financial cooperatives.</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-red-900/30 rounded-lg">
+                        <p class="text-sm">💡 Lesson: Cybersecurity awareness is critical for all organizations.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Practical Security Measures for Kenyan Organizations
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-green-300 mb-4">🏢 Practical Security Measures for Kenyan Organizations</h2>
+                    <ul class="bulleted-list">
+                        <li>Implement multi-factor authentication (MFA)</li><li>Regular software and antivirus updates</li><li>Conduct security awareness training for employees</li><li>Use firewalls and intrusion detection systems</li><li>Regular data backups (3-2-1 backup strategy)</li><li>Develop an incident response plan</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 23 - Real-World Case Study
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-purple-300 mb-4">📋 Real-World Case Study</h2>
+                    <div class="p-4 bg-white/5 rounded-xl">
+                        <p class="font-bold text-cyan-300">Case: University Database Breach</p>
+                        <p class="text-sm text-white/70 mt-2">A Kenyan university's student portal was hacked using weak passwords. Attackers accessed student records and altered grades.</p>
+                        <p class="text-sm mt-2"><span class="font-bold">Threat:</span> Hacker | <span class="font-bold">Vulnerability:</span> Weak passwords | <span class="font-bold">Risk:</span> Data breach and loss of integrity</p>
+                    </div>
+                    <div class="mt-3 p-3 bg-green-900/30 rounded-lg">
+                        <p class="text-sm">✅ Prevention: Strong password policy + MFA + Regular security audits</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - Group Activity: Risk Assessment
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">👥 Group Activity: Risk Assessment</h2>
+                    <p class="text-white/70 mb-3">In groups, analyze a local business (bank, school, hospital, or SACCO) and identify:</p>
+                    <ol class="numbered-list">
+                        <li>Potential threats faced by the organization</li><li>Existing vulnerabilities</li><li>Possible risks</li><li>Recommended security controls</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">📌 Present findings to the class after 20 minutes.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - References
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📚 References</h2>
+                    <ul class="bulleted-list">
+                        <li>Kenya Communications Authority (CA) - Cybersecurity Guidelines</li><li>Data Protection Act, 2019 (Kenya)</li><li>National KE-CIRT/CC Cyber Security Reports</li><li>NIST Cybersecurity Framework</li><li>OWASP Top 10 Web Application Security Risks</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 26 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-6xl mb-4">🛡️🔒💻</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">Thank You</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"Security is not a product, but a process." — Bruce Schneier</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                    <p class="text-white/40 text-sm mt-6">Stay Secure, Stay Informed</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
