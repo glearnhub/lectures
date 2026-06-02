@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>OOP Using Python | Week 3: Introduction to OOP, Classes and Objects</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, monospace;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .code-block {
+            background: #0a0a1a;
+            border-left: 4px solid #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .copy-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .copy-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .class-diagram {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 1px solid #00ffff;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 28</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 3.5%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ OOP USING PYTHON: WEEK 3 - INTRODUCTION TO OOP, CLASSES & OBJECTS ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides • 📋 Click code to copy
+        </div>
+    </div>
+</div>
+
+<script>
+    // Helper function to generate copyable code blocks
+    function makeCodeBlock(code, language = "python") {
+        const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        return `
+            <div class="relative">
+                <div class="code-block p-3 rounded-lg overflow-x-auto">
+                    <pre class="text-sm font-mono text-green-300 whitespace-pre-wrap">${escapedCode}</pre>
+                </div>
+                <button onclick="navigator.clipboard.writeText(\`${code.replace(/`/g, '\\`').replace(/\\/g, '\\\\')}\`)" 
+                    class="copy-btn absolute top-2 right-2 bg-gray-800/80 hover:bg-cyan-500/50 text-white text-xs px-2 py-1 rounded transition-all">
+                    📋 Copy
+                </button>
+            </div>
+        `;
+    }
+
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 3: Introduction to Object-Oriented Programming (OOP), Classes and Objects</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Object-Oriented Programming Using Python</p>
+                        <p class="text-white/50 text-sm mt-1">Level: Pre-Diploma | Duration: 3 Hours</p>
+                        <div class="mt-8 flex gap-4 justify-center flex-wrap">
+                            <div class="px-4 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">🎯 OOP Concepts</div>
+                            <div class="px-4 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">📦 Classes</div>
+                            <div class="px-4 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">🎭 Objects</div>
+                            <div class="px-4 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">🏗️ Student Management System</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Learning Outcomes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">🎯 Learning Outcomes</h2>
+                    <p class="text-white/70 mb-3">By the end of this lesson, learners should be able to:</p>
+                    <ol class="numbered-list">
+                        <li>Define Object-Oriented Programming (OOP).</li>
+                        <li>Explain the concepts of classes and objects.</li>
+                        <li>Differentiate between procedural programming and OOP.</li>
+                        <li>Create classes in Python.</li>
+                        <li>Create objects from classes.</li>
+                        <li>Access object attributes.</li>
+                        <li>Develop the first version of the Student Management System project.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 3 - Introduction
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📖 Introduction</h2>
+                    <p class="text-white/70 leading-relaxed">In Weeks 1 and 2, we learned how to write Python programs using:</p>
+                    <ul class="bulleted-list">
+                        <li>Variables</li><li>Input and Output</li><li>Conditions</li><li>Loops</li><li>Functions</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">💡 While these concepts are useful, large programs become difficult to manage when everything is written as separate functions and variables. <span class="text-cyan-300">Object-Oriented Programming (OOP) provides a better way to organize programs.</span></p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - What is OOP?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🎯 What is Object-Oriented Programming (OOP)?</h2>
+                    <p class="text-white/70">Object-Oriented Programming (OOP) is a programming approach that organizes software around <span class="text-yellow-300">objects</span> rather than functions.</p>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">An object contains:</p>
+                        <ul class="bulleted-list">
+                            <li>Data (Attributes)</li>
+                            <li>Actions (Methods)</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg">
+                        <p class="font-bold">Real-Life Example: Student</p>
+                        <p class="text-sm"><span class="text-cyan-300">Attributes:</span> Student ID, Name, Age, Course</p>
+                        <p class="text-sm"><span class="text-green-300">Behaviours:</span> Register, Study, Sit Exams, View Results</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Why Use OOP?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">⭐ Why Use OOP?</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-blue-500/10 rounded-lg"><span class="font-bold text-blue-300">1. Organize Code Better</span><br>Programs become easier to understand.</div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">2. Reuse Code</span><br>Classes can be reused multiple times.</div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg"><span class="font-bold text-purple-300">3. Reduce Repetition</span><br>Write code once and create many objects.</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg"><span class="font-bold text-yellow-300">4. Model Real-World Systems</span><br>Students, Employees, Cars, Bank Accounts</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Procedural vs OOP
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🔄 Procedural Programming vs OOP</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Procedural Programming</p>
+                            <div class="code-block p-2 rounded mt-2"><pre class="text-xs">student_name = "John"
+student_age = 20
+print(student_name)
+print(student_age)</pre></div>
+                            <p class="text-xs text-white/60 mt-2">Problem: 100 students = 100 variables</p>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Object-Oriented Programming</p>
+                            <div class="code-block p-2 rounded mt-2"><pre class="text-xs">student1 = Student()
+student2 = Student()
+student3 = Student()</pre></div>
+                            <p class="text-xs text-white/60 mt-2">Much easier to manage!</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Understanding Classes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📦 Understanding Classes</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">What is a Class?</span></p>
+                    <p class="text-white/70">A class is a blueprint or template used to create objects. Think of a class as an architectural drawing of a house. The drawing is not the actual house — it only describes how houses should be built.</p>
+                    <div class="mt-4 class-diagram p-4 rounded-lg text-center">
+                        <p class="text-cyan-300 font-bold">Class: Student</p>
+                        <p class="text-white/60">↓ creates ↓</p>
+                        <p class="text-green-300">Objects: John | Mary | Peter</p>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">💡 All students are created from the Student class.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - Class Diagram
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📐 Class Diagram</h2>
+                    <div class="class-diagram p-6 rounded-lg text-center max-w-md mx-auto">
+                        <div class="border-b border-cyan-500 pb-2 mb-2">
+                            <p class="text-cyan-300 font-bold text-xl">Student</p>
+                        </div>
+                        <div class="text-left text-sm pl-4">
+                            <p>• Student ID</p>
+                            <p>• Name</p>
+                            <p>• Age</p>
+                        </div>
+                        <div class="border-t border-cyan-500 mt-2 pt-2 text-left text-sm pl-4">
+                            <p>• register()</p>
+                            <p>• study()</p>
+                            <p>• sit_exams()</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Creating a Class
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🏗️ Creating a Class</h2>
+                    <p class="text-white/70 mb-3">Syntax: <span class="text-yellow-300">class ClassName:</span> <span class="text-green-300">pass</span></p>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    pass</pre>
+                    </div>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Explanation:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li><span class="text-yellow-300">class</span> is a keyword</li>
+                            <li><span class="text-yellow-300">Student</span> is the class name</li>
+                            <li><span class="text-green-300">pass</span> means "do nothing for now"</li>
+                        </ul>
+                    </div>
+                    <div class="code-block p-3 rounded-lg mt-3">
+                        <pre class="text-sm"># Creating Our First Class with Attributes
+class Student:
+    student_id = "S001"
+    name = "John"
+    age = 20</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Accessing Class Attributes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🔍 Accessing Class Attributes</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = "S001"
+    name = "John"
+    age = 20
+
+print(Student.student_id)  # Output: S001
+print(Student.name)        # Output: John
+print(Student.age)         # Output: 20</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - What is an Object?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🎭 What is an Object?</h2>
+                    <p class="text-white/70">An object is an <span class="text-yellow-300">instance</span> of a class.</p>
+                    <div class="class-diagram p-4 rounded-lg text-center my-3">
+                        <p class="text-cyan-300">Class: Student</p>
+                        <p class="text-white/60">↓ creates ↓</p>
+                        <p class="text-green-300">Objects: John | Mary | Peter</p>
+                    </div>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm"># Creating an Object
+class Student:
+    student_id = "S001"
+    name = "John"
+    age = 20
+
+student1 = Student()  # student1 is an object</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Accessing Object Attributes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🔍 Accessing Object Attributes</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = "S001"
+    name = "John"
+    age = 20
+
+student1 = Student()
+print(student1.student_id)  # Output: S001
+print(student1.name)        # Output: John
+print(student1.age)         # Output: 20</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Creating Multiple Objects
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">👥 Creating Multiple Objects</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = "S001"
+    name = "John"
+    age = 20
+
+student1 = Student()
+student2 = Student()
+student3 = Student()
+
+print(student1.name)  # Output: John
+print(student2.name)  # Output: John
+print(student3.name)  # Output: John</pre>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">⚠️ Notice: All objects currently contain the same data. We will solve this in Week 4 using constructors.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Modifying Object Attributes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">✏️ Modifying Object Attributes</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = ""
+    name = ""
+    age = 0
+
+student1 = Student()
+student1.student_id = "S001"
+student1.name = "John"
+student1.age = 20
+
+print(student1.student_id)  # Output: S001
+print(student1.name)        # Output: John
+print(student1.age)         # Output: 20</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - Creating Two Different Students
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">👥 Creating Two Different Students</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = ""
+    name = ""
+    age = 0
+
+student1 = Student()
+student2 = Student()
+
+student1.student_id = "S001"
+student1.name = "John"
+student1.age = 20
+
+student2.student_id = "S002"
+student2.name = "Mary"
+student2.age = 19
+
+print(student1.name)  # Output: John
+print(student2.name)  # Output: Mary</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Practical Activity 1: Student Class
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📝 Practical Activity 1: Student Class</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = ""
+    name = ""
+    age = 0
+
+student1 = Student()
+student1.student_id = "S001"
+student1.name = "John"
+student1.age = 20
+
+print("Student ID:", student1.student_id)
+print("Name:", student1.name)
+print("Age:", student1.age)</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - Practical Activity 2: Employee Class
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">💼 Practical Activity 2: Employee Class</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Employee:
+    employee_id = ""
+    name = ""
+    department = ""
+
+employee1 = Employee()
+employee1.employee_id = "EMP001"
+employee1.name = "James"
+employee1.department = "ICT"
+
+print("Employee ID:", employee1.employee_id)
+print("Name:", employee1.name)
+print("Department:", employee1.department)</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - Practical Activity 3: Book Class
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📚 Practical Activity 3: Book Class</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Book:
+    title = ""
+    author = ""
+    price = 0
+
+book1 = Book()
+book1.title = "Python Basics"
+book1.author = "John Doe"
+book1.price = 1500
+
+print("Title:", book1.title)
+print("Author:", book1.author)
+print("Price:", book1.price)</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Project: Student Management System V1
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">🏗️ Project: Student Management System Version 1</h2>
+                    <div class="class-diagram p-3 rounded-lg text-center mb-3">
+                        <p class="text-cyan-300 font-bold">Student Management System</p>
+                        <p class="text-white/60">Student</p>
+                        <p class="text-white/60">├── Student ID</p>
+                        <p class="text-white/60">├── Name</p>
+                        <p class="text-white/60">└── Age</p>
+                    </div>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = ""
+    name = ""
+    age = 0
+
+student1 = Student()
+student1.student_id = "S001"
+student1.name = "John"
+student1.age = 20
+
+print("STUDENT RECORD")
+print("--------------")
+print("Student ID:", student1.student_id)
+print("Name:", student1.name)
+print("Age:", student1.age)</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Extended Project: Three Students
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">👥 Extended Project: Three Students</h2>
+                    <div class="code-block p-3 rounded-lg">
+                        <pre class="text-sm">class Student:
+    student_id = ""
+    name = ""
+    age = 0
+
+student1 = Student()
+student2 = Student()
+student3 = Student()
+
+student1.student_id = "S001"
+student1.name = "John"
+student1.age = 20
+
+student2.student_id = "S002"
+student2.name = "Mary"
+student2.age = 19
+
+student3.student_id = "S003"
+student3.name = "Peter"
+student3.age = 21
+
+print("STUDENT LIST")
+print("------------")
+print(student1.student_id, student1.name, student1.age)
+print(student2.student_id, student2.name, student2.age)
+print(student3.student_id, student3.name, student3.age)</pre>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - Common Errors
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-red-300 mb-4">⚠️ Common Errors</h2>
+                    <div class="space-y-3">
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Forgetting Parentheses:</span> <span class="text-yellow-300">student1 = Student</span> ❌ → <span class="text-green-300">student1 = Student()</span> ✅</div>
+                        <div class="p-2 bg-orange-500/10 rounded"><span class="font-bold text-orange-300">Misspelling Class Names:</span> <span class="text-yellow-300">student1 = student()</span> ❌ → <span class="text-green-300">student1 = Student()</span> ✅</div>
+                        <div class="p-2 bg-yellow-500/10 rounded"><span class="font-bold text-yellow-300">Accessing Undefined Attributes:</span> <span class="text-yellow-300">print(student1.course)</span> ❌ if course not defined</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Exercises 1-2
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📝 Exercises 1-2</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Exercise 1</p>
+                            <p>Create a class called Car with: Registration Number, Model, Color. Create one object and display its details.</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">Exercise 2</p>
+                            <p>Create a class called Teacher. Attributes: Staff Number, Name, Subject. Create two teacher objects.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 23 - Exercises 3-4
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📝 Exercises 3-4</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">Exercise 3</p>
+                            <p>Create a class called Laptop. Attributes: Brand, RAM, Storage. Display the details of three laptops.</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-yellow-300">Exercise 4</p>
+                            <p>Modify the Student Management System to store: Student ID, Name, Age, Course.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - Lesson Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📌 Lesson Summary</h2>
+                    <p class="text-white/70 mb-3">In this lesson, we learned:</p>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="p-1 text-sm">✓ What OOP is</div><div class="p-1 text-sm">✓ Classes</div>
+                        <div class="p-1 text-sm">✓ Objects</div><div class="p-1 text-sm">✓ Creating classes</div>
+                        <div class="p-1 text-sm">✓ Creating objects</div><div class="p-1 text-sm">✓ Accessing attributes</div>
+                        <div class="p-1 text-sm">✓ Student Management System V1</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - Preparation for Week 4
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📅 Preparation for Week 4</h2>
+                    <div class="p-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-xl text-center">
+                        <p class="text-lg">In Week 4, we will improve the Student Management System by introducing:</p>
+                        <ul class="bulleted-list text-left mt-2">
+                            <li>Constructors (__init__)</li><li>Methods</li>
+                            <li>Multiple student records</li><li>Better object creation</li>
+                        </ul>
+                        <p class="text-cyan-300 mt-2">This will make our system more realistic and professional!</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 26 - Additional Resources
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">📚 Additional Resources</h2>
+                    <ul class="bulleted-list">
+                        <li>Python Official Documentation - Classes</li>
+                        <li>W3Schools Python OOP Tutorial</li>
+                        <li>Real Python - Object-Oriented Programming</li>
+                        <li>GeeksforGeeks - Python Classes and Objects</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 27 - Key Takeaways
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">💡 Key Takeaways</h2>
+                    <ul class="bulleted-list">
+                        <li>Classes are blueprints; objects are instances</li>
+                        <li>OOP helps organize code, reduce repetition, and model real-world systems</li>
+                        <li>Attributes store data about objects</li>
+                        <li>We can create multiple objects from the same class</li>
+                        <li>The Student Management System project begins now!</li>
+                    </ul>
+                    <div class="mt-4 p-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg text-center">
+                        <p class="text-lg font-bold">"Object-Oriented Programming helps us think about code the way we think about the real world."</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 28 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-6xl mb-4">🐍📦🎭</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">Thank You</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"Object-Oriented Programming is a mindset — think in terms of objects, not procedures."</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                    <p class="text-white/40 text-sm mt-6">Next Week: Constructors, Methods, and Enhanced Student Management System</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
