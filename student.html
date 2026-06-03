@@ -246,8 +246,8 @@
             const selectorDiv = document.getElementById('lessonSelector');
             if (!selectorDiv) return;
             if (!currentLessons.length) {
-                selectorDiv.innerHTML = '<div style="color:#aaa;">No lessons yet. Admin can add via admin.html</div>';
-                document.getElementById('codeContent').innerText = '// No lessons available. Please use admin panel to add code.';
+                selectorDiv.innerHTML = '<div style="color:#aaa;">No Codes Available</div>';
+                document.getElementById('codeContent').innerText = '// No code available Now.';
                 return;
             }
             selectorDiv.innerHTML = '';
