@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D OOP Classroom | Student View</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Segoe UI', 'Fira Code', monospace;
+        }
+        .ui-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+        .code-panel {
+            pointer-events: auto;
+            background: rgba(20, 25, 40, 0.88);
+            backdrop-filter: blur(14px);
+            border-radius: 32px;
+            border: 1px solid rgba(100, 150, 255, 0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            width: 750px;
+            max-width: 85vw;
+            padding: 1.5rem;
+            transition: transform 0.2s;
+            font-family: monospace;
+        }
+        .code-panel:hover {
+            transform: scale(1.01);
+            border-color: #7ab3ff;
+        }
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 2px solid #3a6ea5;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .panel-header h2 {
+            margin: 0;
+            background: linear-gradient(135deg, #fff, #8bb9ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .lesson-badge {
+            background: #1e2a3e;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            border: 1px solid #4c8bcd;
+        }
+        .code-container {
+            background: #0a0e1a;
+            border-radius: 20px;
+            padding: 6px;
+            margin: 20px 0;
+            border: 1px solid #2a3a55;
+        }
+        pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #e2e8ff;
+            background: #01040f;
+            border-radius: 16px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .copy-btn {
+            background: linear-gradient(95deg, #2c3e66, #1f2b48);
+            border: none;
+            color: white;
+            font-weight: bold;
+            padding: 12px 28px;
+            border-radius: 40px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            border: 1px solid #4c7aba;
+        }
+        .copy-btn:hover {
+            background: #3e5a8c;
+            transform: translateY(-2px);
+        }
+        .copy-feedback {
+            margin-left: 15px;
+            background: rgba(0,0,0,0.6);
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+        }
+        .lesson-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+            justify-content: center;
+        }
+        .lesson-btn {
+            background: rgba(20, 30, 55, 0.8);
+            border: 1px solid #3f618c;
+            color: #cde2ff;
+            padding: 6px 18px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.1s;
+        }
+        .lesson-btn.active {
+            background: #2c5282;
+            border-color: #7ab3ff;
+            color: white;
+            box-shadow: 0 0 10px #2c6e9e;
+        }
+        .greeting-note {
+            text-align: center;
+            margin-top: 15px;
+            color: #9bb7e0;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="ui-container">
+        <div class="code-panel">
+            <div class="panel-header">
+                <h2>🎓 3D OOP Studio</h2>
+                <div class="lesson-badge" id="lessonBadge">📘 live lessons</div>
+            </div>
+            <div class="lesson-selector" id="lessonSelector"></div>
+            <div class="code-container">
+                <pre id="codeDisplay"><code id="codeContent">// Loading lessons from admin...</code></pre>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                <button class="copy-btn" id="copyCodeBtn">📋 COPY CODE</button>
+                <span id="copyFeedback" class="copy-feedback"> </span>
+            </div>
+            <div class="greeting-note">💡 “Hello Learners, Welcome to Object-oriented Programming class”</div>
+        </div>
+    </div>
+
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+        // --- 3D Setup (same immersive environment) ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050b1a);
+        scene.fog = new THREE.FogExp2(0x050b1a, 0.008);
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(4, 3, 6);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+        const labelRenderer = new CSS2DRenderer();
+        labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        labelRenderer.domElement.style.position = 'absolute';
+        labelRenderer.domElement.style.pointerEvents = 'none';
+        document.body.appendChild(labelRenderer.domElement);
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.target.set(0, 0.5, 0);
+
+        // Lighting
+        const ambient = new THREE.AmbientLight(0x22223b);
+        scene.add(ambient);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1);
+        dirLight.position.set(3, 5, 2);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+        const fillLight = new THREE.PointLight(0x4466cc, 0.4);
+        fillLight.position.set(0, -1, 1);
+        scene.add(fillLight);
+        const grid = new THREE.GridHelper(12, 20, 0x88aaff, 0x335588);
+        grid.position.y = -0.8;
+        grid.material.transparent = true;
+        grid.material.opacity = 0.35;
+        scene.add(grid);
+        
+        // Decorative gems
+        const coreGeo = new THREE.IcosahedronGeometry(0.65, 0);
+        const coreMat = new THREE.MeshStandardMaterial({ color: 0x3a86ff, emissive: 0x0a2350, emissiveIntensity: 0.5 });
+        const coreGem = new THREE.Mesh(coreGeo, coreMat);
+        coreGem.position.set(0, 0.3, 0);
+        scene.add(coreGem);
+        
+        const ringGeo = new THREE.TorusGeometry(1.1, 0.05, 64, 200);
+        const ringMat = new THREE.MeshStandardMaterial({ color: 0x4c9aff });
+        const ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2;
+        ring.position.y = 0.3;
+        scene.add(ring);
+        
+        // stars
+        const starGeo = new THREE.BufferGeometry();
+        const starsPos = [];
+        for (let i = 0; i < 600; i++) starsPos.push((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 80 - 40);
+        starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starsPos), 3));
+        scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xaaccff, size: 0.07 })));
+        
+        // --- Lesson Data from localStorage (synced with admin) ---
+        const STORAGE_KEY = 'oop_lessons_admin';
+        
+        function fetchLessons() {
+            const stored = localStorage.getItem(STORAGE_KEY);
+            if (stored) {
+                try {
+                    return JSON.parse(stored);
+                } catch(e) { return []; }
+            }
+            return [];
+        }
+        
+        let currentLessons = fetchLessons();
+        let activeLessonId = (currentLessons[0] && currentLessons[0].id) || null;
+        
+        function renderStudentUI() {
+            const selectorDiv = document.getElementById('lessonSelector');
+            if (!selectorDiv) return;
+            if (!currentLessons.length) {
+                selectorDiv.innerHTML = '<div style="color:#aaa;">No lessons yet. Admin can add via admin.html</div>';
+                document.getElementById('codeContent').innerText = '// No lessons available. Please use admin panel to add code.';
+                return;
+            }
+            selectorDiv.innerHTML = '';
+            currentLessons.forEach(lesson => {
+                const btn = document.createElement('button');
+                btn.className = 'lesson-btn';
+                if (activeLessonId === lesson.id) btn.classList.add('active');
+                btn.textContent = lesson.title.length > 35 ? lesson.title.slice(0,32)+'..' : lesson.title;
+                btn.addEventListener('click', () => {
+                    activeLessonId = lesson.id;
+                    displayCode(lesson);
+                    document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.getElementById('lessonBadge').innerHTML = `📖 ${lesson.title}`;
+                });
+                selectorDiv.appendChild(btn);
+            });
+            if (activeLessonId) {
+                const active = currentLessons.find(l => l.id === activeLessonId);
+                if (active) displayCode(active);
+                else if (currentLessons[0]) displayCode(currentLessons[0]);
+            } else if (currentLessons[0]) {
+                activeLessonId = currentLessons[0].id;
+                displayCode(currentLessons[0]);
+            }
+        }
+        
+        function displayCode(lesson) {
+            const codeElem = document.getElementById('codeContent');
+            if (codeElem) codeElem.innerText = lesson.code;
+            document.getElementById('lessonBadge').innerHTML = `📖 ${lesson.title}`;
+        }
+        
+        // copy logic with proper feedback
+        const copyBtn = document.getElementById('copyCodeBtn');
+        const feedbackSpan = document.getElementById('copyFeedback');
+        
+        async function copyCode() {
+            const codeText = document.getElementById('codeContent')?.innerText;
+            if (!codeText || codeText === '// Loading lessons from admin...') {
+                feedbackSpan.textContent = '⚠️ No code loaded';
+                setTimeout(() => feedbackSpan.textContent = '', 1500);
+                return;
+            }
+            try {
+                await navigator.clipboard.writeText(codeText);
+                feedbackSpan.textContent = '✅ Copied!';
+                setTimeout(() => feedbackSpan.textContent = '', 1800);
+            } catch (err) {
+                feedbackSpan.textContent = '❌ Copy failed. Use Ctrl+C';
+                setTimeout(() => feedbackSpan.textContent = '', 2000);
+            }
+        }
+        copyBtn.addEventListener('click', copyCode);
+        
+        // auto refresh lessons from storage (poll every 2 seconds)
+        setInterval(() => {
+            const newLessons = fetchLessons();
+            if (JSON.stringify(newLessons) !== JSON.stringify(currentLessons)) {
+                currentLessons = newLessons;
+                if (currentLessons.length && !currentLessons.find(l => l.id === activeLessonId)) {
+                    activeLessonId = currentLessons[0]?.id || null;
+                }
+                renderStudentUI();
+            }
+        }, 2000);
+        
+        // initial render
+        renderStudentUI();
+        
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.012;
+            coreGem.rotation.y = time * 0.6;
+            ring.rotation.z = time * 0.3;
+            controls.update();
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
