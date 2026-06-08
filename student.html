@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>3D OOP Classroom | Student View</title>
+    <title>3D OOP Classroom | Student View with Scrollable Code</title>
     <style>
         body {
             margin: 0;
@@ -25,13 +25,13 @@
         }
         .code-panel {
             pointer-events: auto;
-            background: rgba(20, 25, 40, 0.88);
+            background: rgba(20, 25, 40, 0.9);
             backdrop-filter: blur(14px);
             border-radius: 32px;
             border: 1px solid rgba(100, 150, 255, 0.5);
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            width: 750px;
-            max-width: 85vw;
+            width: 780px;
+            max-width: 90vw;
             padding: 1.5rem;
             transition: transform 0.2s;
             font-family: monospace;
@@ -47,6 +47,7 @@
             border-bottom: 2px solid #3a6ea5;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            gap: 12px;
         }
         .panel-header h2 {
             margin: 0;
@@ -54,6 +55,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-size: 1.4rem;
         }
         .lesson-badge {
             background: #1e2a3e;
@@ -61,6 +63,7 @@
             border-radius: 40px;
             font-size: 0.8rem;
             border: 1px solid #4c8bcd;
+            white-space: nowrap;
         }
         .code-container {
             background: #0a0e1a;
@@ -68,11 +71,30 @@
             padding: 6px;
             margin: 20px 0;
             border: 1px solid #2a3a55;
+            /* CRITICAL FIX: Enable vertical scrolling for code block */
+            max-height: 380px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        /* Custom scrollbar for modern browsers - keep clean */
+        .code-container::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        .code-container::-webkit-scrollbar-track {
+            background: #0f1422;
+            border-radius: 10px;
+        }
+        .code-container::-webkit-scrollbar-thumb {
+            background: #3a6ea5;
+            border-radius: 10px;
+        }
+        .code-container::-webkit-scrollbar-thumb:hover {
+            background: #5f8fd9;
         }
         pre {
             margin: 0;
             padding: 20px;
-            overflow-x: auto;
             font-family: 'Fira Code', monospace;
             font-size: 14px;
             line-height: 1.5;
@@ -81,6 +103,12 @@
             border-radius: 16px;
             white-space: pre-wrap;
             word-wrap: break-word;
+            /* Ensure code wraps properly and scroll container handles overflow */
+        }
+        /* ensure code content doesn't break layout */
+        code {
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
         }
         .copy-btn {
             background: linear-gradient(95deg, #2c3e66, #1f2b48);
@@ -95,6 +123,7 @@
             gap: 10px;
             transition: 0.2s;
             border: 1px solid #4c7aba;
+            pointer-events: auto;
         }
         .copy-btn:hover {
             background: #3e5a8c;
@@ -113,6 +142,12 @@
             gap: 10px;
             margin-top: 12px;
             justify-content: center;
+            max-height: 100px;
+            overflow-y: auto;
+            padding-bottom: 6px;
+        }
+        .lesson-selector::-webkit-scrollbar {
+            height: 4px;
         }
         .lesson-btn {
             background: rgba(20, 30, 55, 0.8);
@@ -123,6 +158,7 @@
             cursor: pointer;
             font-size: 0.8rem;
             transition: 0.1s;
+            white-space: nowrap;
         }
         .lesson-btn.active {
             background: #2c5282;
@@ -136,6 +172,33 @@
             color: #9bb7e0;
             font-size: 0.8rem;
         }
+        /* Responsive tweaks for very small screens */
+        @media (max-width: 550px) {
+            .code-panel {
+                padding: 1rem;
+                max-width: 94vw;
+            }
+            .code-container {
+                max-height: 280px;
+            }
+            pre {
+                font-size: 11px;
+                padding: 12px;
+            }
+            .panel-header h2 {
+                font-size: 1.1rem;
+            }
+            .lesson-badge {
+                font-size: 0.7rem;
+                white-space: normal;
+                word-break: break-word;
+            }
+        }
+        @media (max-width: 380px) {
+            .code-container {
+                max-height: 220px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -146,14 +209,14 @@
                 <div class="lesson-badge" id="lessonBadge">📘 live lessons</div>
             </div>
             <div class="lesson-selector" id="lessonSelector"></div>
-            <div class="code-container">
+            <div class="code-container" id="scrollableCodeContainer">
                 <pre id="codeDisplay"><code id="codeContent">// Loading lessons from admin...</code></pre>
             </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
                 <button class="copy-btn" id="copyCodeBtn">📋 COPY CODE</button>
                 <span id="copyFeedback" class="copy-feedback"> </span>
             </div>
-            <div class="greeting-note">💡 “Welcome to Happy Coding with Gideon”</div>
+            <div class="greeting-note">💡 “Welcome to Happy Coding with Gideon — scroll code vertically if needed”</div>
         </div>
     </div>
 
@@ -170,7 +233,7 @@
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
 
-        // --- 3D Setup (same immersive environment) ---
+        // --- 3D Setup (immersive classroom environment) ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x050b1a);
         scene.fog = new THREE.FogExp2(0x050b1a, 0.008);
@@ -205,7 +268,7 @@
         grid.material.opacity = 0.35;
         scene.add(grid);
         
-        // Decorative gems
+        // Decorative gems (floating core & ring)
         const coreGeo = new THREE.IcosahedronGeometry(0.65, 0);
         const coreMat = new THREE.MeshStandardMaterial({ color: 0x3a86ff, emissive: 0x0a2350, emissiveIntensity: 0.5 });
         const coreGem = new THREE.Mesh(coreGeo, coreMat);
@@ -219,35 +282,214 @@
         ring.position.y = 0.3;
         scene.add(ring);
         
-        // stars
+        // Stars particle system
         const starGeo = new THREE.BufferGeometry();
         const starsPos = [];
         for (let i = 0; i < 600; i++) starsPos.push((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 80 - 40);
         starGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starsPos), 3));
         scene.add(new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xaaccff, size: 0.07 })));
         
-        // --- Lesson Data from localStorage (synced with admin) ---
+        // --- Lesson Data from localStorage (synced with admin/lecturer) ---
         const STORAGE_KEY = 'oop_lessons_admin';
+        
+        // Default lessons (for demo: provide initial OOP examples, scrollable content to test scrolling)
+        const defaultLessons = [
+            {
+                id: "lesson_1",
+                title: "🔷 Class & Object Basics",
+                code: `// Lesson 1: Introduction to Classes and Objects
+// In Object-Oriented Programming, a class is a blueprint for creating objects.
+class Car {
+    constructor(brand, model) {
+        this.brand = brand;
+        this.model = model;
+    }
+    
+    startEngine() {
+        console.log(\`\${this.brand} \${this.model} engine started!\`);
+    }
+}
+
+// Creating instances (objects) of the Car class
+const myCar = new Car("Tesla", "Model 3");
+const friendsCar = new Car("BMW", "i8");
+
+myCar.startEngine();   // Output: Tesla Model 3 engine started!
+friendsCar.startEngine();
+
+// Key takeaway: Encapsulation bundles data and methods into a single unit.
+// Now you can experiment with your own properties!`
+            },
+            {
+                id: "lesson_2",
+                title: "🧬 Inheritance & Polymorphism",
+                code: `// Lesson 2: Inheritance (extends) and Method Overriding
+// Inheritance allows a class to inherit properties and methods from another class.
+class Animal {
+    constructor(name) {
+        this.name = name;
+    }
+    speak() {
+        return \`\${this.name} makes a sound.\`;
+    }
+}
+
+class Dog extends Animal {
+    constructor(name, breed) {
+        super(name);
+        this.breed = breed;
+    }
+    // Override speak method (polymorphism)
+    speak() {
+        return \`\${this.name} the \${this.breed} barks: Woof! Woof!\`;
+    }
+}
+
+class Cat extends Animal {
+    speak() {
+        return \`\${this.name} meows: Meowww~\`;
+    }
+}
+
+const buddy = new Dog("Buddy", "Golden Retriever");
+const whiskers = new Cat("Whiskers");
+
+console.log(buddy.speak());     // Buddy the Golden Retriever barks: Woof! Woof!
+console.log(whiskers.speak());  // Whiskers meows: Meowww~
+
+// Polymorphism: same method name, different behaviors 🚀`
+            },
+            {
+                id: "lesson_3",
+                title: "📦 Encapsulation (Private Fields)",
+                code: `// Lesson 3: Encapsulation using private fields (#)
+// Modern JavaScript supports private class fields to hide internal data.
+
+class BankAccount {
+    #balance;  // private field
+    
+    constructor(owner, initialBalance) {
+        this.owner = owner;
+        this.#balance = initialBalance;
+    }
+    
+    deposit(amount) {
+        if (amount > 0) {
+            this.#balance += amount;
+            this.#logTransaction(\`Deposited \${amount}\`);
+            return true;
+        }
+        return false;
+    }
+    
+    getBalance() {
+        return \`💰 Balance for \${this.owner}: $\${this.#balance}\`;
+    }
+    
+    #logTransaction(message) {
+        console.log(\`[LOG] \${message} | New balance: $\${this.#balance}\`);
+    }
+}
+
+const myAccount = new BankAccount("Gideon", 500);
+myAccount.deposit(150);
+console.log(myAccount.getBalance());
+// myAccount.#balance would cause SyntaxError — truly private!
+// Encapsulation protects internal state and enforces controlled access.`
+            },
+            {
+                id: "lesson_4",
+                title: "✨ Advanced: Static Methods & Getters",
+                code: `// Lesson 4: Static Methods, Getters/Setters
+// Static methods belong to the class itself, not instances.
+
+class MathUtils {
+    static add(a, b) {
+        return a + b;
+    }
+    
+    static circleArea(radius) {
+        return Math.PI * radius ** 2;
+    }
+}
+
+console.log(MathUtils.add(12, 8));        // 20
+console.log(MathUtils.circleArea(5).toFixed(2)); // 78.54
+
+// Getters and Setters provide controlled access.
+class Temperature {
+    constructor(celsius) {
+        this._celsius = celsius;
+    }
+    
+    get fahrenheit() {
+        return this._celsius * 9/5 + 32;
+    }
+    
+    set fahrenheit(value) {
+        this._celsius = (value - 32) * 5/9;
+    }
+    
+    get celsius() {
+        return this._celsius;
+    }
+}
+
+const temp = new Temperature(25);
+console.log(temp.celsius);      // 25
+console.log(temp.fahrenheit);   // 77
+temp.fahrenheit = 86;
+console.log(temp.celsius);      // 30 (updated)
+// Great for computed properties!`
+            }
+        ];
         
         function fetchLessons() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
                 try {
-                    return JSON.parse(stored);
-                } catch(e) { return []; }
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        return parsed;
+                    } else {
+                        // If empty array in storage, return defaults
+                        return [...defaultLessons];
+                    }
+                } catch(e) { 
+                    return [...defaultLessons];
+                }
             }
-            return [];
+            // Seed default lessons into localStorage if completely empty for first run
+            const initialLessons = [...defaultLessons];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(initialLessons));
+            return initialLessons;
         }
         
         let currentLessons = fetchLessons();
         let activeLessonId = (currentLessons[0] && currentLessons[0].id) || null;
         
+        // Helper: display code with proper scroll container (no extra logic, just text)
+        function displayCode(lesson) {
+            const codeElem = document.getElementById('codeContent');
+            if (codeElem) {
+                codeElem.innerText = lesson.code;
+                // Optional: scroll container to top when switching lessons for better UX
+                const scrollContainer = document.getElementById('scrollableCodeContainer');
+                if (scrollContainer) {
+                    scrollContainer.scrollTop = 0;
+                }
+            }
+            const badgeEl = document.getElementById('lessonBadge');
+            if (badgeEl) badgeEl.innerHTML = `📖 ${lesson.title}`;
+        }
+        
         function renderStudentUI() {
             const selectorDiv = document.getElementById('lessonSelector');
             if (!selectorDiv) return;
             if (!currentLessons.length) {
-                selectorDiv.innerHTML = '<div style="color:#aaa;">No Codes Available</div>';
-                document.getElementById('codeContent').innerText = '// No code available Now.';
+                selectorDiv.innerHTML = '<div style="color:#aaa;">📭 No Codes Available - Lecturer will post soon</div>';
+                document.getElementById('codeContent').innerText = '// Waiting for new lessons from professor. Refresh or check later.';
+                document.getElementById('lessonBadge').innerHTML = '📘 No active lesson';
                 return;
             }
             selectorDiv.innerHTML = '';
@@ -255,70 +497,100 @@
                 const btn = document.createElement('button');
                 btn.className = 'lesson-btn';
                 if (activeLessonId === lesson.id) btn.classList.add('active');
-                btn.textContent = lesson.title.length > 35 ? lesson.title.slice(0,32)+'..' : lesson.title;
+                // Truncate very long titles for display
+                btn.textContent = lesson.title.length > 40 ? lesson.title.slice(0, 37) + '...' : lesson.title;
                 btn.addEventListener('click', () => {
                     activeLessonId = lesson.id;
                     displayCode(lesson);
+                    // Update active style
                     document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    document.getElementById('lessonBadge').innerHTML = `📖 ${lesson.title}`;
                 });
                 selectorDiv.appendChild(btn);
             });
-            if (activeLessonId) {
-                const active = currentLessons.find(l => l.id === activeLessonId);
-                if (active) displayCode(active);
-                else if (currentLessons[0]) displayCode(currentLessons[0]);
+            // Show the first lesson if activeLessonId is not found in current lessons
+            const activeExists = currentLessons.find(l => l.id === activeLessonId);
+            if (activeExists) {
+                displayCode(activeExists);
             } else if (currentLessons[0]) {
                 activeLessonId = currentLessons[0].id;
                 displayCode(currentLessons[0]);
+                const firstBtn = selectorDiv.querySelector('.lesson-btn');
+                if (firstBtn) firstBtn.classList.add('active');
+            } else {
+                document.getElementById('codeContent').innerText = '// Oops! No lessons available';
             }
         }
         
-        function displayCode(lesson) {
-            const codeElem = document.getElementById('codeContent');
-            if (codeElem) codeElem.innerText = lesson.code;
-            document.getElementById('lessonBadge').innerHTML = `📖 ${lesson.title}`;
-        }
-        
-        // copy logic with proper feedback
+        // Copy to clipboard functionality with robust feedback
         const copyBtn = document.getElementById('copyCodeBtn');
         const feedbackSpan = document.getElementById('copyFeedback');
         
         async function copyCode() {
             const codeText = document.getElementById('codeContent')?.innerText;
-            if (!codeText || codeText === '// Loading lessons from admin...') {
-                feedbackSpan.textContent = '⚠️ No code loaded';
+            if (!codeText || codeText === '// Loading lessons from admin...' || codeText.includes('Waiting for new lessons')) {
+                feedbackSpan.textContent = '⚠️ No code to copy';
                 setTimeout(() => feedbackSpan.textContent = '', 1500);
                 return;
             }
             try {
                 await navigator.clipboard.writeText(codeText);
-                feedbackSpan.textContent = '✅ Copied!';
+                feedbackSpan.textContent = '✅ Code copied!';
                 setTimeout(() => feedbackSpan.textContent = '', 1800);
             } catch (err) {
-                feedbackSpan.textContent = '❌ Copy failed. Use Ctrl+C';
+                feedbackSpan.textContent = '❌ Manual copy failed, select text';
                 setTimeout(() => feedbackSpan.textContent = '', 2000);
             }
         }
-        copyBtn.addEventListener('click', copyCode);
+        if (copyBtn) copyBtn.addEventListener('click', copyCode);
         
-        // auto refresh lessons from storage (poll every 2 seconds)
+        // Polling for real-time sync with Admin Panel (lecturer updates)
         setInterval(() => {
             const newLessons = fetchLessons();
+            // Compare by JSON string to avoid unnecessary re-renders
             if (JSON.stringify(newLessons) !== JSON.stringify(currentLessons)) {
                 currentLessons = newLessons;
+                // Ensure activeLessonId still exists; if not pick first
                 if (currentLessons.length && !currentLessons.find(l => l.id === activeLessonId)) {
                     activeLessonId = currentLessons[0]?.id || null;
+                } else if (currentLessons.length === 0) {
+                    activeLessonId = null;
                 }
                 renderStudentUI();
             }
         }, 2000);
         
-        // initial render
+        // Also listen for storage events (cross-tab synchronization)
+        window.addEventListener('storage', (event) => {
+            if (event.key === STORAGE_KEY) {
+                const updated = fetchLessons();
+                if (JSON.stringify(updated) !== JSON.stringify(currentLessons)) {
+                    currentLessons = updated;
+                    if (currentLessons.length && !currentLessons.find(l => l.id === activeLessonId)) {
+                        activeLessonId = currentLessons[0]?.id || null;
+                    }
+                    renderStudentUI();
+                }
+            }
+        });
+        
+        // initial render of lessons and UI (code panel includes scroll)
         renderStudentUI();
         
-        // Animation
+        // Ensure after render that any long code shows scrollbar naturally
+        // Update window resize to adjust container if needed
+        function adjustScrollArea() {
+            const container = document.getElementById('scrollableCodeContainer');
+            if (container && window.innerHeight < 600) {
+                container.style.maxHeight = '250px';
+            } else if (container) {
+                container.style.maxHeight = '380px';
+            }
+        }
+        window.addEventListener('resize', adjustScrollArea);
+        adjustScrollArea();
+        
+        // Animation loop
         let time = 0;
         function animate() {
             requestAnimationFrame(animate);
@@ -336,6 +608,9 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
         });
+        
+        // Tiny note in console: ready
+        console.log('3D Classroom ready — Code block now has vertical scroll for smaller screens!');
     </script>
 </body>
 </html>
