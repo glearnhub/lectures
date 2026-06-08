@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Electronic Communication Technologies | Week 3: Email, Video Conferencing, Messaging Systems, Social Media & Collaboration Tools</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .email-example {
+            background: #0a0a1a;
+            border-left: 4px solid #00ffff;
+            font-family: monospace;
+        }
+        
+        .table-header {
+            background: rgba(0, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 26</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 3.8%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ ELECTRONIC COMMUNICATION TECHNOLOGIES: EMAIL, VIDEO CONFERENCING, MESSAGING, SOCIAL MEDIA & COLLABORATION TOOLS ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 3: ELECTRONIC COMMUNICATION TECHNOLOGIES
+    // Complete 26-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 3: Electronic Communication Technologies</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2"></p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">Email</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">Video Conferencing</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">Messaging Systems</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">Social Media</div>
+                            <div class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/40 text-sm">Collaboration Tools</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Learning Outcomes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Learning Outcomes</h2>
+                    <p class="text-white/70 mb-3">By the end of this lesson, learners should be able to:</p>
+                    <ol class="numbered-list">
+                        <li>Define email and explain its purpose.</li>
+                        <li>Identify the components of an email address.</li>
+                        <li>Explain the advantages and limitations of email communication.</li>
+                        <li>Describe video conferencing and its applications.</li>
+                        <li>Explain messaging systems and their uses.</li>
+                        <li>Discuss the role of social media in communication and business.</li>
+                        <li>Identify common collaboration tools used in organizations.</li>
+                        <li>Demonstrate responsible and secure use of online communication technologies.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 3 - Introduction
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Introduction</h2>
+                    <p class="text-white/70 leading-relaxed">Technology has transformed the way people communicate and work. Today, individuals, businesses, schools, and governments use electronic technologies to exchange information instantly regardless of location.</p>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">In Kenya, communication technologies are widely used in:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Schools and universities</li><li>Businesses and banks</li><li>Government offices</li><li>Hospitals and homes</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">This lesson explores five major communication technologies: Email, Video Conferencing, Messaging Systems, Social Media, and Collaboration Tools.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Meaning of Email
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Email: Meaning and Importance</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">Meaning of Email</span></p>
+                    <p class="text-white/70">Email (Electronic Mail) is a method of sending and receiving digital messages through the internet. It allows users to communicate quickly without the need for physical letters.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Examples of Email Services:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Gmail</li><li>Yahoo Mail</li><li>Outlook</li><li>Proton Mail</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">When applying for a job in Kenya, applicants are usually required to send their CV and application letter through email rather than delivering hard copies.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Importance of Email
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Importance of Email</h2>
+                    <p class="text-white/70">Email is important because it:</p>
+                    <ol class="numbered-list">
+                        <li>Enables fast communication.</li>
+                        <li>Allows sending of documents and files.</li>
+                        <li>Provides written records of communication.</li>
+                        <li>Supports communication across different countries.</li>
+                        <li>Is commonly used in professional environments.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 6 - Components of an Email Address
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Components of an Email Address</h2>
+                    <div class="text-center p-4 bg-black/30 rounded-xl font-mono text-xl mb-4">johnkamau@gmail.com</div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Component</th><th class="p-2 text-cyan-300">Meaning</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2">johnkamau</td><td class="p-2">Username</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2">@</td><td class="p-2">Separator symbol</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2">gmail</td><td class="p-2">Email service provider</td></tr>
+                                <tr><td class="p-2">.com</td><td class="p-2">Domain extension</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Main Parts of an Email Message
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Main Parts of an Email Message</h2>
+                    <div class="space-y-2">
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">To:</span> Contains the recipient's email address. Example: principal@school.ac.ke</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Subject:</span> Brief description of email content. Example: Submission of Assignment</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">CC (Carbon Copy):</span> Sends a copy to another recipient</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">BCC (Blind Carbon Copy):</span> Recipients cannot see who else received the email (used for privacy)</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Message Body:</span> Contains the main content of the email</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Attachments:</span> Files attached (documents, images, videos, PDFs, spreadsheets)</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - Advantages and Disadvantages of Email
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Advantages and Disadvantages of Email</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Advantages</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Fast communication</li><li>Cost effective</li><li>Supports file sharing</li>
+                                <li>Accessible anywhere</li><li>Provides records</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Disadvantages</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Spam messages</li><li>Phishing attacks</li><li>Internet dependency</li>
+                                <li>Virus transmission</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Email Etiquette and Professional Email Example
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Email Etiquette</h2>
+                    <p class="text-white/70">Email etiquette refers to proper behavior when using email.</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div>
+                            <p class="font-bold text-cyan-300">Guidelines:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Use clear subject lines</li><li>Be polite and professional</li>
+                                <li>Avoid typing in CAPITAL LETTERS</li><li>Check grammar before sending</li>
+                                <li>Attach correct files</li><li>Verify recipient addresses</li>
+                            </ul>
+                        </div>
+                        <div class="email-example p-3 rounded-lg">
+                            <p class="font-bold text-cyan-300">Professional Email Example:</p>
+                            <p class="text-sm">Subject: Request for Assignment Extension</p>
+                            <p class="text-sm mt-2">Dear Lecturer,</p>
+                            <p class="text-sm">I hope you are well. I am requesting an extension of the assignment deadline due to illness.</p>
+                            <p class="text-sm mt-2">Thank you for your consideration.</p>
+                            <p class="text-sm mt-2">Kind regards,<br>Mary Wanjiku</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Video Conferencing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Video Conferencing</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">Meaning</span></p>
+                    <p class="text-white/70">Video conferencing is the use of internet technologies to conduct face-to-face meetings between people located in different places. Participants can see and hear each other in real time.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Common Video Conferencing Platforms:</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Zoom</span>
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Microsoft Teams</span>
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Google Meet</span>
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Skype</span>
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Cisco Webex</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - Components Required for Video Conferencing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Components Required for Video Conferencing</h2>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <div class="p-3 bg-blue-500/10 rounded-lg">
+                            <p class="font-bold text-blue-300">Hardware</p>
+                            <ul class="bulleted-list text-sm"><li>Computer</li><li>Smartphone</li><li>Webcam</li><li>Microphone</li><li>Speakers or Headphones</li></ul>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Software</p>
+                            <ul class="bulleted-list text-sm"><li>Zoom</li><li>Google Meet</li><li>Teams</li></ul>
+                        </div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg">
+                            <p class="font-bold text-yellow-300">Internet Connection</p>
+                            <p class="text-sm">A stable internet connection is necessary.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Uses and Advantages of Video Conferencing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Uses and Advantages of Video Conferencing</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-bold text-cyan-300">Uses:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Online Learning</li><li>Business Meetings</li><li>Interviews</li>
+                                <li>Telemedicine</li><li>Government Communication</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-bold text-green-300">Advantages:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Reduces travel costs</li><li>Saves time</li><li>Supports remote work</li>
+                                <li>Enables global communication</li><li>Facilitates teamwork</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">Many Kenyan universities used Zoom and Google Meet during the COVID-19 pandemic to continue learning remotely.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Challenges and Best Practices for Video Conferencing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Challenges and Best Practices</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Challenges</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Poor internet connectivity</li><li>Power outages</li>
+                                <li>Background noise</li><li>Technical failures</li><li>Security concerns</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Best Practices</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Join on time</li><li>Test microphone and camera</li>
+                                <li>Mute when not speaking</li><li>Dress appropriately</li>
+                                <li>Use a quiet environment</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Messaging Systems
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Messaging Systems</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">Meaning</span></p>
+                    <p class="text-white/70">Messaging systems are technologies that allow users to send and receive instant messages electronically. Messages can be text, voice notes, images, videos, or documents.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Common Messaging Systems:</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">WhatsApp</span>
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">Telegram</span>
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">Signal</span>
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">Facebook Messenger</span>
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">SMS</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - Features and Uses of Messaging Systems
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Features and Uses of Messaging Systems</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-bold text-cyan-300">Features:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Instant Communication</li><li>Group Chats</li>
+                                <li>Voice Notes</li><li>Media Sharing</li>
+                                <li>Video and Voice Calls</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-bold text-purple-300">Uses:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Education</li><li>Business Communication</li>
+                                <li>Customer Support</li><li>Family Communication</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">Many schools create WhatsApp groups for parents, teachers, and learners to share important announcements.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Advantages and Disadvantages of Messaging Systems
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Advantages and Disadvantages of Messaging Systems</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Advantages</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Fast communication</li><li>Easy to use</li>
+                                <li>Supports multimedia</li><li>Low costs</li>
+                                <li>Accessible on smartphones</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Disadvantages</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Spread of misinformation</li><li>Cyberbullying</li>
+                                <li>Privacy concerns</li><li>Distractions</li>
+                                <li>Dependence on internet</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - Social Media
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Social Media</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">Meaning</span></p>
+                    <p class="text-white/70">Social media refers to online platforms that allow users to create, share, and interact with content and other users.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Examples of Social Media Platforms:</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-blue-500/20 rounded-full text-sm">Facebook</span>
+                            <span class="px-2 py-1 bg-pink-500/20 rounded-full text-sm">Instagram</span>
+                            <span class="px-2 py-1 bg-black/50 rounded-full text-sm">TikTok</span>
+                            <span class="px-2 py-1 bg-gray-500/20 rounded-full text-sm">X (Twitter)</span>
+                            <span class="px-2 py-1 bg-blue-600/20 rounded-full text-sm">LinkedIn</span>
+                            <span class="px-2 py-1 bg-red-500/20 rounded-full text-sm">YouTube</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - Functions of Social Media and Business Use
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Functions of Social Media and Business Use</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-bold text-cyan-300">Functions:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Communication</li><li>Information Sharing</li>
+                                <li>Marketing</li><li>Education</li><li>Entertainment</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-bold text-green-300">Social Media in Business:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Promote products</li><li>Reach customers</li>
+                                <li>Build brand awareness</li><li>Provide customer support</li>
+                                <li>Conduct digital marketing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">Many small businesses in Nairobi, Eldoret, Nakuru, and Mombasa use Facebook, Instagram, and TikTok to market products without renting expensive physical shops.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Benefits and Risks of Social Media
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Benefits and Risks of Social Media</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Benefits</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Global Reach</li><li>Low Marketing Costs</li>
+                                <li>Quick Information Sharing</li><li>Networking Opportunities</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Risks</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Cybercrime</li><li>Fake News</li>
+                                <li>Privacy Violations</li><li>Addiction</li>
+                                <li>Identity Theft</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Responsible Use of Social Media
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Responsible Use of Social Media</h2>
+                    <ul class="bulleted-list">
+                        <li>Verify information before sharing.</li>
+                        <li>Protect personal information.</li>
+                        <li>Use strong passwords.</li>
+                        <li>Avoid cyberbullying.</li>
+                        <li>Respect others online.</li>
+                        <li>Report suspicious activities.</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 21 - Collaboration Tools
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Collaboration Tools</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">Meaning</span></p>
+                    <p class="text-white/70">Collaboration tools are technologies that enable multiple people to work together on tasks, projects, and documents regardless of location.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Examples:</p>
+                        <div class="space-y-2 mt-2">
+                            <p><span class="font-bold text-green-300">Google Workspace:</span> Google Docs, Google Sheets, Google Slides, Google Drive</p>
+                            <p><span class="font-bold text-blue-300">Microsoft 365:</span> Word Online, Excel Online, PowerPoint Online, OneDrive, Teams</p>
+                            <p><span class="font-bold text-purple-300">Project Management Tools:</span> Trello, Asana, Monday.com</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Importance and Features of Collaboration Tools
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Importance and Features of Collaboration Tools</h2>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <p class="font-bold text-cyan-300">Importance:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Improve teamwork</li><li>Increase productivity</li>
+                                <li>Support remote work</li><li>Facilitate information sharing</li>
+                                <li>Enhance project management</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p class="font-bold text-purple-300">Features:</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Real-Time Editing</li><li>File Sharing</li>
+                                <li>Version Control</li><li>Communication Integration</li>
+                                <li>Cloud Storage</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">A project team consisting of members in Nairobi, Kisumu, Eldoret, and Mombasa can work on the same Google Document simultaneously without meeting physically.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 23 - Security Considerations for Communication Technologies
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Security Considerations for Communication Technologies</h2>
+                    <ul class="bulleted-list">
+                        <li>Use strong passwords. Example: K3nya@2026Tech</li>
+                        <li>Enable Two-Factor Authentication (2FA) – adds an extra layer of security</li>
+                        <li>Avoid suspicious links – do not click unknown links</li>
+                        <li>Keep software updated – updates fix security vulnerabilities</li>
+                        <li>Verify information sources – avoid spreading fake news and misinformation</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 24 - Lesson Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Lesson Summary</h2>
+                    <p class="text-white/70">Communication technologies have transformed how people communicate, learn, and work.</p>
+                    <ul class="bulleted-list mt-3">
+                        <li>Email enables formal communication and file sharing.</li>
+                        <li>Video conferencing supports remote meetings and learning.</li>
+                        <li>Messaging systems provide instant communication.</li>
+                        <li>Social media connects people and businesses globally.</li>
+                        <li>Collaboration tools enable teamwork and project management.</li>
+                    </ul>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">Proper use of these technologies requires good digital citizenship and cybersecurity awareness.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - Discussion Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Discussion Questions</h2>
+                    <ol class="numbered-list">
+                        <li>What is email and why is it important in modern organizations?</li>
+                        <li>Explain the components of an email address.</li>
+                        <li>Differentiate between CC and BCC in email communication.</li>
+                        <li>State five uses of video conferencing.</li>
+                        <li>Discuss the advantages and disadvantages of messaging systems.</li>
+                        <li>Explain how social media benefits businesses in Kenya.</li>
+                        <li>Identify common risks associated with social media.</li>
+                        <li>What are collaboration tools and why are they important?</li>
+                        <li>Explain how Google Docs supports teamwork.</li>
+                        <li>Describe security measures that should be observed when using online communication technologies.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 26 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-5xl mb-4">📧💻📱</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">Thank You</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"Technology is best when it brings people together."</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
