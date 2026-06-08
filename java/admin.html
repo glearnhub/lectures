@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | OOP Lesson Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Fira Code', monospace;
+            background: linear-gradient(135deg, #0a0f1e, #0c1222);
+            color: #eef5ff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #a0c0ff, #5c8eff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .sub {
+            color: #8899cc;
+            margin-bottom: 2rem;
+            border-left: 3px solid #3a7bd5;
+            padding-left: 1rem;
+        }
+
+        /* Lesson Form */
+        .form-card {
+            background: rgba(20, 30, 55, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 28px;
+            padding: 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid #2e4a77;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 1.4rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #bbd4ff;
+        }
+
+        input, textarea {
+            width: 100%;
+            background: #0a0e1a;
+            border: 1px solid #2e4a77;
+            border-radius: 20px;
+            padding: 12px 18px;
+            color: white;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            transition: 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #6ea4ff;
+            box-shadow: 0 0 8px rgba(110, 164, 255, 0.3);
+        }
+
+        textarea {
+            min-height: 180px;
+            resize: vertical;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #2c3e66;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            font-family: inherit;
+            transition: 0.2s;
+            border: 1px solid #4f7eb3;
+        }
+
+        button.primary {
+            background: linear-gradient(95deg, #3a6ea5, #28548c);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        button.primary:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(95deg, #4f7eb3, #2c5a8c);
+        }
+
+        button.danger {
+            background: #5a2a3a;
+            border-color: #aa5577;
+        }
+
+        button.danger:hover {
+            background: #7a3a50;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.05);
+        }
+
+        /* Lessons List */
+        .lessons-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .lesson-item {
+            background: rgba(12, 18, 32, 0.8);
+            border-radius: 24px;
+            padding: 1rem 1.5rem;
+            border: 1px solid #2a3c60;
+            transition: 0.15s;
+        }
+
+        .lesson-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .lesson-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #c6e0ff;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .lesson-code-preview {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            color: #9bb3dd;
+            background: #03060e;
+            padding: 8px 12px;
+            border-radius: 16px;
+            white-space: pre-wrap;
+            max-height: 80px;
+            overflow-y: auto;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            background: #1e3a5f;
+            border-radius: 40px;
+            padding: 2px 10px;
+        }
+
+        hr {
+            border-color: #2a3f60;
+            margin: 1rem 0;
+        }
+
+        .status-msg {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #1f3a4b;
+            padding: 10px 18px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            border-left: 4px solid #5c9eff;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📚 Admin Dashboard — OOP Code Vault</h1>
+    <div class="sub">Manage lessons: add, edit, delete. Changes reflect instantly on the student 3D interface (after refresh).</div>
+
+    <div class="form-card">
+        <h3 style="margin-bottom: 1rem;">✏️ Add / Edit Lesson</h3>
+        <input type="hidden" id="editId" value="">
+        <div class="form-group">
+            <label>📖 Lesson Title</label>
+            <input type="text" id="lessonTitle" placeholder="e.g., Encapsulation, Inheritance..." autocomplete="off">
+        </div>
+        <div class="form-group">
+            <label>💻 Code Snippet (Python / JS / any language)</label>
+            <textarea id="lessonCode" placeholder="Paste your code here..."></textarea>
+        </div>
+        <div class="btn-group">
+            <button class="primary" id="saveLessonBtn">➕ Save Lesson</button>
+            <button id="cancelEditBtn">Cancel Edit</button>
+        </div>
+    </div>
+
+    <h3>📋 Existing Lessons</h3>
+    <div id="lessonsContainer" class="lessons-list">
+        <!-- dynamic lessons will appear here -->
+        <div style="text-align: center; padding: 2rem;">Loading lessons...</div>
+    </div>
+</div>
+<div id="statusMsg" class="status-msg">✅ Saved</div>
+
+<script>
+    // ---------- STORAGE KEY ----------
+    const STORAGE_KEY = 'oop_lessons_admin';
+
+    // Default lessons if nothing exists
+    const defaultLessons = [
+        { id: 1, title: "🏷️ Class & Object", code: `# Defining a simple class in Python
+class Car:
+    def __init__(self, brand, model):
+        self.brand = brand
+        self.model = model
+    
+    def start(self):
+        print(f"{self.brand} {self.model} is starting...")
+
+my_car = Car("Tesla", "Model 3")
+my_car.start()` },
+        { id: 2, title: "🔒 Encapsulation", code: `# Private attributes with getter/setter
+class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self.__balance = balance
+    
+    def deposit(self, amount):
+        if amount > 0:
+            self.__balance += amount
+    
+    def get_balance(self):
+        return self.__balance
+
+account = BankAccount("Alice", 1000)
+account.deposit(500)
+print(account.get_balance())  # 1500` },
+        { id: 3, title: "🧬 Inheritance", code: `class Animal:
+    def speak(self):
+        print("Animal makes sound")
+
+class Dog(Animal):
+    def speak(self):
+        print("Dog barks: Woof!")
+
+class Cat(Animal):
+    def speak(self):
+        print("Cat meows: Meow!")
+
+for animal in [Dog(), Cat()]:
+    animal.speak()` },
+        { id: 4, title: "🌀 Polymorphism", code: `class Shape:
+    def area(self): pass
+
+class Rectangle(Shape):
+    def __init__(self, w, h): self.w, self.h = w, h
+    def area(self): return self.w * self.h
+
+class Circle(Shape):
+    def __init__(self, r): self.r = r
+    def area(self): return 3.1415 * self.r ** 2
+
+shapes = [Rectangle(3,4), Circle(5)]
+for s in shapes: print(f"Area: {s.area()}")` },
+        { id: 5, title: "✨ Greeting & Intro", code: `print("Hello Learners, Welcome to Object-oriented Programming class")
+# OOP: Encapsulation, Inheritance, Polymorphism, Abstraction` }
+    ];
+
+    // Load lessons from localStorage
+    function loadLessons() {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+            try {
+                let lessons = JSON.parse(stored);
+                // ensure each lesson has an id
+                if (lessons && lessons.length) return lessons;
+            } catch(e) {}
+        }
+        // initial save defaults
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(defaultLessons));
+        return [...defaultLessons];
+    }
+
+    let lessons = loadLessons();
+
+    function saveToStorage() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(lessons));
+        renderLessonList();
+        showStatus("✅ Lessons saved & synced! Student will see updates after refresh.");
+    }
+
+    function showStatus(msg) {
+        const statusDiv = document.getElementById('statusMsg');
+        statusDiv.textContent = msg;
+        statusDiv.style.opacity = '1';
+        setTimeout(() => {
+            statusDiv.style.opacity = '0';
+        }, 2000);
+    }
+
+    function renderLessonList() {
+        const container = document.getElementById('lessonsContainer');
+        if (!lessons.length) {
+            container.innerHTML = '<div style="padding: 2rem; text-align:center;">📭 No lessons yet. Add one above!</div>';
+            return;
+        }
+        container.innerHTML = '';
+        lessons.forEach(lesson => {
+            const div = document.createElement('div');
+            div.className = 'lesson-item';
+            div.innerHTML = `
+                <div class="lesson-header">
+                    <span class="lesson-title">${escapeHtml(lesson.title)}</span>
+                    <div class="lesson-actions">
+                        <button class="edit-lesson" data-id="${lesson.id}">✏️ Edit</button>
+                        <button class="delete-lesson" data-id="${lesson.id}">🗑️ Delete</button>
+                    </div>
+                </div>
+                <div class="lesson-code-preview"><code>${escapeHtml(lesson.code.substring(0, 180))}${lesson.code.length > 180 ? '…' : ''}</code></div>
+                <div class="badge" style="margin-top: 8px; display:inline-block;">ID: ${lesson.id}</div>
+            `;
+            container.appendChild(div);
+        });
+
+        // attach events
+        document.querySelectorAll('.edit-lesson').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.dataset.id);
+                const lesson = lessons.find(l => l.id === id);
+                if (lesson) {
+                    document.getElementById('editId').value = lesson.id;
+                    document.getElementById('lessonTitle').value = lesson.title;
+                    document.getElementById('lessonCode').value = lesson.code;
+                }
+            });
+        });
+
+        document.querySelectorAll('.delete-lesson').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.dataset.id);
+                if (confirm('Delete this lesson permanently?')) {
+                    lessons = lessons.filter(l => l.id !== id);
+                    if (lessons.length === 0) {
+                        // add a placeholder so not empty
+                        lessons.push({ id: Date.now(), title: "Example Lesson", code: "# add new code here" });
+                    }
+                    saveToStorage();
+                }
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // Save or update
+    function saveLesson() {
+        let id = document.getElementById('editId').value;
+        const title = document.getElementById('lessonTitle').value.trim();
+        const code = document.getElementById('lessonCode').value;
+
+        if (!title) {
+            showStatus("❌ Please enter a lesson title");
+            return;
+        }
+        if (!code) {
+            showStatus("❌ Code cannot be empty");
+            return;
+        }
+
+        if (id) {
+            // update existing
+            const numId = parseInt(id);
+            const index = lessons.findIndex(l => l.id === numId);
+            if (index !== -1) {
+                lessons[index] = { ...lessons[index], title, code };
+                showStatus("✏️ Lesson updated!");
+            }
+        } else {
+            // create new
+            const newId = Date.now();
+            lessons.push({ id: newId, title, code });
+            showStatus("➕ New lesson added!");
+        }
+
+        // reset form
+        document.getElementById('editId').value = '';
+        document.getElementById('lessonTitle').value = '';
+        document.getElementById('lessonCode').value = '';
+        saveToStorage();
+    }
+
+    function cancelEdit() {
+        document.getElementById('editId').value = '';
+        document.getElementById('lessonTitle').value = '';
+        document.getElementById('lessonCode').value = '';
+        showStatus("Edit cancelled");
+    }
+
+    // Event listeners
+    document.getElementById('saveLessonBtn').addEventListener('click', saveLesson);
+    document.getElementById('cancelEditBtn').addEventListener('click', cancelEdit);
+    
+    // initial render
+    renderLessonList();
+</script>
+</body>
+</html>
