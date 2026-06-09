@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ISMS | Week 4: Security Policies, Standards, and ISO/IEC 27001</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .policy-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 4px solid #00ffff;
+        }
+        
+        .table-header {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        
+        .pdca-cycle {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .pdca-item {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 120px;
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 32</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 3.1%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ ISMS: SECURITY POLICIES, STANDARDS, AND ISO/IEC 27001 ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 4: SECURITY POLICIES, STANDARDS, AND ISO/IEC 27001
+    // Complete 32-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 4: Security Policies, Standards, and ISO/IEC 27001</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Information Security Management Systems (ISMS)</p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">Security Policies</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">Standards</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">Procedures</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">Guidelines</div>
+                            <div class="px-3 py-1 rounded-full bg-blue-500/20 border border-blue-400/40 text-sm">ISO/IEC 27001</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Introduction
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Introduction</h2>
+                    <p class="text-white/70 leading-relaxed">Security policies and standards are among the most important foundations of an Information Security Management System (ISMS). Technology alone cannot secure an organization. Employees, management, contractors, and third parties must understand their responsibilities regarding information security.</p>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Key Components:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Security policies establish management expectations</li>
+                            <li>Standards, procedures, and guidelines provide detailed instructions for implementation</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">This handbook is designed for diploma-level learners and provides detailed explanations, examples, discussion points, and practical applications using Kenyan organizational contexts.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 3 - Meaning of Security Policies
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Meaning of Security Policies</h2>
+                    <p class="text-white/80 mb-3">A <span class="text-cyan-300 font-bold">security policy</span> is a formal statement approved by management that defines how an organization protects its information assets.</p>
+                    <p class="text-white/70">It provides a framework for decision-making and establishes rules regarding information handling, storage, transmission, and protection.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Why Organizations Need Security Policies:</p>
+                        <p class="text-sm text-white/70">Organizations process sensitive information every day including customer information, employee records, financial data, research information, intellectual property, and operational data.</p>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">A university such as Riara University stores student records, examination results, fee payment information, and staff records. A security policy ensures that only authorized personnel can access and modify these records.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Importance of Security Policies
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Importance of Security Policies</h2>
+                    <p class="text-white/70">Security policies support information security governance and provide clear direction to employees.</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Protect sensitive information</span></div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Reduce security incidents</span></div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Improve compliance with legal requirements</span></div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Support business continuity</span></div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Promote accountability</span></div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Case Example:</p>
+                        <p class="text-sm">A bank employee shares customer information with unauthorized individuals. The security policy provides the basis for disciplinary action.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Characteristics of Effective Security Policies
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Characteristics of Effective Security Policies</h2>
+                    <p class="text-white/70">Good security policies should be:</p>
+                    <ul class="bulleted-list">
+                        <li>Clear – employees cannot follow policies they do not understand</li>
+                        <li>Concise</li><li>Realistic</li><li>Enforceable – violations can be addressed appropriately</li>
+                        <li>Measurable</li><li>Aligned with business objectives</li>
+                        <li>Flexible – allows policies to evolve as technologies and threats change</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 6 - Policy Components: Purpose
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Component: Purpose</h2>
+                    <div class="policy-box p-4 rounded-lg">
+                        <p class="font-bold text-cyan-300">Purpose</p>
+                        <p class="text-white/70">The purpose explains why the policy exists and what it aims to achieve. It provides the overall objective of the policy and helps users understand its importance.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-green-300">Example:</span> "The purpose of this Password Policy is to protect organizational information by ensuring that strong passwords are used by all employees."</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-yellow-300">Why it is important:</span> Gives direction and focus, explains the need for the policy, aligns the policy with organizational goals.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Policy Components: Scope
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Component: Scope</h2>
+                    <div class="policy-box p-4 rounded-lg">
+                        <p class="font-bold text-cyan-300">Scope</p>
+                        <p class="text-white/70">The scope defines who, what, and where the policy applies. It identifies the individuals, departments, systems, devices, or information covered by the policy.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-green-300">Example:</span> "This policy applies to all employees, contractors, interns, and third-party users who access the organization's computer systems and networks."</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-yellow-300">Why it is important:</span> Clarifies who must comply, prevents misunderstandings, ensures complete coverage of relevant assets and users.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - Policy Components: Responsibilities
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Component: Responsibilities</h2>
+                    <div class="policy-box p-4 rounded-lg">
+                        <p class="font-bold text-cyan-300">Responsibilities</p>
+                        <p class="text-white/70">The responsibilities section outlines the duties of individuals or groups regarding the policy. It clearly states who is responsible for implementing, monitoring, and complying with the policy.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-green-300">Example:</span> Employees must create and protect strong passwords. Managers must ensure their teams follow the policy. IT administrators must enforce password requirements on systems.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-yellow-300">Why it is important:</span> Promotes accountability, ensures everyone understands their role, helps avoid confusion during implementation.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Policy Components: Policy Statements
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Component: Policy Statements</h2>
+                    <div class="policy-box p-4 rounded-lg">
+                        <p class="font-bold text-cyan-300">Policy Statements</p>
+                        <p class="text-white/70">The policy statements are the actual rules, requirements, and standards that must be followed. This is usually the main section of the policy.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-green-300">Example (Password Policy):</span> Passwords must contain at least 8 characters. Passwords must include uppercase letters, lowercase letters, numbers, and special characters. Passwords must not be shared with other users.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-yellow-300">Why it is important:</span> Provides clear guidance, establishes expected behavior, forms the basis for compliance monitoring.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Policy Components: Exceptions and Enforcement
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Components: Exceptions and Enforcement</h2>
+                    <div class="space-y-3">
+                        <div class="policy-box p-3 rounded-lg">
+                            <p class="font-bold text-cyan-300">Exceptions</p>
+                            <p class="text-sm">Identifies circumstances where policy requirements may be waived. Exceptions should be formally approved and documented.<br><span class="text-green-300">Example:</span> Legacy systems that do not support complex passwords may be exempted with written approval.</p>
+                        </div>
+                        <div class="policy-box p-3 rounded-lg">
+                            <p class="font-bold text-cyan-300">Enforcement Provisions</p>
+                            <p class="text-sm">Explains what happens if the policy is violated. Describes disciplinary actions, corrective measures, or penalties.<br><span class="text-green-300">Example:</span> Employees who violate this policy may face disciplinary action, including verbal warnings, suspension of system access, or termination of employment.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - Policy Components: Review Schedules
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Policy Component: Review Schedules</h2>
+                    <div class="policy-box p-4 rounded-lg">
+                        <p class="font-bold text-cyan-300">Review Schedule</p>
+                        <p class="text-white/70">The review schedule specifies how often the policy will be examined and updated. Technology, threats, and business requirements change over time, making regular reviews necessary.</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-green-300">Example:</span> "This policy shall be reviewed annually or whenever significant changes occur in technology, regulations, or business operations."</p>
+                        <p class="mt-2 text-sm"><span class="font-bold text-yellow-300">Why it is important:</span> Keeps the policy current and relevant, addresses new security threats, ensures compliance with changing laws and standards.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Types of Security Policies (Overview)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Security Policies</h2>
+                    <p class="text-white/70">Organizations typically use three categories of security policies:</p>
+                    <div class="grid md:grid-cols-3 gap-3 mt-4">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg text-center"><span class="font-bold text-cyan-300">EISP</span><br>Enterprise Information Security Policy</div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg text-center"><span class="font-bold text-purple-300">ISSP</span><br>Issue-Specific Security Policy</div>
+                        <div class="p-3 bg-green-500/10 rounded-lg text-center"><span class="font-bold text-green-300">SysSP</span><br>System-Specific Security Policy</div>
+                    </div>
+                    <p class="text-white/60 text-sm mt-3">Each serves a different purpose but collectively supports organizational security objectives.</p>
+                </div>
+            `
+        },
+        { // Slide 13 - Enterprise Information Security Policy (EISP)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Enterprise Information Security Policy (EISP)</h2>
+                    <p class="text-white/70">The EISP is the highest-level security policy. It communicates management commitment and establishes the overall security direction.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">It defines:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Security objectives</li><li>Governance structure</li>
+                            <li>Roles and responsibilities</li><li>Organizational expectations</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Example:</p>
+                        <p class="text-sm">A Kenyan bank may require all departments to comply with information security requirements established by management.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Issue-Specific Security Policies (ISSP)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Issue-Specific Security Policies (ISSP)</h2>
+                    <p class="text-white/70">Issue-specific policies focus on particular security topics.</p>
+                    <div class="flex flex-wrap gap-2 my-3">
+                        <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Password Policy</span>
+                        <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Internet Usage Policy</span>
+                        <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Email Usage Policy</span>
+                        <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Remote Access Policy</span>
+                        <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Mobile Device Policy</span>
+                    </div>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Example:</p>
+                        <p class="text-sm">A password policy may require employees to use unique passwords and prohibit password sharing. An internet usage policy may prohibit employees from accessing unauthorized websites during working hours.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - System-Specific Policies (SysSP)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">System-Specific Policies (SysSP)</h2>
+                    <p class="text-white/70">System-specific policies focus on individual systems and technologies.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">These policies provide guidance regarding:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Configuration requirements</li><li>Access controls</li>
+                            <li>Backup procedures</li><li>Monitoring requirements</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Example:</p>
+                        <p class="text-sm">A student management system may have specific requirements governing administrator access and audit logging.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Security Standards
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Security Standards</h2>
+                    <p class="text-white/70">Standards are mandatory requirements that support security policies. A policy may state that sensitive information must be protected. A standard specifies exactly how that protection should occur.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Examples:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Password length requirements</li><li>Encryption requirements</li><li>Backup retention periods</li>
+                        </ul>
+                    </div>
+                    <p class="text-white/70 mt-2">Standards promote consistency throughout the organization.</p>
+                </div>
+            `
+        },
+        { // Slide 17 - Security Procedures
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Security Procedures</h2>
+                    <p class="text-white/70">Procedures provide detailed step-by-step instructions explaining how tasks should be performed.</p>
+                    <div class="policy-box p-4 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Example: User Account Creation Procedure</p>
+                        <ul class="numbered-list text-sm">
+                            <li>Step 1: Receive authorization</li><li>Step 2: Create account</li>
+                            <li>Step 3: Assign permissions</li><li>Step 4: Document activity</li>
+                        </ul>
+                    </div>
+                    <p class="text-white/70 mt-2">Procedures reduce errors and improve consistency.</p>
+                </div>
+            `
+        },
+        { // Slide 18 - Security Guidelines
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Security Guidelines</h2>
+                    <p class="text-white/70">Guidelines provide recommendations and best practices. Unlike standards, guidelines are generally not mandatory. They help employees make informed decisions when specific situations are not covered by formal requirements.</p>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Example:</p>
+                        <p class="text-sm">Employees may be advised to avoid public Wi-Fi when accessing organizational systems.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Comparing Policies, Standards, Procedures, and Guidelines
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Comparing Policies, Standards, Procedures, and Guidelines</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Document</th><th class="p-2 text-cyan-300">Description</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-cyan-300">Policy</td><td class="p-2">High-level management direction</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-purple-300">Standard</td><td class="p-2">Mandatory technical requirement</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-green-300">Procedure</td><td class="p-2">Step-by-step instructions</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Guideline</td><td class="p-2">Recommended best practice</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="text-sm"><span class="font-bold text-cyan-300">Example:</span> Policy: Protect confidential information. Standard: Use AES-256 encryption. Procedure: Steps for encrypting files. Guideline: Avoid sharing confidential files through personal email.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Introduction to Security Standards
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Introduction to Security Standards</h2>
+                    <p class="text-white/70">Security standards provide structured approaches to managing security.</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-2 bg-green-500/10 rounded">Consistency</div>
+                        <div class="p-2 bg-green-500/10 rounded">Improved compliance</div>
+                        <div class="p-2 bg-green-500/10 rounded">Better risk management</div>
+                        <div class="p-2 bg-green-500/10 rounded">Increased stakeholder confidence</div>
+                    </div>
+                    <p class="text-white/70 mt-2">Organizations often adopt international standards because they represent globally recognized best practices.</p>
+                </div>
+            `
+        },
+        { // Slide 21 - Introduction to ISO/IEC 27001
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Introduction to ISO/IEC 27001</h2>
+                    <p class="text-white/80 mb-3"><span class="text-cyan-300 font-bold">ISO/IEC 27001</span> is the internationally recognized standard for Information Security Management Systems.</p>
+                    <p class="text-white/70">The standard provides requirements for establishing, implementing, maintaining, and continually improving an ISMS.</p>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Primary Objective:</p>
+                        <p class="text-sm">Protecting the confidentiality, integrity, and availability of information.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Key Principles of ISO 27001
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Key Principles of ISO 27001</h2>
+                    <ul class="bulleted-list">
+                        <li>Risk-based decision making</li><li>Continuous improvement</li>
+                        <li>Management commitment</li><li>Documented processes</li>
+                        <li>Performance monitoring</li>
+                    </ul>
+                    <p class="text-white/70 mt-2">Organizations identify risks and implement controls appropriate to their environment.</p>
+                </div>
+            `
+        },
+        { // Slide 23 - ISO 27001 Clauses Explained (Part 1)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">ISO 27001 Clauses Explained (Part 1)</h2>
+                    <div class="space-y-2">
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 4: Context of the Organization</span> - Understanding internal and external factors affecting information security</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 5: Leadership</span> - Management commitment and assignment of responsibilities</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 6: Planning</span> - Risk assessment and risk treatment planning</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 7: Support</span> - Resources, awareness, competence, and communication</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - ISO 27001 Clauses Explained (Part 2)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">ISO 27001 Clauses Explained (Part 2)</h2>
+                    <div class="space-y-2">
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 8: Operation</span> - Implementation of security controls and risk treatment plans</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 9: Performance Evaluation</span> - Monitoring, measurement, audits, and management reviews</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Clause 10: Improvement</span> - Corrective actions and continual improvement</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - Annex A Controls Overview
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Annex A Controls Overview</h2>
+                    <p class="text-white/70">ISO 27001 Annex A contains security controls addressing four categories:</p>
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <div class="p-2 bg-cyan-500/10 rounded text-center">Organizational controls</div>
+                        <div class="p-2 bg-purple-500/10 rounded text-center">People controls</div>
+                        <div class="p-2 bg-green-500/10 rounded text-center">Physical controls</div>
+                        <div class="p-2 bg-yellow-500/10 rounded text-center">Technological controls</div>
+                    </div>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Examples include:</p>
+                        <p class="text-sm">Access control, asset management, incident response, cryptography, backup management, and supplier security.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 26 - PDCA Cycle in ISO 27001
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">PDCA Cycle in ISO 27001</h2>
+                    <div class="pdca-cycle">
+                        <div class="pdca-item"><span class="font-bold text-cyan-300 text-xl">Plan</span><br>Identify risks and establish objectives</div>
+                        <div class="pdca-item"><span class="font-bold text-green-300 text-xl">Do</span><br>Implement controls</div>
+                        <div class="pdca-item"><span class="font-bold text-yellow-300 text-xl">Check</span><br>Measure effectiveness through audits and monitoring</div>
+                        <div class="pdca-item"><span class="font-bold text-purple-300 text-xl">Act</span><br>Correct weaknesses and improve the ISMS</div>
+                    </div>
+                    <p class="text-white/70 text-center mt-3">The cycle ensures continual improvement.</p>
+                </div>
+            `
+        },
+        { // Slide 27 - Benefits of ISO 27001
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Benefits of ISO 27001</h2>
+                    <ul class="bulleted-list">
+                        <li>Improved security governance</li><li>Reduced security incidents</li>
+                        <li>Better risk management</li><li>Enhanced reputation</li>
+                        <li>Greater customer trust</li><li>Competitive advantage</li>
+                    </ul>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">Many organizations use certification to demonstrate commitment to information security.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 28 - Kenyan Case Studies
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Kenyan Case Studies</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Case Study 1: University Environment</p>
+                            <p class="text-sm">A university introduces an Information Security Policy requiring strong passwords, account monitoring, and restricted access to examination systems.</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">Case Study 2: SACCO Environment</p>
+                            <p class="text-sm">A SACCO handling financial transactions implements ISO 27001-inspired controls to improve customer confidence and reduce fraud risks.</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-yellow-900/30 rounded-lg">
+                        <p class="text-sm">Discussion: Identify the policies, standards, procedures, and controls that would be required in each case.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 29 - Discussion Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Discussion Questions</h2>
+                    <ol class="numbered-list">
+                        <li>Why do organizations need security policies?</li>
+                        <li>Can technology replace security policies?</li>
+                        <li>What challenges might organizations face when implementing policies?</li>
+                        <li>How can management encourage compliance?</li>
+                        <li>Why is ISO 27001 considered important globally?</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 30 - CAT Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">CAT Questions</h2>
+                    <ol class="numbered-list">
+                        <li>Define a security policy and explain its importance. (10 Marks)</li>
+                        <li>Differentiate between policies, standards, procedures, and guidelines. (10 Marks)</li>
+                        <li>Explain the purpose of ISO/IEC 27001. (10 Marks)</li>
+                        <li>Discuss the three types of security policies. (10 Marks)</li>
+                        <li>Explain the PDCA cycle used in ISO 27001. (10 Marks)</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 31 - Assignment
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Assignment</h2>
+                    <div class="p-4 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Task:</p>
+                        <p class="text-white/70">Visit an organization such as a school, SACCO, hospital, or business.</p>
+                        <p class="text-white/70 mt-2">Prepare a report identifying:</p>
+                        <ul class="bulleted-list">
+                            <li>Existing security policies</li><li>Security standards in use</li>
+                            <li>Procedures supporting security activities</li><li>Recommendations for improvement</li>
+                        </ul>
+                        <p class="text-white/70 mt-2">Length: 3-5 pages.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 32 - Lesson Summary and Closing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Lesson Summary</h2>
+                    <p class="text-white/70">Security policies, standards, procedures, and guidelines work together to establish a comprehensive information security framework.</p>
+                    <p class="text-white/70 mt-2">ISO/IEC 27001 provides internationally recognized requirements for implementing and continually improving an Information Security Management System.</p>
+                    <div class="mt-4 p-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-lg text-center">
+                        <p class="text-sm">Understanding these concepts is essential for information security professionals and organizational leaders.</p>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-white/40 text-sm">Thank You</p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
