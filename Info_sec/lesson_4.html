@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Information Security | Week 4: Passwords and Authentication</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .password-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 4px solid #00ffff;
+        }
+        
+        .factor-card {
+            transition: all 0.3s ease;
+        }
+        .factor-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 22</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 4.5%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ INFORMATION SECURITY: PASSWORDS AND AUTHENTICATION ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 4: PASSWORDS AND AUTHENTICATION
+    // Complete 22-slide presentation based on the provided notes
+    // Diploma in Information Security | 3-Hour Lesson
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 4: Passwords and Authentication</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Diploma in Information Security</p>
+                        <p class="text-white/50 text-sm mt-1">3-Hour Lesson</p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">Password Security</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">Multi-Factor Authentication</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">Biometric Security</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">Authentication Methods</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Lesson Objectives
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Lesson Objectives</h2>
+                    <p class="text-white/70 mb-3">By the end of this lesson, learners should be able to:</p>
+                    <ol class="numbered-list">
+                        <li>Define password security and explain its importance.</li>
+                        <li>Explain characteristics of strong passwords.</li>
+                        <li>Identify password threats and attack methods.</li>
+                        <li>Describe multi-factor authentication (MFA).</li>
+                        <li>Compare different authentication methods.</li>
+                        <li>Explain biometric security with its advantages and limitations.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 3 - Introduction
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Introduction</h2>
+                    <p class="text-white/80 mb-3">What is Authentication?</p>
+                    <p class="text-white/70 leading-relaxed">Authentication is the process of verifying that a person is who they claim to be before granting access to systems and information. As organizations increasingly rely on digital systems, secure authentication has become essential in protecting sensitive information from unauthorized access.</p>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Why Authentication Matters:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Prevents unauthorized access to sensitive data</li>
+                            <li>Protects user identities and accounts</li>
+                            <li>Supports accountability and audit trails</li>
+                            <li>Complies with security regulations and standards</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Password Security
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Password Security</h2>
+                    <p class="text-white/70">Passwords remain the most widely used authentication mechanism. A password is a secret combination of characters used to verify identity. Despite advances in technology, weak passwords continue to be a major cause of security breaches.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Characteristics of Strong Passwords:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Sufficient length (minimum 12 characters)</li>
+                            <li>Complexity (mix of character types)</li>
+                            <li>Uniqueness (different for each account)</li>
+                            <li>Unpredictability (not based on personal information)</li>
+                        </ul>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">Many mobile money fraud cases occur because users share their PINs with fraudsters pretending to be customer care representatives.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Password Threats
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Password Threats</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Brute-force attacks</p>
+                            <p class="text-sm">Attackers systematically try many combinations</p>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Dictionary attacks</p>
+                            <p class="text-sm">Attackers use lists of common passwords</p>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Credential stuffing</p>
+                            <p class="text-sm">Stolen passwords are reused on multiple platforms</p>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Phishing</p>
+                            <p class="text-sm">Users are tricked into revealing credentials</p>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Shoulder surfing</p>
+                            <p class="text-sm">Observing users entering passwords</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-yellow-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Consequences:</p>
+                        <p class="text-sm">Financial losses, data breaches, and reputational damage</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Password Best Practices
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Password Best Practices</h2>
+                    <div class="grid md:grid-cols-2 gap-2">
+                        <div class="p-2 bg-green-500/10 rounded">Use passwords with at least 12 characters</div>
+                        <div class="p-2 bg-green-500/10 rounded">Combine uppercase, lowercase, numbers, and symbols</div>
+                        <div class="p-2 bg-green-500/10 rounded">Use a different password for every account</div>
+                        <div class="p-2 bg-green-500/10 rounded">Change passwords immediately after compromise</div>
+                        <div class="p-2 bg-green-500/10 rounded">Do not share passwords with anyone</div>
+                        <div class="p-2 bg-green-500/10 rounded">Use password managers to securely store credentials</div>
+                        <div class="p-2 bg-green-500/10 rounded">Enable account lockout mechanisms</div>
+                    </div>
+                    <div class="password-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Example of a Strong Password:</p>
+                        <p class="font-mono text-sm">K3nya@2026Secur!ty#Pass</p>
+                        <p class="text-xs text-white/50 mt-1">(12+ characters, mixed case, numbers, special symbols, unpredictable)</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Multi-Factor Authentication (MFA) Overview
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Multi-Factor Authentication (MFA)</h2>
+                    <p class="text-white/80 mb-3">What is MFA?</p>
+                    <p class="text-white/70">Multi-Factor Authentication requires users to provide two or more independent factors before access is granted. MFA significantly reduces the likelihood of unauthorized access because attackers must compromise multiple factors.</p>
+                    <div class="mt-4 grid md:grid-cols-3 gap-3">
+                        <div class="factor-card p-3 bg-cyan-500/10 rounded-lg text-center border border-cyan-400/50">
+                            <div class="text-3xl">🔐</div>
+                            <p class="font-bold text-cyan-300">Something You Know</p>
+                            <p class="text-xs">Password, PIN, Security Question</p>
+                        </div>
+                        <div class="factor-card p-3 bg-purple-500/10 rounded-lg text-center border border-purple-400/50">
+                            <div class="text-3xl">📱</div>
+                            <p class="font-bold text-purple-300">Something You Have</p>
+                            <p class="text-xs">Token, Smartphone, Smart Card</p>
+                        </div>
+                        <div class="factor-card p-3 bg-green-500/10 rounded-lg text-center border border-green-400/50">
+                            <div class="text-3xl">👆</div>
+                            <p class="font-bold text-green-300">Something You Are</p>
+                            <p class="text-xs">Fingerprint, Face, Iris</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - MFA Examples
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">MFA Examples</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Online Banking</p>
+                            <p class="text-sm">Password + One-time verification code sent to registered mobile number</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Email Account</p>
+                            <p class="text-sm">Password + Authentication app code or biometric verification</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Corporate Systems</p>
+                            <p class="text-sm">Smart card + PIN + Fingerprint verification</p>
+                        </div>
+                    </div>
+                    <div class="mt-3 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Kenyan Example:</p>
+                        <p class="text-sm">Many banking apps require both a password and a one-time verification code sent via SMS or generated in-app.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Benefits of MFA
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Benefits of MFA</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-2 bg-green-500/10 rounded">Improves security beyond passwords alone</div>
+                        <div class="p-2 bg-green-500/10 rounded">Reduces risks associated with stolen credentials</div>
+                        <div class="p-2 bg-green-500/10 rounded">Enhances user confidence and trust</div>
+                        <div class="p-2 bg-green-500/10 rounded">Supports regulatory compliance</div>
+                        <div class="p-2 bg-green-500/10 rounded">Protects remote access environments</div>
+                    </div>
+                    <div class="mt-3 p-3 bg-yellow-900/30 rounded-lg">
+                        <p class="text-sm">📊 Studies show MFA can block over 99% of account compromise attacks.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Authentication Methods Overview
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Authentication Methods</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg">
+                            <p class="font-bold text-cyan-300">Knowledge-Based Authentication</p>
+                            <p class="text-sm">Uses information known only to the user (passwords, PINs, security questions)</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg">
+                            <p class="font-bold text-purple-300">Token-Based Authentication</p>
+                            <p class="text-sm">Relies on physical or digital devices generating authentication codes</p>
+                        </div>
+                        <div class="p-3 bg-blue-500/10 rounded-lg">
+                            <p class="font-bold text-blue-300">Certificate-Based Authentication</p>
+                            <p class="text-sm">Uses digital certificates issued by trusted authorities</p>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Biometric Authentication</p>
+                            <p class="text-sm">Uses physical or behavioural characteristics unique to individuals</p>
+                        </div>
+                    </div>
+                    <p class="text-white/70 text-sm mt-2">Organizations often combine several methods to improve security.</p>
+                </div>
+            `
+        },
+        { // Slide 11 - Biometric Security Introduction
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Biometric Security</h2>
+                    <p class="text-white/80 mb-3">What is Biometric Security?</p>
+                    <p class="text-white/70">Biometric security uses unique human characteristics to verify identity. These characteristics are difficult to replicate or steal, making biometrics a strong authentication method.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Common Biometric Systems:</p>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <span class="px-2 py-1 bg-blue-500/20 rounded-full text-sm">Fingerprint recognition</span>
+                            <span class="px-2 py-1 bg-purple-500/20 rounded-full text-sm">Facial recognition</span>
+                            <span class="px-2 py-1 bg-green-500/20 rounded-full text-sm">Iris recognition</span>
+                            <span class="px-2 py-1 bg-yellow-500/20 rounded-full text-sm">Voice recognition</span>
+                            <span class="px-2 py-1 bg-pink-500/20 rounded-full text-sm">Hand geometry</span>
+                            <span class="px-2 py-1 bg-indigo-500/20 rounded-full text-sm">Signature recognition</span>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Advantages of Biometrics
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Advantages of Biometrics</h2>
+                    <ul class="bulleted-list">
+                        <li>Convenient because users do not need to remember passwords</li>
+                        <li>Difficult to share or forget</li>
+                        <li>Provides stronger proof of identity</li>
+                        <li>Improves accountability and audit trails</li>
+                        <li>Speeds up authentication processes</li>
+                        <li>Biometric traits are unique to each individual</li>
+                    </ul>
+                    <div class="mt-3 p-3 bg-green-900/30 rounded-lg">
+                        <p class="text-sm font-semibold">Example:</p>
+                        <p class="text-sm">Smartphones with fingerprint or facial recognition provide quick, secure unlocking without typing passwords.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Limitations of Biometrics
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Limitations of Biometrics</h2>
+                    <ul class="bulleted-list">
+                        <li>Implementation costs can be high</li>
+                        <li>Privacy concerns may arise from biometric data collection</li>
+                        <li>False acceptance and false rejection errors may occur</li>
+                        <li>Biometric traits cannot easily be changed if compromised</li>
+                        <li>Environmental conditions may affect performance (lighting, moisture, etc.)</li>
+                        <li>Some users may have medical conditions affecting biometric capture</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 14 - Comparison: Authentication Methods
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Comparison: Authentication Methods</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Method</th><th class="p-2 text-cyan-300">Strength</th><th class="p-2 text-cyan-300">Weakness</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2">Password</td><td class="p-2 text-green-300">Low cost, familiar</td><td class="p-2 text-red-300">Can be guessed, stolen, forgotten</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2">Token</td><td class="p-2 text-green-300">Something you have</td><td class="p-2 text-red-300">Can be lost or stolen</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2">Biometric</td><td class="p-2 text-green-300">Unique, hard to forge</td><td class="p-2 text-red-300">Cost, privacy, cannot reset</td></tr>
+                                <tr><td class="p-2">MFA</td><td class="p-2 text-green-300">Multiple factors, very secure</td><td class="p-2 text-red-300">Extra steps, may require devices</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - Kenyan Applications
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Kenyan Applications</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Voter Registration</p>
+                            <p class="text-sm">Biometric systems used for voter identification to prevent duplicate registrations</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Employee Attendance</p>
+                            <p class="text-sm">Many organizations use fingerprint or facial recognition for attendance tracking</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Smartphone Security</p>
+                            <p class="text-sm">Fingerprint and face unlock features common on mobile devices</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Banking Authentication</p>
+                            <p class="text-sm">One-time passwords and app-based authentication used by Kenyan banks</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Class Activity
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Class Activity</h2>
+                    <div class="p-4 bg-white/5 rounded-lg">
+                        <p class="font-bold text-yellow-300">Group Activity:</p>
+                        <p class="text-white/70 mt-2">Divide students into groups and identify authentication methods used in everyday services such as:</p>
+                        <ul class="bulleted-list mt-2">
+                            <li>M-Pesa</li><li>Email accounts</li><li>Social media platforms</li><li>Online banking</li>
+                        </ul>
+                        <p class="text-white/70 mt-3">For each service, discuss:</p>
+                        <ul class="bulleted-list">
+                            <li>Strengths of the authentication methods used</li>
+                            <li>Weaknesses or vulnerabilities</li>
+                            <li>Possible improvements</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - Discussion Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Discussion Questions</h2>
+                    <ol class="numbered-list">
+                        <li>Why do users continue to choose weak passwords despite knowing the risks?</li>
+                        <li>Is MFA necessary for all systems? Why or why not?</li>
+                        <li>Should organizations replace passwords entirely with biometrics?</li>
+                        <li>What privacy concerns arise from biometric systems?</li>
+                        <li>How can organizations balance security with user convenience?</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 18 - Lesson Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Lesson Summary</h2>
+                    <ul class="bulleted-list">
+                        <li>Authentication is essential for protecting information systems from unauthorized access</li>
+                        <li>Strong password practices reduce vulnerabilities and prevent common attacks</li>
+                        <li>Multi-Factor Authentication (MFA) provides additional protection beyond passwords alone</li>
+                        <li>Different authentication methods have varying strengths and limitations</li>
+                        <li>Biometric security offers convenience and improved assurance but introduces privacy and implementation challenges</li>
+                        <li>Organizations should implement layered authentication based on risk assessment</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 19 - Assessment Questions (Part 1)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Assessment Questions (1-3)</h2>
+                    <ol class="numbered-list">
+                        <li>Define authentication and explain its importance in information security.</li>
+                        <li>Describe four characteristics of a strong password with examples.</li>
+                        <li>Differentiate between brute-force attacks and dictionary attacks.</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">📝 Submit answers at the end of the lesson.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Assessment Questions (Part 2)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Assessment Questions (4-6)</h2>
+                    <ol class="numbered-list" start="4">
+                        <li>Explain the three factors used in Multi-Factor Authentication (MFA). Provide examples for each.</li>
+                        <li>Discuss four authentication methods used in modern systems, including their strengths and weaknesses.</li>
+                        <li>Describe the advantages and limitations of biometric security systems.</li>
+                    </ol>
+                    <div class="mt-4 p-3 bg-purple-900/30 rounded-lg">
+                        <p class="text-sm">📝 Total marks: 30 | Each question carries 5 marks</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - Additional Resources
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Additional Resources</h2>
+                    <ul class="bulleted-list">
+                        <li>NIST Special Publication 800-63B: Digital Identity Guidelines</li>
+                        <li>OWASP Authentication Cheat Sheet</li>
+                        <li>National KE-CIRT/CC Security Advisories</li>
+                        <li>Communications Authority of Kenya - Cybersecurity Guidelines</li>
+                        <li>Data Protection Act, 2019 (Kenya)</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 22 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-6xl mb-4">🔐🔑👆</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">Thank You</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"The security of your information begins with how you prove who you are."</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                    <p class="text-white/40 text-sm mt-6">Stay Secure, Authenticate Properly</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
