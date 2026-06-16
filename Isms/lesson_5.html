@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Information Security | Week 5: Access Control and Authentication</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .kenya-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 4px solid #00ffff;
+        }
+        
+        .comparison-table {
+            font-size: 0.9rem;
+        }
+        .comparison-table th {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .comparison-table td, .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .case-study {
+            background: rgba(255, 255, 0, 0.05);
+            border-left: 4px solid #ffd700;
+        }
+        
+        .activity-box {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 4px solid #00ff88;
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 29</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 3.4%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ INFORMATION SECURITY: ACCESS CONTROL AND AUTHENTICATION ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 5: ACCESS CONTROL AND AUTHENTICATION
+    // Complete 29-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 5: Access Control and Authentication</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Information Security</p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">Access Control Models</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">Authentication Methods</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">Password Security</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">Multi-Factor Authentication</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Learning Outcomes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Learning Outcomes</h2>
+                    <p class="text-white/70 mb-3">By the end of this lesson, learners should be able to:</p>
+                    <ul class="bulleted-list">
+                        <li>Explain the key concepts and mechanisms of access control</li>
+                        <li>Differentiate between DAC, MAC, and RBAC models</li>
+                        <li>Describe common authentication methods and when to apply them</li>
+                        <li>Demonstrate password security best practices</li>
+                        <li>Configure and explain Multi-Factor Authentication (MFA)</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 3 - What is Access Control?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Access Control?</h2>
+                    <p class="text-white/70 leading-relaxed">Access control is a security mechanism that determines who or what is allowed to view, use, or modify resources in a computing environment. It is one of the fundamental pillars of information security, alongside confidentiality, integrity, and availability (the CIA triad).</p>
+                    <div class="kenya-box p-4 rounded-lg mt-4">
+                        <p class="font-bold text-cyan-300">Kenyan Example:</p>
+                        <p class="text-sm">Think of M-Pesa: only the registered account holder (identified by their ID number and SIM card) can send money. A teller at a Cooperative Bank branch can view customer balances but cannot approve loans — that requires a bank manager. This is access control in everyday life.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Core Access Control Principles
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Core Access Control Principles</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">Principle of Least Privilege</p>
+                            <p class="text-sm">Every user, program, or system component should be given only the minimum access rights necessary to perform its job.</p>
+                            <p class="text-xs text-white/50 mt-1">Example: A data entry clerk at KRA can enter tax returns but cannot approve refunds or view audit logs.</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">Need-to-Know Principle</p>
+                            <p class="text-sm">Access to information is restricted to individuals who need it to perform their duties, regardless of their clearance level.</p>
+                            <p class="text-xs text-white/50 mt-1">Example: A nurse at KNH can view their assigned patients' records but not others.</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">Separation of Duties</p>
+                            <p class="text-sm">Critical tasks are divided among multiple people to prevent fraud and errors.</p>
+                            <p class="text-xs text-white/50 mt-1">Example: At a SACCO, the person who approves loans is different from the person who disburses funds.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Discretionary Access Control (DAC)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Discretionary Access Control (DAC)</h2>
+                    <p class="text-white/70">In DAC, the owner of a resource decides who can access it. Access rights are granted at the owner's discretion. This is the most flexible — but least secure — model.</p>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Kenyan Example:</p>
+                        <p class="text-sm">A lecturer at the University of Nairobi creates an exam paper and stores it on a shared Google Drive folder. They can choose to share with specific colleagues (read-only) or with the department head (editor). The lecturer, as the owner, decides who sees what — that is DAC.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantages:</span> Flexible, easy to implement in small environments</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantages:</span> Owners may make poor security decisions, permissions can propagate uncontrollably</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Mandatory Access Control (MAC)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Mandatory Access Control (MAC)</h2>
+                    <p class="text-white/70">In MAC, access decisions are made by a central authority (the system/administrator), not by individual owners. Resources and users are assigned security labels/classifications, and the system enforces access based on policy.</p>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Kenyan Example:</p>
+                        <p class="text-sm">The National Intelligence Service (NIS) uses classification systems. A junior analyst with 'Confidential' clearance cannot access files labeled 'Top Secret' even if their supervisor asks them to. The system enforces this automatically — no individual discretion is allowed.</p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantages:</span> Very high security, difficult to bypass</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantages:</span> Rigid, significant administrative overhead</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - Role-Based Access Control (RBAC)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Role-Based Access Control (RBAC)</h2>
+                    <p class="text-white/70">RBAC assigns permissions to roles (job functions) rather than to individual users. Users are assigned to roles, and they inherit the permissions of those roles. This is the most widely used model in enterprises today.</p>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Kenyan Example - Equity Bank:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li><span class="text-green-300">Bank Teller:</span> view balances, process deposits/withdrawals</li>
+                            <li><span class="text-yellow-300">Branch Manager:</span> approve loans, override transactions, view branch reports</li>
+                            <li><span class="text-purple-300">Auditor:</span> view all transactions (read-only), generate audit reports</li>
+                            <li><span class="text-blue-300">IT Admin:</span> create accounts, reset passwords, configure the system</li>
+                        </ul>
+                        <p class="text-xs text-white/50 mt-1">When a teller is promoted to manager, the IT team simply changes their role — no need to reconfigure individual permissions.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - Comparison: DAC vs MAC vs RBAC
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Comparison: DAC vs MAC vs RBAC</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full">
+                            <thead><tr><th>Feature</th><th>DAC</th><th>MAC</th><th>RBAC</th></tr></thead>
+                            <tbody>
+                                <tr><td class="font-bold">Access decided by</td><td>Resource owner</td><td>System/Admin</td><td>Role assignment</td></tr>
+                                <tr><td class="font-bold">Flexibility</td><td>High</td><td>Low</td><td>Medium</td></tr>
+                                <tr><td class="font-bold">Security level</td><td>Low-Medium</td><td>Very High</td><td>High</td></tr>
+                                <tr><td class="font-bold">Admin overhead</td><td>Low</td><td>Very High</td><td>Medium</td></tr>
+                                <tr><td class="font-bold">Best for</td><td>Personal/small teams</td><td>Military/Govt</td><td>Enterprises</td></tr>
+                                <tr><td class="font-bold">Kenyan example</td><td>Google Drive sharing</td><td>NIS systems</td><td>Equity Bank CBS</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Activity 1: Access Control Case Study
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Activity 1: Access Control Case Study</h2>
+                    <div class="case-study p-4 rounded-lg">
+                        <p class="font-bold text-yellow-300">Case Study: Safaricom Data Breach Scenario</p>
+                        <p class="text-sm text-white/70 mt-2">Safaricom's customer database has staff accessing it daily:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Customer Service Agents — handle complaints, view call history</li>
+                            <li>Network Engineers — configure towers, view network logs</li>
+                            <li>Finance Team — view billing data, process refunds</li>
+                            <li>Security Team — view all logs, run vulnerability scans</li>
+                            <li>CEO — view executive dashboards only</li>
+                        </ul>
+                        <p class="font-bold text-cyan-300 mt-3">Discussion Questions:</p>
+                        <ol class="numbered-list text-sm">
+                            <li>Which access control model is most appropriate here? Why?</li>
+                            <li>What happens if a customer service agent accidentally views billing data?</li>
+                            <li>How would you set up RBAC for this organization? Define at least 3 roles.</li>
+                            <li>What principle of access control does this scenario demonstrate?</li>
+                        </ol>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - What is Authentication?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Authentication?</h2>
+                    <p class="text-white/70">Authentication is the process of verifying that someone (or something) is who they claim to be. It answers the question: 'Are you really who you say you are?'</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-4">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg">
+                            <p class="font-bold text-cyan-300">Authentication</p>
+                            <p class="text-sm">Verifying identity — Who are you?</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg">
+                            <p class="font-bold text-purple-300">Authorization</p>
+                            <p class="text-sm">Verifying permissions — What are you allowed to do?</p>
+                        </div>
+                    </div>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Analogy:</p>
+                        <p class="text-sm">When you visit a Stanbic Bank branch, the teller asks for your National ID card. That is authentication — confirming you are who you say. Once confirmed, the system checks if you're allowed to withdraw from that account. That is authorization.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - The Three Factors of Authentication
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">The Three Factors of Authentication</h2>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg text-center border border-cyan-400/50">
+                            <div class="text-3xl">🧠</div>
+                            <p class="font-bold text-cyan-300">Something You Know</p>
+                            <p class="text-sm">Knowledge Factor</p>
+                            <p class="text-xs text-white/50">Password, PIN, Security Question, M-Pesa PIN</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg text-center border border-purple-400/50">
+                            <div class="text-3xl">📱</div>
+                            <p class="font-bold text-purple-300">Something You Have</p>
+                            <p class="text-sm">Possession Factor</p>
+                            <p class="text-xs text-white/50">SIM card, ATM card, Hardware token, Phone with OTP app</p>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg text-center border border-green-400/50">
+                            <div class="text-3xl">👆</div>
+                            <p class="font-bold text-green-300">Something You Are</p>
+                            <p class="text-sm">Inherence Factor</p>
+                            <p class="text-xs text-white/50">Fingerprint (Huduma Namba), Face ID, Voice, Iris scan</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Common Authentication Methods
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Common Authentication Methods</h2>
+                    <div class="space-y-3">
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Password-Based:</span> Username and password. Widely supported but vulnerable to phishing, brute force, and credential stuffing.</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-purple-300">Token-Based:</span> One-time code (OTP) or hardware token. Example: SMS code for KCB Mobile Banking.</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-green-300">Biometric:</span> Physical characteristics. Example: Fingerprint used in Huduma Namba and biometric ATMs (Co-op Bank, Equity Bank).</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-yellow-300">Certificate-Based:</span> Digital certificates. Example: eCitizen portal uses SSL certificates to authenticate government servers.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Why Passwords Still Matter
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Why Passwords Still Matter</h2>
+                    <p class="text-white/70">Despite advances in authentication technology, passwords remain the primary authentication method for most systems in Kenya and globally. Understanding how to create and manage strong passwords is an essential cybersecurity skill.</p>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-red-300">Common Weak Passwords in Kenya:</p>
+                        <p class="text-sm">Research shows many Kenyans use: 'kenya2024', 'nairobi1', 'safaricom', 'password123', their phone number, or their name + birth year. These can be cracked in seconds using dictionary attacks.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Characteristics of a Strong Password
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Characteristics of a Strong Password</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">Length:</span> At least 12-16 characters</li>
+                        <li><span class="text-cyan-300 font-bold">Complexity:</span> Mix of uppercase, lowercase, numbers, and special characters</li>
+                        <li><span class="text-cyan-300 font-bold">Unpredictability:</span> No personal information (names, dates of birth, ID numbers)</li>
+                        <li><span class="text-cyan-300 font-bold">Uniqueness:</span> Different password for each account</li>
+                    </ul>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-green-300">Example of a Strong Password:</p>
+                        <p class="font-mono text-sm">K3nya@2026Secur!ty#Pass</p>
+                        <p class="text-xs text-white/50">(12+ characters, mixed case, numbers, special symbols, unpredictable)</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - Password Attack Types
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Password Attack Types</h2>
+                    <div class="space-y-2">
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Brute Force:</span> Attacker tries every possible combination. Defence: Use long passwords, lockout policies.</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Dictionary Attack:</span> Uses lists of common words. Defence: Avoid common words; use passphrases.</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Phishing:</span> Tricks users into revealing passwords via fake websites/emails. Defence: Verify URLs, enable MFA.</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Credential Stuffing:</span> Uses leaked passwords on other sites. Defence: Use unique passwords per site.</div>
+                    </div>
+                    <div class="kenya-box p-2 rounded-lg mt-2">
+                        <p class="text-sm">Example: A fake KCB bank login page sent via WhatsApp claiming your account has been suspended.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Password Best Practices
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Password Best Practices</h2>
+                    <ul class="bulleted-list">
+                        <li>Use a password manager (Bitwarden, 1Password, KeePass — free options available)</li>
+                        <li>Create passphrases: 'Nairobi!Coffee#Morning2024' is strong and memorable</li>
+                        <li>Never reuse passwords across different accounts</li>
+                        <li>Change passwords immediately if a breach is suspected</li>
+                        <li>Never share passwords via SMS, WhatsApp, or email</li>
+                        <li>Enable 'Have I Been Pwned' checks (haveibeenpwned.com)</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 17 - Activity 2: Password Strength Activity
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Activity 2: Password Strength Activity</h2>
+                    <div class="activity-box p-4 rounded-lg">
+                        <p class="font-bold text-green-300">Rate My Password!</p>
+                        <p class="text-sm text-white/70">Rate each password as WEAK, MEDIUM, or STRONG and explain why.</p>
+                        <ol class="numbered-list text-sm">
+                            <li>"kenya"</li><li>"Nairobi2024"</li><li>"0712345678"</li>
+                            <li>"Tr0ub4dor&3"</li><li>"CorrectHorseBatteryStaple"</li>
+                            <li>"K3ny@#M0b!le$2024Secure"</li>
+                        </ol>
+                        <p class="font-bold text-cyan-300 mt-2">Bonus:</p>
+                        <p class="text-sm">Create your own strong password for a banking app. Share with the class (without revealing your real password!).</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - What is MFA?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Multi-Factor Authentication (MFA)?</h2>
+                    <p class="text-white/70">Multi-Factor Authentication (MFA) — also called Two-Factor Authentication (2FA) — requires users to present two or more verification factors from different categories before granting access. Even if one factor is compromised, the attacker still cannot access the account without the second factor.</p>
+                    <div class="kenya-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">MFA You Already Use:</p>
+                        <p class="text-sm">When you log into M-Pesa via the app: You enter your phone number and password (Something you KNOW) + You receive an OTP on your registered SIM (Something you HAVE). This is MFA — you need both to proceed.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Types of MFA Methods (SMS OTP & Authenticator Apps)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of MFA Methods (Part 1)</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">SMS/USSD One-Time Password (OTP)</p>
+                            <p class="text-sm">A code is sent via SMS to your registered phone number. Used by: KCB, Equity Bank, NCBA, eCitizen, Safaricom My Account.</p>
+                            <p class="text-xs text-green-400">Pros: Easy, no app needed, works on all phones | Cons: Vulnerable to SIM swapping; SMS can be intercepted</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">Authenticator Apps</p>
+                            <p class="text-sm">An app generates a time-based OTP (TOTP) that changes every 30 seconds. Examples: Google Authenticator, Microsoft Authenticator, Authy.</p>
+                            <p class="text-xs text-green-400">Pros: Works offline, more secure than SMS | Cons: If you lose the phone without backup codes, access is lost</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - Types of MFA Methods (Push Notifications, Hardware Tokens, Biometrics)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of MFA Methods (Part 2)</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-yellow-300">Push Notifications</p>
+                            <p class="text-sm">A notification is sent to a trusted device; the user approves or denies. Used in Microsoft 365 (Kenyan corporates and universities).</p>
+                            <p class="text-xs text-green-400">Pros: Simple user experience, fast | Cons: MFA fatigue attacks</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-blue-300">Hardware Tokens (Security Keys)</p>
+                            <p class="text-sm">A physical USB or NFC device (like a YubiKey) that must be plugged in or tapped. Used by high-security environments.</p>
+                            <p class="text-xs text-green-400">Pros: Most phishing-resistant method | Cons: Costly, can be lost</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">Biometrics as MFA</p>
+                            <p class="text-sm">Fingerprint or facial recognition used in addition to a password. Example: Equity Bank mobile app.</p>
+                            <p class="text-xs text-green-400">Pros: Convenient, fast, hard to steal | Cons: Cannot be changed if compromised</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - MFA Attacks and Defences
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">MFA Attacks and Defences</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Attack</th><th class="p-2 text-cyan-300">How it Works</th><th class="p-2 text-cyan-300">Defence</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">SIM Swapping</td><td class="p-2">Attacker convinces Safaricom to transfer your number to their SIM</td><td class="p-2">Use authenticator app instead of SMS; add SIM PIN</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">MFA Fatigue</td><td class="p-2">Attacker repeatedly sends MFA push notifications</td><td class="p-2">Set a PIN/number match requirement; use hardware keys</td></tr>
+                                <tr><td class="p-2 font-bold">Real-time Phishing</td><td class="p-2">Fake site collects credentials and OTP live</td><td class="p-2">Use FIDO2/hardware keys; check website URLs carefully</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Activity 3: Practical MFA Demonstration
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Activity 3: Practical MFA Demonstration</h2>
+                    <div class="activity-box p-4 rounded-lg">
+                        <p class="font-bold text-green-300">Setting Up Google Authenticator</p>
+                        <ol class="numbered-list text-sm">
+                            <li>Install Google Authenticator from Play Store or App Store</li>
+                            <li>Open a supported account — we'll use a Google Account (Gmail)</li>
+                            <li>Go to: myaccount.google.com → Security → How you sign in → 2-Step Verification</li>
+                            <li>Select 'Authenticator App' and click 'Set up authenticator'</li>
+                            <li>Scan the QR code displayed on screen using the Authenticator app</li>
+                            <li>Enter the 6-digit code shown in the app to verify it's working</li>
+                            <li>Save your backup codes in a safe place (offline, printed)</li>
+                            <li>Log out and log back in — experience the MFA flow firsthand</li>
+                        </ol>
+                        <p class="font-bold text-cyan-300 mt-2">Discussion:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>What would happen if you lost your phone after enabling this?</li>
+                            <li>Why is this safer than SMS OTP?</li>
+                            <li>Which of your accounts should you enable MFA on first?</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 23 - Lesson Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Lesson Summary</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Topic</th><th class="p-2 text-cyan-300">Key Point</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">Access Control</td><td class="p-2">Controls who can access what. Based on three principles: Least Privilege, Need-to-Know, Separation of Duties</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">DAC</td><td class="p-2">Owner controls access. Flexible but least secure. Used for personal file sharing.</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">MAC</td><td class="p-2">System/admin controls access via labels. Very secure but rigid. Used in government/military.</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">RBAC</td><td class="p-2">Access based on job roles. Best for enterprises. Reduces admin overhead.</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold">Authentication</td><td class="p-2">Verifying identity using knowledge, possession, or inherence factors.</td></tr>
+                                <tr><td class="p-2 font-bold">MFA</td><td class="p-2">Always use at least two factors. Prefer authenticator apps over SMS. Hardware keys are the safest.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - Quick Review Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Quick Review Questions</h2>
+                    <ol class="numbered-list">
+                        <li>You are the IT manager at a county hospital in Kisumu. Which access control model would you recommend and why?</li>
+                        <li>A colleague shares their M-Pesa PIN with you over WhatsApp. What security principle does this violate?</li>
+                        <li>Name two Kenyan services that already use MFA. What type of MFA do they use?</li>
+                        <li>Your KCB online banking account is asking you to enable 2FA. You can choose between SMS OTP or Google Authenticator. Which do you choose and why?</li>
+                        <li>Explain in simple terms why 'Nairobi2024' is a weak password and suggest a stronger alternative.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 25 - Further Reading & Resources
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Further Reading & Resources</h2>
+                    <ul class="bulleted-list">
+                        <li>NIST Password Guidelines: https://pages.nist.gov/800-63-3/</li>
+                        <li>Have I Been Pwned: https://haveibeenpwned.com</li>
+                        <li>Bitwarden (free password manager): https://bitwarden.com</li>
+                        <li>Kenya Computer Incident Response Team (KE-CIRT): https://ke-cirt.go.ke</li>
+                        <li>Communications Authority of Kenya — Cybersecurity: https://ca.go.ke</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 26 - Assignment
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Assignment</h2>
+                    <div class="case-study p-4 rounded-lg">
+                        <p class="font-bold text-yellow-300">Due Next Week</p>
+                        <p class="text-white/70 mt-2">Choose any Kenyan government service (eCitizen, NHIF, iTax, Huduma Centre) and:</p>
+                        <ol class="numbered-list">
+                            <li>Identify the authentication methods currently in use</li>
+                            <li>Identify the access control model likely being used for staff access</li>
+                            <li>Identify at least 2 security weaknesses in the current setup</li>
+                            <li>Recommend improvements with justification</li>
+                        </ol>
+                        <p class="text-white/70 mt-2">Format: 1-2 page written report OR 5-slide presentation. Submit on Google Classroom.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 27 - Key Takeaways
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Key Takeaways</h2>
+                    <ul class="bulleted-list">
+                        <li>Access control is one of the fundamental pillars of information security</li>
+                        <li>DAC, MAC, and RBAC each serve different purposes and security requirements</li>
+                        <li>RBAC is the most widely used model in enterprise environments</li>
+                        <li>Authentication verifies identity; authorization verifies permissions</li>
+                        <li>Strong passwords are long, complex, unique, and unpredictable</li>
+                        <li>MFA significantly reduces the risk of account compromise</li>
+                        <li>Security is about layers — use multiple controls to protect sensitive systems</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 28 - Kenya Context Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Kenya Context Summary</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">M-Pesa</p>
+                            <p class="text-sm">Uses PIN (knowledge factor) + SIM card (possession factor) — this is MFA in action</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">Banking Sector</p>
+                            <p class="text-sm">Equity Bank, KCB, and Co-op Bank use RBAC for staff and MFA for customers</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">Government Services</p>
+                            <p class="text-sm">eCitizen, Huduma Namba, and iTax are increasingly adopting MFA and RBAC models</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-yellow-300">SACCOs</p>
+                            <p class="text-sm">Cooperative societies are implementing RBAC and MFA to reduce fraud and improve security</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 29 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-6xl mb-4">🔐🔑👆</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">Thank You</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"Access control is not just about technology — it's about who you trust, and how much."</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                    <p class="text-white/40 text-sm mt-6">Next Week: Cryptography and Encryption Fundamentals</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
