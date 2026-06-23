@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Information Security | Week 6: Cryptography and Data Backup</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .key-point {
+            background: rgba(255, 255, 0, 0.05);
+            border-left: 4px solid #ffd700;
+        }
+        
+        .tip-box {
+            background: rgba(128, 0, 255, 0.05);
+            border-left: 4px solid #a855f7;
+        }
+        
+        .example-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 4px solid #00ffff;
+        }
+        
+        .warning-box {
+            background: rgba(255, 0, 0, 0.05);
+            border-left: 4px solid #ff4444;
+        }
+        
+        .comparison-table th {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .comparison-table td, .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .scenario-box {
+            background: rgba(255, 200, 0, 0.05);
+            border-left: 4px solid #ffcc00;
+        }
+        
+        .activity-box {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 4px solid #00ff88;
+        }
+        
+        .backup-rule {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .backup-rule-item {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 80px;
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 42</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 2.4%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ INFORMATION SECURITY: CRYPTOGRAPHY AND DATA BACKUP ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 6: CRYPTOGRAPHY AND DATA BACKUP
+    // Complete 42-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 2L3 7v7c0 5 9 8 9 8s9-3 9-8V7l-9-5z"/><path d="M12 8v4m0 4h.01"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 6: Cryptography and Data Backup</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Introduction to Information Security</p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">🔐 Encryption</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">🔑 Symmetric</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">🔓 Asymmetric</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">✍️ Digital Signatures</div>
+                            <div class="px-3 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-sm">💾 Data Backup</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Learning Outcomes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Learning Outcomes</h2>
+                    <p class="text-white/70 mb-3">By the end of this lecture, students should be able to:</p>
+                    <ol class="numbered-list">
+                        <li>Define cryptography and explain its role in information security.</li>
+                        <li>Distinguish between encryption and decryption, and describe how they work.</li>
+                        <li>Compare symmetric and asymmetric encryption, identifying their strengths and use cases.</li>
+                        <li>Explain the concept and purpose of digital signatures in verifying authenticity.</li>
+                        <li>Describe data backup strategies and recovery planning to ensure data resilience.</li>
+                        <li>Apply appropriate cryptographic and backup concepts to real-world security scenarios.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 3 - What is Cryptography?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Cryptography?</h2>
+                    <p class="text-white/70 leading-relaxed">Cryptography is the science and practice of securing information by transforming it into an unreadable format that can only be reversed by those who possess the correct secret key or knowledge. The word derives from the Greek <span class="text-cyan-300">kryptos</span> (hidden) and <span class="text-cyan-300">graphia</span> (writing).</p>
+                    <div class="key-point p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Point:</p>
+                        <p class="text-sm">Cryptography does not prevent an attacker from intercepting data — it ensures that intercepted data is useless without the means to decrypt it. It is about making data unintelligible, not inaccessible.</p>
+                    </div>
+                    <p class="text-white/70 text-sm mt-2">In the context of information security, cryptography is a foundational technology that underpins secure communication, data storage, authentication, and digital transactions.</p>
+                </div>
+            `
+        },
+        { // Slide 4 - Historical Context
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Historical Context</h2>
+                    <p class="text-white/70">Cryptography is not a modern invention. Humans have protected sensitive communications for thousands of years:</p>
+                    <div class="overflow-x-auto comparison-table mt-3">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Era / Cipher</th><th class="p-2 text-cyan-300">Description</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-yellow-300">Caesar Cipher (58 BC)</td><td class="p-2">Julius Caesar shifted letters by 3 positions: A→D, B→E etc. One of the earliest known substitution ciphers.</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Vigenère Cipher (1553)</td><td class="p-2">Used a keyword to apply multiple Caesar shifts, making it harder to crack by frequency analysis.</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Enigma Machine (WWII)</td><td class="p-2">Nazi Germany used electromechanical rotors to produce complex substitution. Broken by Allied codebreakers at Bletchley Park.</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">DES (1977)</td><td class="p-2">Data Encryption Standard — first widely adopted modern symmetric cipher; now considered insecure due to short key length (56-bit).</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">AES (2001-present)</td><td class="p-2">Advanced Encryption Standard — the current global standard; uses 128, 192, or 256-bit keys; highly secure.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="tip-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-purple-300">Lecturer Tip:</p>
+                        <p class="text-sm">Ask students: 'If you wanted to pass a secret note in class, how would you hide its meaning? Imagine doing this for millions of internet transactions every second.' This grounds cryptography in a relatable context before moving into technical detail.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Core Cryptographic Concepts
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Core Cryptographic Concepts</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Term</th><th class="p-2 text-cyan-300">Definition</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-cyan-300">Plaintext</td><td class="p-2">The original, readable data before encryption (e.g., a password, document, or message)</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">Ciphertext</td><td class="p-2">The scrambled, unreadable output produced after encrypting plaintext</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Key</td><td class="p-2">A piece of secret data (a number or string) used to control the encryption/decryption process</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">Algorithm</td><td class="p-2">The mathematical procedure (cipher) used to encrypt or decrypt data</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">Cipher</td><td class="p-2">A specific algorithm used for encryption (e.g., AES, RSA, ChaCha20)</td></tr>
+                                <tr><td class="p-2 font-bold text-orange-300">Key Length</td><td class="p-2">Measured in bits; longer keys provide exponentially stronger security (e.g., 256-bit vs 128-bit)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Goals of Cryptography
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Goals of Cryptography</h2>
+                    <p class="text-white/70">Cryptography supports the four core security goals:</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg"><span class="font-bold text-cyan-300">Confidentiality</span> — Only the intended recipient can read the data</div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg"><span class="font-bold text-purple-300">Integrity</span> — Data has not been altered in transit</div>
+                        <div class="p-3 bg-green-500/10 rounded-lg"><span class="font-bold text-green-300">Authentication</span> — Confirms the identity of the sender</div>
+                        <div class="p-3 bg-yellow-500/10 rounded-lg"><span class="font-bold text-yellow-300">Non-repudiation</span> — The sender cannot later deny having sent the data</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - What is Encryption?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Encryption?</h2>
+                    <p class="text-white/70 leading-relaxed">Encryption is the process of converting plaintext (readable data) into ciphertext (unreadable data) using a cryptographic algorithm and a key. The purpose is to ensure that only authorised parties with the correct key can access the original information.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Encryption is applied to data in two states:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li><span class="text-cyan-300">Data at Rest</span> — Files stored on a hard drive, database, or cloud storage</li>
+                            <li><span class="text-purple-300">Data in Transit</span> — Information being transmitted across a network (e.g., emails, web traffic, VPN tunnels)</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - What is Decryption?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Decryption?</h2>
+                    <p class="text-white/70">Decryption is the reverse process — converting ciphertext back into readable plaintext using the appropriate key. Decryption can only succeed when the correct key is applied. Without it, the ciphertext remains computationally infeasible to reverse.</p>
+                    <div class="example-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Note:</p>
+                        <p class="text-sm">The terms encryption and decryption describe the process; the term cipher describes the algorithm used. For example: 'AES encryption' means using the AES cipher algorithm to encrypt data.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - The Encryption Process Step by Step
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">The Encryption Process — Step by Step</h2>
+                    <ol class="numbered-list">
+                        <li>The sender starts with plaintext: e.g., "Transfer KES 50,000 to Account 4821"</li>
+                        <li>An encryption algorithm (e.g., AES-256) is selected.</li>
+                        <li>A key is applied to the algorithm, transforming the plaintext into ciphertext.</li>
+                        <li>The ciphertext is transmitted or stored: e.g., "X4$Jm#92k..." (unreadable).</li>
+                        <li>The recipient applies the corresponding key to the decryption algorithm.</li>
+                        <li>The original plaintext is recovered.</li>
+                    </ol>
+                    <div class="key-point p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Analogy:</p>
+                        <p class="text-sm">Encryption is like putting a letter into a locked box. Only someone with the correct key can open the box and read the letter.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Common Encryption Algorithms
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Common Encryption Algorithms</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Algorithm</th><th class="p-2 text-cyan-300">Type</th><th class="p-2 text-cyan-300">Key Details</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-green-300">AES</td><td class="p-2">Symmetric</td><td class="p-2">128/192/256-bit keys; current global standard; used in Wi-Fi, TLS, disk encryption</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">RSA</td><td class="p-2">Asymmetric</td><td class="p-2">1024-4096-bit keys; used for secure key exchange, email, digital signatures</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">ECC</td><td class="p-2">Asymmetric</td><td class="p-2">Elliptic Curve; smaller keys, high security; used in mobile and IoT devices</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">3DES</td><td class="p-2">Symmetric</td><td class="p-2">Triple Data Encryption Standard; legacy; being phased out</td></tr>
+                                <tr><td class="p-2 font-bold text-cyan-300">ChaCha20</td><td class="p-2">Symmetric</td><td class="p-2">Modern stream cipher; used in TLS 1.3 and mobile applications</td></tr>
+                                <tr><td class="p-2 font-bold text-blue-300">Blowfish</td><td class="p-2">Symmetric</td><td class="p-2">Fast, flexible block cipher; used in password hashing tools</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - Encryption in Everyday Use
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Encryption in Everyday Use</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">HTTPS</span> — Encrypts web traffic between your browser and websites (TLS/SSL)</li>
+                        <li><span class="text-purple-300 font-bold">WhatsApp & Signal</span> — End-to-end encryption means only sender and recipient can read messages</li>
+                        <li><span class="text-green-300 font-bold">Disk Encryption</span> — BitLocker (Windows) and FileVault (Mac) encrypt entire hard drives</li>
+                        <li><span class="text-yellow-300 font-bold">Email Encryption</span> — PGP (Pretty Good Privacy) and S/MIME encrypt email content</li>
+                        <li><span class="text-red-300 font-bold">Payment Systems</span> — Card data is encrypted during online transactions (PCI-DSS compliance)</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 12 - Symmetric Encryption
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Symmetric Encryption</h2>
+                    <p class="text-white/70">Symmetric encryption (also called secret-key or private-key encryption) uses the same key for both encryption and decryption. Both the sender and the recipient must possess an identical copy of this shared secret key. Symmetric encryption is fast and efficient, making it ideal for encrypting large volumes of data.</p>
+                    <div class="example-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Example:</p>
+                        <p class="text-sm">Alice wants to send Bob a confidential file. She encrypts it using a shared secret key (e.g., AES-256). Bob, who has the same key, uses it to decrypt and read the file. If an attacker intercepts the file, they cannot read it without the key.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - The Key Exchange Problem
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">The Key Exchange Problem</h2>
+                    <p class="text-white/70">The fundamental challenge with symmetric encryption is securely sharing the key. If Alice sends the key to Bob over an insecure channel, an attacker could intercept it and then decrypt all future messages. This is known as the <span class="text-cyan-300 font-bold">key distribution problem</span>, and it is a primary reason why asymmetric encryption was developed.</p>
+                    <div class="warning-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-red-300">The Challenge:</p>
+                        <p class="text-sm">How do two people who have never met securely exchange a secret key over an untrusted network?</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Common Symmetric Algorithms
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Common Symmetric Algorithms</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-green-300 font-bold">AES</span> (Advanced Encryption Standard) — Gold standard; 128/192/256-bit keys; used in virtually all modern systems</li>
+                        <li><span class="text-red-300 font-bold">3DES</span> (Triple DES) — Applies DES three times; legacy systems; being deprecated</li>
+                        <li><span class="text-blue-300 font-bold">Blowfish / Twofish</span> — Flexible block ciphers; open-source alternatives to AES</li>
+                        <li><span class="text-cyan-300 font-bold">ChaCha20</span> — Stream cipher; excellent for mobile/low-power devices</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 15 - Symmetric: Strengths and Weaknesses
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Symmetric Encryption: Strengths and Weaknesses</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Strengths</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Very fast — ideal for bulk data</li>
+                                <li>Low computational overhead</li>
+                                <li>Suitable for disk/file encryption</li>
+                                <li>Simple to implement</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Weaknesses</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Key must be shared securely beforehand</li>
+                                <li>Scalability problem: n users need n(n-1)/2 unique keys</li>
+                                <li>If the key is compromised, all data is exposed</li>
+                                <li>No built-in mechanism for authentication</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - Asymmetric Encryption
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Asymmetric Encryption</h2>
+                    <p class="text-white/70">Asymmetric encryption (also called public-key cryptography) uses a mathematically linked key pair: a public key and a private key. Data encrypted with one key can only be decrypted with the other. The public key is freely distributed, while the private key is kept secret by its owner.</p>
+                    <div class="example-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Example:</p>
+                        <p class="text-sm">Bob generates a key pair: a public key (shared freely) and a private key (kept secret). Alice uses Bob's public key to encrypt a message. Only Bob's private key can decrypt it. Even Alice cannot decrypt her own message after encrypting it.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - Public Key / Private Key Relationship
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Public Key / Private Key Relationship</h2>
+                    <p class="text-white/70">The mathematics behind asymmetric cryptography (based on problems like integer factorisation for RSA and elliptic curve discrete logarithm for ECC) makes it computationally infeasible to derive the private key from the public key, even though they are mathematically related.</p>
+                    <div class="key-point p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Point:</p>
+                        <p class="text-sm">The security of asymmetric encryption relies on the mathematical difficulty of certain problems. RSA relies on the difficulty of factorising large numbers. ECC relies on the difficulty of solving the elliptic curve discrete logarithm problem.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - Two Primary Uses of Asymmetric Encryption
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Two Primary Uses of Asymmetric Encryption</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg border border-cyan-400/50">
+                            <p class="font-bold text-cyan-300">Encryption for Confidentiality</p>
+                            <p class="text-sm">Sender uses recipient's public key to encrypt. Only the recipient's private key decrypts.</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg border border-purple-400/50">
+                            <p class="font-bold text-purple-300">Digital Signatures for Authentication</p>
+                            <p class="text-sm">Sender uses their own private key to sign. Anyone with the sender's public key can verify the signature.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Common Asymmetric Algorithms
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Common Asymmetric Algorithms</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-yellow-300 font-bold">RSA</span> (Rivest-Shamir-Adleman) — Most widely used; relies on prime factorisation; 2048-bit minimum recommended</li>
+                        <li><span class="text-purple-300 font-bold">ECC</span> (Elliptic Curve Cryptography) — Smaller keys, equivalent strength; used in TLS, Bitcoin, mobile</li>
+                        <li><span class="text-cyan-300 font-bold">Diffie-Hellman (DH)</span> — Key exchange protocol; establishes a shared secret over an insecure channel</li>
+                        <li><span class="text-green-300 font-bold">ElGamal</span> — Based on Diffie-Hellman; used in PGP email encryption</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 20 - Asymmetric: Strengths and Weaknesses
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Asymmetric Encryption: Strengths and Weaknesses</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Strengths</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Solves the key distribution problem</li>
+                                <li>Enables secure communication without prior key sharing</li>
+                                <li>Supports digital signatures and non-repudiation</li>
+                                <li>Scales well (n users need only n key pairs)</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Weaknesses</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Much slower than symmetric encryption</li>
+                                <li>Computationally expensive; not ideal for large data</li>
+                                <li>Public key infrastructure (PKI) required for trust</li>
+                                <li>Longer keys needed for equivalent security vs symmetric</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - Symmetric vs Asymmetric: Side-by-Side
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Symmetric vs Asymmetric: Side-by-Side Comparison</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Feature</th><th class="p-2 text-cyan-300">Symmetric Encryption</th><th class="p-2 text-cyan-300">Asymmetric Encryption</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Keys Used</td><td class="p-2">One shared key</td><td class="p-2">Public key + Private key pair</td></tr>
+                                <tr><td class="p-2 font-bold">Speed</td><td class="p-2">Fast — suitable for large data</td><td class="p-2">Slow — suitable for small data / key exchange</td></tr>
+                                <tr><td class="p-2 font-bold">Key Distribution</td><td class="p-2">Challenging (must share key securely)</td><td class="p-2">Easy (public key freely distributed)</td></tr>
+                                <tr><td class="p-2 font-bold">Use Cases</td><td class="p-2">File/disk encryption, bulk data</td><td class="p-2">Key exchange, email, digital signatures, TLS handshake</td></tr>
+                                <tr><td class="p-2 font-bold">Examples</td><td class="p-2">AES, 3DES, ChaCha20</td><td class="p-2">RSA, ECC, Diffie-Hellman</td></tr>
+                                <tr><td class="p-2 font-bold">Scalability</td><td class="p-2">Poor for large groups</td><td class="p-2">Excellent (n users, n key pairs)</td></tr>
+                                <tr><td class="p-2 font-bold">Non-repudiation</td><td class="p-2">Not supported</td><td class="p-2">Supported via digital signatures</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 22 - Hybrid Encryption
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Hybrid Encryption: The Best of Both Worlds</h2>
+                    <p class="text-white/70">Modern systems combine both approaches to maximise efficiency and security. This is called hybrid encryption:</p>
+                    <ol class="numbered-list">
+                        <li>A symmetric session key (e.g., AES-256) is generated for the communication session.</li>
+                        <li>The session key is encrypted using the recipient's public key (asymmetric).</li>
+                        <li>The actual data is encrypted using the fast symmetric session key.</li>
+                        <li>The recipient decrypts the session key using their private key, then uses it to decrypt the data.</li>
+                    </ol>
+                    <div class="example-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Note:</p>
+                        <p class="text-sm">Hybrid encryption is how TLS (used in HTTPS) works. The TLS handshake uses asymmetric encryption to exchange a symmetric session key, then all subsequent data is encrypted symmetrically. This gives you the security of asymmetric and the speed of symmetric encryption.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 23 - What is a Digital Signature?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is a Digital Signature?</h2>
+                    <p class="text-white/70">A digital signature is a cryptographic mechanism that provides proof of the origin, identity, and integrity of a digital message or document. It is the electronic equivalent of a handwritten signature or a wax seal — but mathematically verifiable and far more secure.</p>
+                    <div class="key-point p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Point:</p>
+                        <p class="text-sm">A digital signature does NOT encrypt the content of a message. It proves who sent it and that the content has not been altered since signing. Encryption protects confidentiality; digital signatures protect authenticity and integrity.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - How Digital Signatures Work (Signing Process)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">How Digital Signatures Work — Signing Process</h2>
+                    <p class="font-bold text-cyan-300">Signing Process (Sender):</p>
+                    <ol class="numbered-list">
+                        <li>The sender creates a message or document.</li>
+                        <li>A hash function (e.g., SHA-256) generates a fixed-length digest of the document content.</li>
+                        <li>The sender encrypts this hash with their private key — this encrypted hash is the digital signature.</li>
+                        <li>The original document + signature are sent to the recipient.</li>
+                    </ol>
+                    <div class="tip-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-purple-300">Note:</p>
+                        <p class="text-sm">The hash is signed, not the entire document. This is much more efficient because hashes are small and fixed-length.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - How Digital Signatures Work (Verification Process)
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">How Digital Signatures Work — Verification Process</h2>
+                    <p class="font-bold text-purple-300">Verification Process (Recipient):</p>
+                    <ol class="numbered-list">
+                        <li>The recipient receives the document and the digital signature.</li>
+                        <li>The recipient decrypts the signature using the sender's public key, recovering the original hash.</li>
+                        <li>The recipient independently computes a new hash of the received document.</li>
+                        <li>If both hashes match, the signature is valid: the document is authentic and unaltered.</li>
+                        <li>If the hashes differ, the document has been tampered with or the signature is invalid.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 26 - Hash Functions in Digital Signatures
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Hash Functions in Digital Signatures</h2>
+                    <p class="text-white/70">A cryptographic hash function takes an input of any size and produces a fixed-length output (the hash or digest). Two critical properties make it useful for signatures:</p>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300">Deterministic</span> — The same input always produces the same hash output</li>
+                        <li><span class="text-purple-300">Collision-resistant</span> — It is computationally infeasible to find two different inputs with the same hash</li>
+                        <li><span class="text-green-300">One-way</span> — You cannot reverse a hash to find the original input</li>
+                        <li><span class="text-yellow-300">Avalanche effect</span> — Changing even one character of input completely changes the hash output</li>
+                    </ul>
+                    <div class="overflow-x-auto comparison-table mt-3">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Hash Algorithm</th><th class="p-2 text-cyan-300">Details</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-red-300">MD5</td><td class="p-2">128-bit digest; fast but cryptographically broken — do not use for security purposes</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">SHA-1</td><td class="p-2">160-bit digest; deprecated; vulnerable to collision attacks (broken 2017)</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">SHA-256</td><td class="p-2">256-bit digest; part of the SHA-2 family; widely used; currently secure</td></tr>
+                                <tr><td class="p-2 font-bold text-cyan-300">SHA-3</td><td class="p-2">Latest NIST standard; different design from SHA-2; highly secure</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">bcrypt</td><td class="p-2">Designed for password hashing; deliberately slow to resist brute-force attacks</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 27 - What Digital Signatures Provide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What Digital Signatures Provide</h2>
+                    <div class="grid md:grid-cols-3 gap-3">
+                        <div class="p-3 bg-cyan-500/10 rounded-lg text-center border border-cyan-400/50">
+                            <div class="text-3xl">✅</div>
+                            <p class="font-bold text-cyan-300">Authentication</p>
+                            <p class="text-sm">Confirms the identity of the signer (only the holder of the private key can sign)</p>
+                        </div>
+                        <div class="p-3 bg-purple-500/10 rounded-lg text-center border border-purple-400/50">
+                            <div class="text-3xl">🔒</div>
+                            <p class="font-bold text-purple-300">Integrity</p>
+                            <p class="text-sm">Any modification to the document after signing invalidates the signature</p>
+                        </div>
+                        <div class="p-3 bg-green-500/10 rounded-lg text-center border border-green-400/50">
+                            <div class="text-3xl">🚫</div>
+                            <p class="font-bold text-green-300">Non-repudiation</p>
+                            <p class="text-sm">The signer cannot later deny having signed the document</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 28 - Digital Certificates and PKI
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Digital Certificates and PKI</h2>
+                    <p class="text-white/70">A <span class="text-cyan-300 font-bold">Digital Certificate</span> (also called a Public Key Certificate) is a document issued by a trusted Certificate Authority (CA) that binds a public key to an identity (person, organisation, or server).</p>
+                    <p class="text-white/70 mt-2">The <span class="text-purple-300 font-bold">Public Key Infrastructure (PKI)</span> is the framework of policies, procedures, hardware, and software that manages digital certificates and public-key encryption.</p>
+                    <div class="overflow-x-auto comparison-table mt-3">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">PKI Component</th><th class="p-2 text-cyan-300">Role</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Certificate Authority (CA)</td><td class="p-2">Trusted entity that issues and signs digital certificates (e.g., DigiCert, Let's Encrypt)</td></tr>
+                                <tr><td class="p-2 font-bold">Registration Authority (RA)</td><td class="p-2">Verifies identity of certificate applicants before the CA issues a certificate</td></tr>
+                                <tr><td class="p-2 font-bold">Digital Certificate</td><td class="p-2">Contains the public key, owner's identity, validity period, and CA signature</td></tr>
+                                <tr><td class="p-2 font-bold">Certificate Revocation List (CRL)</td><td class="p-2">Published list of certificates that have been revoked before expiry</td></tr>
+                                <tr><td class="p-2 font-bold">OCSP</td><td class="p-2">Online Certificate Status Protocol — real-time checking of certificate validity</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 29 - Real-World Applications of Digital Signatures
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Real-World Applications of Digital Signatures</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300">HTTPS / TLS</span> — Server certificates signed by a CA authenticate websites to browsers</li>
+                        <li><span class="text-purple-300">Email Security</span> — S/MIME and PGP allow digitally signed and encrypted emails</li>
+                        <li><span class="text-green-300">Software Distribution</span> — Code signing verifies that software has not been tampered with</li>
+                        <li><span class="text-yellow-300">Legal Documents</span> — E-signature platforms (e.g., DocuSign) use digital signature standards</li>
+                        <li><span class="text-red-300">Blockchain</span> — Cryptocurrency transactions use digital signatures to authorise transfers</li>
+                        <li><span class="text-blue-300">Government e-ID</span> — National identity systems use digital certificates for citizen authentication</li>
+                    </ul>
+                    <div class="example-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Example:</p>
+                        <p class="text-sm">When you visit https://www.kra.go.ke, your browser verifies the site's digital certificate (signed by a trusted CA). This confirms you are communicating with the genuine KRA website, not an impostor. The padlock icon in your browser signals this verification.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 30 - Why Data Backup Matters
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Why Data Backup Matters</h2>
+                    <p class="text-white/70">Data is one of the most valuable assets of any organisation. Data loss can result from hardware failure, human error, ransomware attacks, natural disasters, or theft. Without reliable backups, data loss can be catastrophic — threatening business continuity, regulatory compliance, and customer trust.</p>
+                    <div class="warning-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-red-300">Warning:</p>
+                        <p class="text-sm">Encryption alone does not protect against data loss. A ransomware attack encrypts your data with the attacker's key, making it inaccessible. The only guaranteed defence against ransomware is a secure, tested, offline backup.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 31 - Key Backup Terminology
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Key Backup Terminology</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Term</th><th class="p-2 text-cyan-300">Definition</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-cyan-300">Recovery Point Objective (RPO)</td><td class="p-2">The maximum acceptable amount of data loss measured in time. How old can the backup be? (e.g., RPO = 4 hours means we accept losing up to 4 hours of data)</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">Recovery Time Objective (RTO)</td><td class="p-2">The maximum acceptable time to restore systems after a failure. (e.g., RTO = 2 hours)</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">Retention Period</td><td class="p-2">How long backup copies are kept before being overwritten or deleted</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Backup Window</td><td class="p-2">The scheduled time period during which backups are performed</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">Restore</td><td class="p-2">The process of retrieving and returning data from a backup to a production system</td></tr>
+                                <tr><td class="p-2 font-bold text-blue-300">Data Integrity</td><td class="p-2">Verifying that restored data is complete, uncorrupted, and matches the original</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 32 - Types of Backups: Full
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Backups: Full Backup</h2>
+                    <div class="p-4 bg-white/5 rounded-lg border border-cyan-400/50">
+                        <p class="font-bold text-cyan-300 text-xl">1. Full Backup</p>
+                        <p class="text-sm text-white/70">Copies all selected data every time the backup runs. Provides the simplest and fastest restore but requires the most storage space and time to complete.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Fastest restore; complete data set in one backup</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Slowest to run; most storage consumed</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 33 - Types of Backups: Incremental
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Backups: Incremental Backup</h2>
+                    <div class="p-4 bg-white/5 rounded-lg border border-purple-400/50">
+                        <p class="font-bold text-purple-300 text-xl">2. Incremental Backup</p>
+                        <p class="text-sm text-white/70">Copies only the data that has changed since the last backup of any type (full or incremental). Faster and smaller than a full backup, but restoring requires the last full backup plus every subsequent incremental backup in sequence.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Fast to run; minimal storage per backup</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Slower and more complex to restore</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 34 - Types of Backups: Differential
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Backups: Differential Backup</h2>
+                    <div class="p-4 bg-white/5 rounded-lg border border-green-400/50">
+                        <p class="font-bold text-green-300 text-xl">3. Differential Backup</p>
+                        <p class="text-sm text-white/70">Copies all data that has changed since the last full backup. Sits between full and incremental in terms of storage and speed. Restoring requires only the last full backup plus the latest differential.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Faster restore than incremental; simpler than full</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Grows larger over time until the next full backup</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 35 - Backup Type Comparison
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Backup Type Comparison</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Backup Type</th><th class="p-2 text-cyan-300">Data Copied</th><th class="p-2 text-cyan-300">Restore Complexity</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-cyan-300">Full</td><td class="p-2">All selected data every time</td><td class="p-2">Simple — single backup set</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">Incremental</td><td class="p-2">Changes since last backup (any type)</td><td class="p-2">Complex — full + all incrementals needed</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">Differential</td><td class="p-2">Changes since last full backup</td><td class="p-2">Moderate — full + latest differential</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 36 - The 3-2-1 Backup Rule
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">The 3-2-1 Backup Rule</h2>
+                    <p class="text-white/70">The 3-2-1 rule is the industry-standard framework for backup strategy:</p>
+                    <div class="backup-rule mt-4">
+                        <div class="backup-rule-item"><span class="text-cyan-300 text-2xl font-bold">3</span><br>Copies</div>
+                        <div class="backup-rule-item"><span class="text-purple-300 text-2xl font-bold">2</span><br>Media Types</div>
+                        <div class="backup-rule-item"><span class="text-green-300 text-2xl font-bold">1</span><br>Offsite Copy</div>
+                    </div>
+                    <div class="space-y-2 mt-3">
+                        <div class="p-2 bg-cyan-500/10 rounded"><span class="font-bold text-cyan-300">3 Copies:</span> Maintain at least 3 copies of your data: the original (production) and 2 backup copies.</div>
+                        <div class="p-2 bg-purple-500/10 rounded"><span class="font-bold text-purple-300">2 Media Types:</span> Store backups on at least 2 different types of media (e.g., external hard drive + cloud storage).</div>
+                        <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">1 Offsite Copy:</span> Keep at least 1 copy offsite (cloud or remote location) to protect against physical disasters.</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 37 - Backup Storage Locations
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Backup Storage Locations</h2>
+                    <div class="space-y-2">
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-cyan-300">Local / On-site:</span> External hard drives, NAS, tape drives; fast restore but vulnerable to local disasters</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-purple-300">Offsite:</span> Physical media stored at a secondary location; protects against site-specific disasters</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-green-300">Cloud Backup:</span> AWS S3, Azure Backup, Google Cloud, Backblaze; offsite by nature; scalable and accessible</div>
+                        <div class="p-2 bg-white/5 rounded"><span class="font-bold text-yellow-300">Hybrid:</span> Combination of local + cloud; provides both speed of local restore and resilience of offsite</div>
+                        <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Air-Gapped:</span> Backup system physically disconnected from all networks; maximum protection against ransomware</div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 38 - Data Recovery and Business Continuity
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Data Recovery and Business Continuity</h2>
+                    <p class="text-white/70">Having backups is only half the solution. Organisations must also plan and test their recovery process:</p>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">Disaster Recovery Plan (DRP)</span> — Detailed procedures for restoring IT systems after a disruption</li>
+                        <li><span class="text-purple-300 font-bold">Business Continuity Plan (BCP)</span> — Broader plan to keep the business operational during and after a crisis</li>
+                        <li><span class="text-green-300 font-bold">Recovery Testing</span> — Regularly test backups by actually performing restore exercises; untested backups cannot be trusted</li>
+                        <li><span class="text-yellow-300 font-bold">Backup Encryption</span> — Encrypt backup files to prevent data exposure if storage media is lost or stolen</li>
+                        <li><span class="text-red-300 font-bold">Access Controls</span> — Restrict who can delete or modify backups to prevent insider threats</li>
+                        <li><span class="text-blue-300 font-bold">Immutable Backups</span> — Backups that cannot be modified or deleted for a defined retention period; critical defence against ransomware</li>
+                    </ul>
+                    <div class="warning-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-red-300">Note:</p>
+                        <p class="text-sm">A backup that has never been tested is a backup that does not exist. Many organisations discover their backups are corrupted, incomplete, or incompatible only when they urgently need them. Schedule quarterly restore drills.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 39 - Case Study: NotPetya Ransomware Attack
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Case Study: NotPetya Ransomware Attack (2017)</h2>
+                    <div class="scenario-box p-4 rounded-lg">
+                        <p class="font-bold text-yellow-300">The Most Destructive Cyberattack in History</p>
+                        <p class="text-sm text-white/70 mt-2">In June 2017, the NotPetya malware spread rapidly through global corporate networks, encrypting master boot records and rendering thousands of systems inoperable.</p>
+                        <ul class="bulleted-list text-sm mt-2">
+                            <li><span class="text-red-300">Maersk</span> lost control of approximately 45,000 PCs and 4,000 servers in 10 minutes</li>
+                            <li><span class="text-red-300">Merck</span> (pharmaceutical) was hit during vaccine production, causing medicine shortages</li>
+                            <li>Total losses exceeded <span class="text-yellow-300">USD 10 billion</span></li>
+                        </ul>
+                        <p class="text-sm text-white/70 mt-2">Critically, NotPetya appeared to encrypt data but was actually designed to destroy it — there was no decryption key available. The only organisations that recovered quickly were those with tested, offline (air-gapped) backups.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 40 - Case Study Discussion Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Case Study Discussion Questions</h2>
+                    <ol class="numbered-list">
+                        <li>Which backup type (full, incremental, or differential) would provide the most complete and rapid recovery for Maersk? Why?</li>
+                        <li>How would the 3-2-1 backup rule have mitigated the impact of this attack?</li>
+                        <li>How do digital signatures and code signing help prevent malware like NotPetya from being installed?</li>
+                        <li>What cryptographic measures would have protected the data that NotPetya attempted to destroy?</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 41 - Group Activity: Design a Security Solution
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Group Activity: Design a Security Solution</h2>
+                    <div class="activity-box p-4 rounded-lg">
+                        <p class="font-bold text-green-300">Scenario: Jua Kali Microfinance Ltd.</p>
+                        <p class="text-sm text-white/70 mt-2">Jua Kali Microfinance Ltd. operates in Nairobi and Kisumu. They store loan records, client KYC documents, and transaction data on local servers.</p>
+                        <p class="font-bold text-cyan-300 mt-2">Concerns:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Sensitive emails are being sent without encryption</li>
+                            <li>No formal backup policy — data occasionally copied to a single USB drive</li>
+                            <li>Loan data must be protected even if a laptop is lost or stolen</li>
+                            <li>Company processes online loan applications via a web form</li>
+                        </ul>
+                        <p class="font-bold text-yellow-300 mt-2">Task:</p>
+                        <p class="text-sm">Recommend specific cryptographic tools or backup strategies for each concern above. Use the correct technical terms from today's lesson. Be ready to present in 3 minutes.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 42 - Week 7 Summary and Closing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Week 7 Summary</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Topic</th><th class="p-2 text-cyan-300">Key Takeaway</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Cryptography</td><td class="p-2">Science of securing data; protects confidentiality, integrity, authentication, and non-repudiation</td></tr>
+                                <tr><td class="p-2 font-bold">Encryption</td><td class="p-2">Converts plaintext to ciphertext using a key and algorithm; applied to data at rest and in transit</td></tr>
+                                <tr><td class="p-2 font-bold">Symmetric</td><td class="p-2">One shared key; fast; ideal for bulk data; key distribution is a challenge</td></tr>
+                                <tr><td class="p-2 font-bold">Asymmetric</td><td class="p-2">Key pair (public + private); solves key distribution; slower; used in TLS, digital signatures</td></tr>
+                                <tr><td class="p-2 font-bold">Hybrid Encryption</td><td class="p-2">Combines both: asymmetric for key exchange, symmetric for data; used in HTTPS/TLS</td></tr>
+                                <tr><td class="p-2 font-bold">Digital Signatures</td><td class="p-2">Uses private key to sign; public key to verify; proves authenticity, integrity, non-repudiation</td></tr>
+                                <tr><td class="p-2 font-bold">Hash Functions</td><td class="p-2">One-way; produces fixed digest; SHA-256 is the standard; underpins digital signatures</td></tr>
+                                <tr><td class="p-2 font-bold">PKI / Certificates</td><td class="p-2">Framework for distributing and trusting public keys; CAs issue digital certificates</td></tr>
+                                <tr><td class="p-2 font-bold">Data Backup</td><td class="p-2">3-2-1 rule; full/incremental/differential types; test restores regularly; use immutable + encrypted backups</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <div class="flex justify-center gap-2 mb-4">
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-white/40 text-sm">Next Week — Week 8: Incident Response and Security Management</p>
+                    </div>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
