@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Information Security | Week 6: Network Security</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+                        'spin-slow': 'spin 8s linear infinite',
+                        'border-glow': 'borderGlow 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        },
+                        glowPulse: {
+                            '0%, 100%': { boxShadow: '0 0 5px #00ffff, 0 0 10px #00ffff' },
+                            '50%': { boxShadow: '0 0 20px #00ffff, 0 0 30px #a855f7' },
+                        },
+                        borderGlow: {
+                            '0%, 100%': { borderColor: '#00ffff', boxShadow: '0 0 5px #00ffff' },
+                            '50%': { borderColor: '#a855f7', boxShadow: '0 0 20px #a855f7' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0a0a2a, #020210);
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00ffff;
+            border-radius: 10px;
+        }
+        
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .glass-card-deep {
+            background: rgba(10, 20, 40, 0.55);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 15px rgba(0, 255, 255, 0.2);
+        }
+        
+        .grid-particles {
+            background-image: 
+                linear-gradient(rgba(0, 255, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 255, 0.08) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+        
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+        
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a2a; }
+        ::-webkit-scrollbar-thumb { background: #00ffff; border-radius: 4px; }
+        
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.5rem 0;
+            line-height: 1.5;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 0, 0.05);
+            border-left: 4px solid #ffd700;
+        }
+        
+        .analogy-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-left: 4px solid #00ffff;
+        }
+        
+        .comparison-table th {
+            background: rgba(0, 255, 255, 0.1);
+        }
+        .comparison-table td, .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .scenario-box {
+            background: rgba(255, 0, 0, 0.05);
+            border-left: 4px solid #ff4444;
+        }
+        
+        .tip-box {
+            background: rgba(128, 0, 255, 0.05);
+            border-left: 4px solid #a855f7;
+        }
+        
+        .activity-box {
+            background: rgba(0, 255, 0, 0.05);
+            border-left: 4px solid #00ff88;
+        }
+        
+        .firewall-card {
+            transition: all 0.3s ease;
+        }
+        .firewall-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="text-white overflow-hidden h-screen w-screen">
+
+<div class="relative h-full w-full overflow-hidden">
+    <div class="absolute inset-0 grid-particles opacity-30 pointer-events-none"></div>
+    <div class="absolute inset-0 bg-gradient-to-br from-transparent via-purple-900/5 to-black/50 pointer-events-none"></div>
+    
+    <div class="absolute top-20 left-10 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+    <div class="absolute bottom-20 right-10 w-80 h-80 bg-purple-600/10 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+    <div class="relative z-10 flex flex-col h-full w-full">
+        <!-- Top Bar -->
+        <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-black/70 to-transparent backdrop-blur-md">
+            <div class="flex justify-between items-center mb-2">
+                <div class="flex gap-3">
+                    <button id="prevBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m15 18-6-6 6-6"/></svg>
+                    </button>
+                    <button id="nextBtn" class="p-2 rounded-full bg-white/10 backdrop-blur border border-cyan-500/40 hover:bg-cyan-500/30 transition-all duration-300 transform hover:scale-110">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-cyan-300"><path d="m9 18 6-6-6-6"/></svg>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span id="slideCounter" class="text-sm font-mono bg-black/40 px-3 py-1 rounded-full border border-cyan-500/50 backdrop-blur">1 / 38</span>
+                </div>
+            </div>
+            <div class="w-full h-1.5 bg-gray-800/80 rounded-full overflow-hidden backdrop-blur-sm">
+                <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-cyan-400 to-purple-500 rounded-full" style="width: 2.6%"></div>
+            </div>
+            <p class="text-[10px] text-cyan-400/70 text-center mt-2 font-mono tracking-wider">✦ INTRODUCTION TO INFORMATION SECURITY: WEEK 6 - NETWORK SECURITY ✦</p>
+        </div>
+
+        <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+            <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+        </div>
+        
+        <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-cyan-400/40 text-[10px] font-mono bg-black/30 px-3 py-1 rounded-full backdrop-blur-sm pointer-events-none">
+            ↑↓ Scroll • ← → Navigate slides
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // WEEK 6: NETWORK SECURITY
+    // Complete 38-slide presentation based on the provided notes
+    // --------------------------------------------------------------
+    const slidesData = [
+        { // Slide 1 - Title Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-12 text-center relative min-h-[50vh]">
+                    <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl animate-pulse"></div>
+                    <div class="relative z-10">
+                        <div class="flex justify-center mb-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-cyan-400/60 flex items-center justify-center bg-black/40 backdrop-blur-xl shadow-[0_0_30px_#00ffff] animate-glow-pulse">
+                                <svg class="w-12 h-12 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9"/></svg>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl md:text-5xl font-extrabold bg-gradient-to-r from-cyan-300 via-purple-400 to-blue-500 bg-clip-text text-transparent mb-3">Week 6: Network Security</h1>
+                        <p class="text-xl text-cyan-300/80 mt-2">Introduction to Information Security</p>
+                        <div class="mt-8 flex gap-3 justify-center flex-wrap">
+                            <div class="px-3 py-1 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-sm">Firewalls</div>
+                            <div class="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-400/40 text-sm">IDS/IPS</div>
+                            <div class="px-3 py-1 rounded-full bg-green-500/20 border border-green-400/40 text-sm">VPNs</div>
+                            <div class="px-3 py-1 rounded-full bg-yellow-500/20 border border-yellow-400/40 text-sm">Wireless Security</div>
+                            <div class="px-3 py-1 rounded-full bg-red-500/20 border border-red-400/40 text-sm">Safe Browsing</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 2 - Learning Outcomes
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold border-l-4 border-cyan-400 pl-4 mb-6">Learning Outcomes</h2>
+                    <p class="text-white/70 mb-3">By the end of this lecture, students should be able to:</p>
+                    <ol class="numbered-list">
+                        <li>Define network security and explain why it is essential in today's digital environment.</li>
+                        <li>Describe the functions and types of firewalls and where they are deployed.</li>
+                        <li>Differentiate between Intrusion Detection Systems (IDS) and Intrusion Prevention Systems (IPS).</li>
+                        <li>Explain how Virtual Private Networks (VPNs) work and their use cases.</li>
+                        <li>Identify the security challenges and best practices for wireless networks.</li>
+                        <li>Apply safe internet browsing practices to protect against common online threats.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 3 - What is Network Security?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is Network Security?</h2>
+                    <p class="text-white/70 leading-relaxed">Network security refers to the set of policies, practices, and technologies designed to protect the integrity, confidentiality, and availability of computer networks and the data transmitted across them. It encompasses both hardware and software solutions aimed at preventing unauthorized access, misuse, modification, or denial of a network and its resources.</p>
+                    <div class="mt-4 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Core Goals of Network Security:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li><span class="text-cyan-300">Confidentiality</span> — Ensure sensitive data is accessible only to authorised parties</li>
+                            <li><span class="text-purple-300">Integrity</span> — Protect data from unauthorised modification during transmission</li>
+                            <li><span class="text-green-300">Availability</span> — Guarantee network resources are accessible when needed</li>
+                            <li><span class="text-yellow-300">Authentication</span> — Verify identity of users and devices accessing the network</li>
+                            <li><span class="text-red-300">Non-repudiation</span> — Prevent denial of actions performed on the network</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 4 - Why is Network Security Important?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Why is Network Security Important?</h2>
+                    <p class="text-white/70">Modern organisations rely heavily on computer networks to conduct business, communicate, and store data. Without robust security measures, networks are vulnerable to a wide range of attacks that can cause financial loss, reputational damage, and legal consequences.</p>
+                    <div class="stat-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Statistic:</p>
+                        <p class="text-sm">According to cybersecurity reports, over 60% of data breaches involve network-level attacks such as man-in-the-middle (MITM), denial-of-service (DoS), and eavesdropping. This underscores the critical need for strong network security controls.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 5 - Common Network Threats
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Common Network Threats</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr class="border-b border-cyan-500/30"><th class="p-2 text-cyan-300">Threat</th><th class="p-2 text-cyan-300">Description</th></tr></thead>
+                            <tbody>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-red-300">Eavesdropping</td><td class="p-2">Intercepting network traffic to steal data; common on unsecured Wi-Fi</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-red-300">Man-in-the-Middle (MITM)</td><td class="p-2">Attacker secretly relays/alters communication between two parties</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-red-300">Denial of Service (DoS)</td><td class="p-2">Flooding a network with traffic to make it unavailable</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-red-300">IP Spoofing</td><td class="p-2">Sending packets with a forged source IP address</td></tr>
+                                <tr class="border-b border-white/10"><td class="p-2 font-bold text-red-300">Packet Sniffing</td><td class="p-2">Capturing data packets traversing a network using specialised tools</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">DNS Poisoning</td><td class="p-2">Corrupting DNS cache to redirect users to malicious sites</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 6 - Network Security Layers
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Network Security Layers</h2>
+                    <p class="text-white/70">Network security operates at multiple layers of the OSI (Open Systems Interconnection) model. Controls must be applied at each relevant layer for comprehensive protection:</p>
+                    <div class="grid md:grid-cols-2 gap-3 mt-3">
+                        <div class="p-2 bg-cyan-500/10 rounded"><span class="font-bold text-cyan-300">Physical Layer:</span> Physical access controls, cable management</div>
+                        <div class="p-2 bg-purple-500/10 rounded"><span class="font-bold text-purple-300">Network Layer:</span> Firewalls, IP filtering, VPNs</div>
+                        <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Transport Layer:</span> TLS/SSL encryption</div>
+                        <div class="p-2 bg-yellow-500/10 rounded"><span class="font-bold text-yellow-300">Application Layer:</span> Web Application Firewalls (WAF), authentication protocols</div>
+                    </div>
+                    <div class="tip-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-purple-300">Lecturer Tip:</p>
+                        <p class="text-sm">Ask students: 'Think of a network as a building. What security measures would you put in place at the entrance, the corridors, and individual offices?' This analogy maps well onto layered security.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 7 - What is a Firewall?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is a Firewall?</h2>
+                    <p class="text-white/70 leading-relaxed">A firewall is a network security device — either hardware, software, or a combination of both — that monitors and controls incoming and outgoing network traffic based on a set of predefined security rules. It establishes a barrier between a trusted internal network and untrusted external networks (such as the internet).</p>
+                    <div class="analogy-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Analogy:</p>
+                        <p class="text-sm">Think of a firewall as a security guard at a building entrance. The guard checks IDs (packet headers) and decides who enters and who is turned away based on a list of approved people (security rules).</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 8 - How Firewalls Work
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">How Firewalls Work</h2>
+                    <p class="text-white/70">Firewalls inspect network packets and compare them against a ruleset. Depending on the match, the firewall either allows (permits), blocks (denies), or logs the traffic.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Rules are typically based on:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Source and destination IP addresses</li>
+                            <li>Source and destination port numbers</li>
+                            <li>Network protocol (TCP, UDP, ICMP)</li>
+                            <li>Direction of traffic (inbound or outbound)</li>
+                            <li>Application or service type (in advanced firewalls)</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 9 - Types of Firewalls: Packet-Filtering
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Firewalls: Packet-Filtering</h2>
+                    <div class="firewall-card p-4 bg-white/5 rounded-lg border border-cyan-400/50">
+                        <p class="font-bold text-cyan-300 text-xl">1. Packet-Filtering Firewall</p>
+                        <p class="text-sm text-white/70">Operates at the Network Layer (Layer 3) of the OSI model. Examines each packet independently without considering the state of the connection. It is fast but lacks deep inspection capability.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Low overhead, fast processing</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Susceptible to IP spoofing; cannot detect sophisticated attacks</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 10 - Types of Firewalls: Stateful Inspection
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Firewalls: Stateful Inspection</h2>
+                    <div class="firewall-card p-4 bg-white/5 rounded-lg border border-purple-400/50">
+                        <p class="font-bold text-purple-300 text-xl">2. Stateful Inspection Firewall</p>
+                        <p class="text-sm text-white/70">Tracks the state of active connections. Unlike packet filtering, it maintains a state table and allows only packets that belong to an established, legitimate connection. This is the most widely deployed type today.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> More secure than packet filtering; understands context of traffic</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Performance overhead due to state tracking</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 11 - Types of Firewalls: Application-Layer
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Firewalls: Application-Layer</h2>
+                    <div class="firewall-card p-4 bg-white/5 rounded-lg border border-green-400/50">
+                        <p class="font-bold text-green-300 text-xl">3. Application-Layer Firewall (Proxy Firewall)</p>
+                        <p class="text-sm text-white/70">Operates at the Application Layer (Layer 7). Acts as an intermediary between users and the internet, inspecting the actual content of network traffic. Can understand and filter specific application protocols such as HTTP, FTP, and DNS.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Deep inspection; can filter malicious content</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Slower due to the overhead of full packet inspection</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 12 - Types of Firewalls: Next-Generation
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of Firewalls: Next-Generation</h2>
+                    <div class="firewall-card p-4 bg-white/5 rounded-lg border border-yellow-400/50">
+                        <p class="font-bold text-yellow-300 text-xl">4. Next-Generation Firewall (NGFW)</p>
+                        <p class="text-sm text-white/70">Combines traditional firewall capabilities with advanced features such as deep packet inspection (DPI), intrusion prevention, SSL/TLS decryption, application awareness, and user identity tracking. NGFWs are the industry standard for enterprise environments.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-2">
+                            <div class="p-2 bg-green-500/10 rounded"><span class="font-bold text-green-300">Advantage:</span> Comprehensive protection; integrates multiple security features</div>
+                            <div class="p-2 bg-red-500/10 rounded"><span class="font-bold text-red-300">Disadvantage:</span> Complex to configure; higher cost</div>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 13 - Firewall Type Comparison
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Firewall Type Comparison</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Firewall Type</th><th class="p-2 text-cyan-300">Key Characteristic</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-cyan-300">Packet-Filtering</td><td class="p-2">Inspects packets individually; no connection awareness</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">Stateful Inspection</td><td class="p-2">Tracks active connections; context-aware</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">Application Layer</td><td class="p-2">Inspects content at Layer 7; acts as proxy</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">Next-Generation (NGFW)</td><td class="p-2">DPI + IPS + App awareness; enterprise-grade</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 14 - Firewall Placement
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Firewall Placement</h2>
+                    <p class="text-white/70">Firewalls are strategically placed within a network architecture:</p>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">Perimeter Firewall:</span> Guards the boundary between the internal network and the internet</li>
+                        <li><span class="text-purple-300 font-bold">Internal Firewall:</span> Segments internal network zones (e.g., separating HR from Finance)</li>
+                        <li><span class="text-green-300 font-bold">Host-Based Firewall:</span> Software firewall installed on individual devices</li>
+                        <li><span class="text-yellow-300 font-bold">DMZ (Demilitarised Zone):</span> A buffer zone hosting public-facing servers, protected by two firewalls</li>
+                    </ul>
+                    <div class="stat-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Example:</p>
+                        <p class="text-sm">A company places a perimeter firewall between their office network and the internet. A second firewall separates the company's internal servers from staff workstations. Public web servers sit in a DMZ between the two firewalls.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 15 - What is an IDS?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is an Intrusion Detection System (IDS)?</h2>
+                    <p class="text-white/70">An Intrusion Detection System (IDS) is a security tool that monitors network traffic and/or system activities for malicious behaviour or policy violations. When suspicious activity is detected, it generates alerts for security administrators to investigate.</p>
+                    <div class="key-idea p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Point:</p>
+                        <p class="text-sm">An IDS detects and alerts — it does NOT actively block threats. Think of it as a security camera that records and sends an alarm, but does not stop the intruder.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 16 - What is an IPS?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is an Intrusion Prevention System (IPS)?</h2>
+                    <p class="text-white/70">An Intrusion Prevention System (IPS) extends IDS capabilities by actively blocking or preventing detected intrusions in real time. It sits inline with network traffic (in the data path), meaning all traffic passes through it and can be dropped if identified as malicious.</p>
+                    <div class="key-idea p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Key Point:</p>
+                        <p class="text-sm">An IPS detects AND prevents — it automatically blocks malicious traffic. Think of it as a security guard who both monitors and physically stops intruders.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 17 - IDS vs IPS Comparison
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">IDS vs IPS: Comparison</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Feature</th><th class="p-2 text-cyan-300">IDS vs IPS</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Function</td><td class="p-2">IDS: Detects and alerts | IPS: Detects and blocks</td></tr>
+                                <tr><td class="p-2 font-bold">Network Placement</td><td class="p-2">IDS: Out-of-band (passive) | IPS: Inline (active)</td></tr>
+                                <tr><td class="p-2 font-bold">Response</td><td class="p-2">IDS: Manual (admin must act) | IPS: Automatic</td></tr>
+                                <tr><td class="p-2 font-bold">False Positive Risk</td><td class="p-2">IDS: Low impact | IPS: Can block legitimate traffic</td></tr>
+                                <tr><td class="p-2 font-bold">Performance Impact</td><td class="p-2">IDS: Minimal | IPS: Moderate (inline processing)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 18 - Detection Methods
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Detection Methods</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">1. Signature-Based Detection</p>
+                            <p class="text-sm">Compares network traffic against a database of known attack signatures (patterns). Effective for known threats but cannot detect novel (zero-day) attacks.</p>
+                            <p class="text-xs text-white/50">Example: Detecting a specific string in a packet that matches a known exploit</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">2. Anomaly-Based Detection</p>
+                            <p class="text-sm">Establishes a baseline of normal network behaviour and flags deviations. Capable of detecting unknown threats, but may produce more false positives.</p>
+                            <p class="text-xs text-white/50">Example: Alerting when a user account logs in at 3 AM from a foreign country</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">3. Hybrid Detection</p>
+                            <p class="text-sm">Combines both signature-based and anomaly-based techniques to provide more comprehensive detection with fewer false positives.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 19 - Types of IDS/IPS
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of IDS/IPS</h2>
+                    <ul class="bulleted-list">
+                        <li><span class="text-cyan-300 font-bold">Network-Based (NIDS/NIPS):</span> Monitors traffic across an entire network segment</li>
+                        <li><span class="text-purple-300 font-bold">Host-Based (HIDS/HIPS):</span> Monitors activity on individual hosts (servers, workstations)</li>
+                        <li><span class="text-green-300 font-bold">Wireless IDS/IPS (WIDS/WIPS):</span> Designed for wireless network monitoring</li>
+                        <li><span class="text-yellow-300 font-bold">Network Behaviour Analysis (NBA):</span> Detects unusual traffic flows (e.g., DDoS)</li>
+                    </ul>
+                    <div class="stat-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Real-World Example:</p>
+                        <p class="text-sm">The 2013 Target data breach could have been mitigated had their IDS alerts been properly acted upon. Security tools detected the intrusion, but alerts were ignored. This case study highlights that detection tools are only effective when combined with proper incident response procedures.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 20 - What is a VPN?
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">What is a Virtual Private Network (VPN)?</h2>
+                    <p class="text-white/70">A Virtual Private Network (VPN) is a technology that creates a secure, encrypted 'tunnel' over a public network (typically the internet), allowing users or networks to communicate as if they were directly connected via a private network.</p>
+                    <div class="analogy-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-cyan-300">Analogy:</p>
+                        <p class="text-sm">Think of a VPN as a secure armoured courier vehicle on a public road. Other drivers (network observers) can see the vehicle moving, but they cannot see what is inside it (the data). The contents are protected and delivered securely to the intended recipient.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 21 - How VPNs Work
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">How VPNs Work</h2>
+                    <p class="text-white/70">VPNs work through a process of encapsulation and encryption:</p>
+                    <ol class="numbered-list">
+                        <li>The client device establishes a connection to a VPN server.</li>
+                        <li>Data is encrypted on the client side before transmission.</li>
+                        <li>The encrypted data is encapsulated within VPN packets and sent through the internet.</li>
+                        <li>The VPN server decrypts the data and forwards it to the intended destination.</li>
+                        <li>Return traffic follows the same encrypted path back to the client.</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 22 - VPN Protocols
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">VPN Protocols</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Protocol</th><th class="p-2 text-cyan-300">Description</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-green-300">OpenVPN</td><td class="p-2">Open-source, highly secure, widely used; uses SSL/TLS for encryption</td></tr>
+                                <tr><td class="p-2 font-bold text-cyan-300">IPSec</td><td class="p-2">Internet Protocol Security; provides authentication and encryption at IP layer</td></tr>
+                                <tr><td class="p-2 font-bold text-purple-300">L2TP/IPSec</td><td class="p-2">Layer 2 Tunnelling Protocol combined with IPSec for security</td></tr>
+                                <tr><td class="p-2 font-bold text-yellow-300">WireGuard</td><td class="p-2">Modern, lightweight protocol; faster than OpenVPN with strong encryption</td></tr>
+                                <tr><td class="p-2 font-bold text-red-300">PPTP</td><td class="p-2">Point-to-Point Tunnelling Protocol; older, fast but considered insecure</td></tr>
+                                <tr><td class="p-2 font-bold text-blue-300">SSTP</td><td class="p-2">Secure Socket Tunnelling Protocol; uses SSL 3.0; Windows-native</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 23 - Types of VPNs
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Types of VPNs</h2>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-cyan-300">1. Remote Access VPN</p>
+                            <p class="text-sm">Enables individual users to connect securely to a corporate network from remote locations. Commonly used by employees working from home.</p>
+                            <p class="text-xs text-white/50">Example: A staff member connects to the company intranet from a coffee shop via VPN</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-purple-300">2. Site-to-Site VPN</p>
+                            <p class="text-sm">Connects entire networks to each other over the internet. Used by organisations with multiple branches to link offices securely.</p>
+                            <p class="text-xs text-white/50">Example: A company's Nairobi and Mombasa offices connected through a permanent VPN tunnel</p>
+                        </div>
+                        <div class="p-3 bg-white/5 rounded-lg">
+                            <p class="font-bold text-green-300">3. Cloud VPN</p>
+                            <p class="text-sm">Connects on-premises networks or users to cloud environments (e.g., AWS VPC, Azure VPN Gateway) securely.</p>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 24 - Benefits and Limitations of VPNs
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Benefits and Limitations of VPNs</h2>
+                    <div class="grid md:grid-cols-2 gap-3">
+                        <div class="p-3 bg-green-500/10 rounded-lg">
+                            <p class="font-bold text-green-300">Benefits</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Encrypts data in transit</li><li>Masks user IP address</li>
+                                <li>Bypasses geographic restrictions</li><li>Secures remote worker connections</li>
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-red-500/10 rounded-lg">
+                            <p class="font-bold text-red-300">Limitations</p>
+                            <ul class="bulleted-list text-sm">
+                                <li>Can reduce network speed due to encryption overhead</li>
+                                <li>VPN provider may log user activity</li>
+                                <li>Not foolproof — advanced monitoring can detect VPN use</li>
+                                <li>Misconfiguration can create security vulnerabilities</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 25 - Why Wireless Networks Are Vulnerable
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Why Wireless Networks Are Vulnerable</h2>
+                    <p class="text-white/70">Unlike wired networks, wireless networks transmit data through radio waves that can be intercepted by any device within range. This makes wireless networks inherently more vulnerable to a range of attacks without proper security configurations.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Common Wireless Threats:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Eavesdropping — Intercepting unencrypted wireless traffic</li>
+                            <li>Rogue Access Points — Unauthorised Wi-Fi hotspots set up by attackers</li>
+                            <li>Evil Twin Attacks — Fake Wi-Fi network mimicking a legitimate one</li>
+                            <li>WPS Attacks — Exploiting vulnerabilities in Wi-Fi Protected Setup</li>
+                            <li>Deauthentication Attacks — Forcing devices to disconnect</li>
+                            <li>War Driving — Mapping and exploiting unsecured wireless networks</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 26 - Wireless Encryption Standards
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Wireless Encryption Standards</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Standard</th><th class="p-2 text-cyan-300">Details</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold text-red-300">WEP</td><td class="p-2">Introduced 1997; severely flawed; easily cracked; DEPRECATED — do not use</td></tr>
+                                <tr><td class="p-2 font-bold text-orange-300">WPA</td><td class="p-2">Introduced 2003; improved over WEP but still has vulnerabilities</td></tr>
+                                <tr><td class="p-2 font-bold text-green-300">WPA2</td><td class="p-2">Introduced 2004; uses AES-CCMP; current industry standard</td></tr>
+                                <tr><td class="p-2 font-bold text-cyan-300">WPA3</td><td class="p-2">Introduced 2018; strongest standard; recommended for all new deployments</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="key-idea p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Important:</p>
+                        <p class="text-sm">As of 2023, WPA3 is the recommended standard for all new wireless deployments. WEP should NEVER be used in any modern environment. If a network still uses WEP, it should be considered completely compromised.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 27 - Best Practices for Wireless Security
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Best Practices for Wireless Security</h2>
+                    <ul class="bulleted-list">
+                        <li>Use WPA3 (or WPA2 as a minimum) with a strong, complex passphrase</li>
+                        <li>Change the default SSID (network name) and disable SSID broadcasting if appropriate</li>
+                        <li>Change default router/AP administrator credentials immediately</li>
+                        <li>Implement MAC address filtering as an additional layer of control</li>
+                        <li>Disable WPS (Wi-Fi Protected Setup) — it is frequently exploited</li>
+                        <li>Segment wireless networks — create separate SSIDs for staff, guests, and IoT devices</li>
+                        <li>Enable firewall protection on the wireless router</li>
+                        <li>Regularly update router firmware to patch known vulnerabilities</li>
+                        <li>Use a VPN when connecting to public Wi-Fi networks</li>
+                        <li>Monitor the network for rogue access points using wireless IDS</li>
+                    </ul>
+                </div>
+            `
+        },
+        { // Slide 28 - Enterprise Wireless Security: 802.1X
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Enterprise Wireless Security: 802.1X Authentication</h2>
+                    <p class="text-white/70">Enterprise environments should implement IEEE 802.1X, a port-based Network Access Control (NAC) standard. It requires all devices to authenticate with a central RADIUS (Remote Authentication Dial-In User Service) server before gaining network access. This replaces the shared passphrase model with per-user authentication.</p>
+                    <div class="stat-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Benefit:</p>
+                        <p class="text-sm">802.1X provides stronger security than a shared Wi-Fi password because each user has unique credentials, and access can be revoked instantly if needed.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 29 - The Importance of Safe Browsing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">The Importance of Safe Browsing</h2>
+                    <p class="text-white/70">The internet is the most common attack vector for cyber threats including malware, phishing, ransomware, and social engineering. Safe browsing practices are the first line of personal defence against these threats. Even technically robust network infrastructure can be compromised by a single user clicking a malicious link.</p>
+                </div>
+            `
+        },
+        { // Slide 30 - Recognising Secure Websites
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Recognising Secure Websites</h2>
+                    <ul class="bulleted-list">
+                        <li>Always look for HTTPS (HyperText Transfer Protocol Secure) in the URL</li>
+                        <li>A padlock icon in the browser's address bar indicates an encrypted connection</li>
+                        <li>Click the padlock to verify the site's SSL/TLS certificate details</li>
+                        <li>Be alert to certificate warnings — never proceed past an SSL error on sensitive sites</li>
+                    </ul>
+                    <div class="key-idea p-3 rounded-lg mt-3">
+                        <p class="font-bold text-yellow-300">Note:</p>
+                        <p class="text-sm">HTTPS encrypts data in transit between your browser and the server. However, HTTPS alone does not guarantee the site is legitimate. Phishing sites can and do use HTTPS. Always verify the domain name carefully.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 31 - Identifying and Avoiding Phishing
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Identifying and Avoiding Phishing</h2>
+                    <p class="text-white/70">Phishing is one of the most prevalent threats on the internet. It involves attackers impersonating legitimate organisations to steal credentials, financial information, or install malware.</p>
+                    <div class="mt-3 p-3 bg-white/5 rounded-lg">
+                        <p class="font-bold text-cyan-300">Warning Signs of a Phishing Site or Email:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>Misspelled or lookalike domain names (e.g., 'paypa1.com' vs 'paypal.com')</li>
+                            <li>Urgent language pressuring immediate action ('Your account will be suspended!')</li>
+                            <li>Requests for sensitive information via email or pop-ups</li>
+                            <li>Generic greetings ('Dear Customer') instead of your name</li>
+                            <li>Unexpected attachments, especially .exe, .zip, or .docm files</li>
+                            <li>Hover over links to preview the actual URL before clicking</li>
+                        </ul>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 32 - Browser Security Settings and Tools
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Browser Security Settings and Tools</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Tool / Setting</th><th class="p-2 text-cyan-300">Purpose</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Browser updates</td><td class="p-2">Patch known vulnerabilities in the browser engine</td></tr>
+                                <tr><td class="p-2 font-bold">Pop-up blockers</td><td class="p-2">Prevent malicious pop-ups and drive-by downloads</td></tr>
+                                <tr><td class="p-2 font-bold">Ad blockers</td><td class="p-2">Reduce exposure to malvertising (malicious advertisements)</td></tr>
+                                <tr><td class="p-2 font-bold">Private/Incognito mode</td><td class="p-2">Does not save browsing history locally; does NOT make you anonymous online</td></tr>
+                                <tr><td class="p-2 font-bold">Two-Factor Authentication</td><td class="p-2">Adds a second verification step when logging into accounts</td></tr>
+                                <tr><td class="p-2 font-bold">Password Manager</td><td class="p-2">Generates and stores strong, unique passwords for each site</td></tr>
+                                <tr><td class="p-2 font-bold">Safe browsing extensions</td><td class="p-2">Tools like uBlock Origin, HTTPS Everywhere filter known malicious sites</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 33 - Additional Safe Browsing Habits
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Additional Safe Browsing Habits</h2>
+                    <ul class="bulleted-list">
+                        <li>Never download files from untrusted or unknown websites</li>
+                        <li>Avoid using the same password across multiple websites</li>
+                        <li>Log out of accounts, especially on shared or public computers</li>
+                        <li>Clear browser cache and cookies regularly</li>
+                        <li>Be cautious of URL shorteners — preview the full URL using tools like checkshorturl.com</li>
+                        <li>Do not enter sensitive data on public or shared computers</li>
+                        <li>Enable automatic browser and OS updates</li>
+                        <li>Use a reputable antivirus with real-time web protection</li>
+                    </ul>
+                    <div class="activity-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-green-300">Activity (5 min):</p>
+                        <p class="text-sm">Show students two websites side-by-side: one legitimate (e.g., a bank) and one phishing clone. Ask them to identify three differences between the two. Discuss findings as a group.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 34 - Lesson Summary
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Lesson Summary</h2>
+                    <div class="overflow-x-auto comparison-table">
+                        <table class="w-full text-left border-collapse text-sm">
+                            <thead><tr><th class="p-2 text-cyan-300">Topic</th><th class="p-2 text-cyan-300">Key Takeaway</th></tr></thead>
+                            <tbody>
+                                <tr><td class="p-2 font-bold">Network Security</td><td class="p-2">Protects data and resources across networks using layered controls aligned with the CIA Triad</td></tr>
+                                <tr><td class="p-2 font-bold">Firewalls</td><td class="p-2">Act as gatekeepers; types range from basic packet filtering to advanced NGFWs</td></tr>
+                                <tr><td class="p-2 font-bold">IDS / IPS</td><td class="p-2">IDS detects and alerts; IPS detects and blocks; both use signature and/or anomaly detection</td></tr>
+                                <tr><td class="p-2 font-bold">VPNs</td><td class="p-2">Create encrypted tunnels over public networks; essential for remote access and privacy</td></tr>
+                                <tr><td class="p-2 font-bold">Wireless Security</td><td class="p-2">WPA3 is the gold standard; disable WPS; segment networks; avoid public Wi-Fi without VPN</td></tr>
+                                <tr><td class="p-2 font-bold">Safe Browsing</td><td class="p-2">Verify HTTPS; recognise phishing; use strong passwords, 2FA, and updated browsers</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 35 - Group Activity: Network Security Scenario
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Group Activity: Network Security Scenario</h2>
+                    <div class="scenario-box p-4 rounded-lg">
+                        <p class="font-bold text-red-300">Scenario: The Breach at Savanna Tech Ltd.</p>
+                        <p class="text-sm text-white/70 mt-2">Savanna Tech Ltd. is a mid-sized company in Nairobi with 200 employees. They recently suffered a security incident: an attacker gained access to their internal network, intercepted emails containing client financial data, and installed ransomware on three servers.</p>
+                        <p class="font-bold text-cyan-300 mt-2">Investigation reveals:</p>
+                        <ul class="bulleted-list text-sm">
+                            <li>The company used WEP encryption on their office Wi-Fi.</li>
+                            <li>No IDS/IPS was deployed on the network.</li>
+                            <li>Remote workers connected directly without a VPN.</li>
+                            <li>An employee clicked a phishing link and entered their credentials on a fake login page.</li>
+                        </ul>
+                        <p class="font-bold text-yellow-300 mt-2">Your Task:</p>
+                        <p class="text-sm">Identify the security failures and recommend specific controls from today's lesson to prevent future incidents. Present your findings in 3 minutes.</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 36 - Review Questions
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Review Questions</h2>
+                    <p class="text-white/70">Use these questions for self-assessment or exam preparation:</p>
+                    <ol class="numbered-list">
+                        <li>What is the difference between a packet-filtering firewall and a stateful inspection firewall?</li>
+                        <li>Explain why an IPS is considered more proactive than an IDS.</li>
+                        <li>A company has offices in Nairobi, Kampala, and Dar es Salaam. Which type of VPN would best connect these offices? Justify your answer.</li>
+                        <li>Why is WEP no longer considered a secure encryption standard for wireless networks?</li>
+                        <li>List five indicators that a website or email may be a phishing attempt.</li>
+                        <li>A user connects their laptop to a hotel Wi-Fi network to access company emails. What security measures should be in place to protect this connection?</li>
+                    </ol>
+                </div>
+            `
+        },
+        { // Slide 37 - Further Reading
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-8 md:p-10">
+                    <h2 class="text-3xl md:text-4xl font-bold text-cyan-300 mb-4">Further Reading</h2>
+                    <ul class="bulleted-list">
+                        <li>Stallings, W. (2023). Cryptography and Network Security: Principles and Practice (8th ed.). Pearson.</li>
+                        <li>NIST Special Publication 800-41: Guidelines on Firewalls and Firewall Policy</li>
+                        <li>NIST Special Publication 800-94: Guide to IDS and IPS</li>
+                        <li>Cisco Networking Academy — Network Security modules (netacad.com)</li>
+                        <li>OWASP Web Security Testing Guide (owasp.org)</li>
+                    </ul>
+                    <div class="tip-box p-3 rounded-lg mt-3">
+                        <p class="font-bold text-purple-300">Next Week:</p>
+                        <p class="text-sm">Week 7: Cryptography and Data Encryption</p>
+                    </div>
+                </div>
+            `
+        },
+        { // Slide 38 - Closing Slide
+            content: () => `
+                <div class="glass-card-deep rounded-3xl p-12 md:p-16 text-center">
+                    <div class="text-6xl mb-4">🌐🔒🛡️</div>
+                    <h2 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-300 to-purple-400 bg-clip-text text-transparent">End of Week 6 Lecture Notes</h2>
+                    <p class="text-white/70 mt-4 text-xl">Questions and Answers Session</p>
+                    <p class="text-cyan-300 mt-4 italic">"Network security is not a product — it's a process of continuous improvement."</p>
+                    <div class="mt-8 flex justify-center gap-2">
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                        <div class="w-2 h-2 bg-purple-400 rounded-full animate-pulse delay-150"></div>
+                        <div class="w-2 h-2 bg-cyan-400 rounded-full animate-pulse delay-300"></div>
+                    </div>
+                    <p class="text-white/40 text-sm mt-6">Next Week — Week 7: Cryptography and Data Encryption</p>
+                </div>
+            `
+        }
+    ];
+
+    let currentIndex = 0;
+    const slidesWrapper = document.getElementById('slidesWrapper');
+    const slideContainer = document.getElementById('slideContainer');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideCounterSpan = document.getElementById('slideCounter');
+    const progressFill = document.getElementById('progressFill');
+
+    function renderSlide() {
+        if (!slidesWrapper) return;
+        slidesWrapper.style.opacity = '0';
+        slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+        setTimeout(() => {
+            slidesWrapper.innerHTML = `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+            slidesWrapper.style.opacity = '1';
+            slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+            slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+            progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+            if (slideContainer) slideContainer.scrollTop = 0;
+        }, 150);
+    }
+
+    function nextSlide() { if (currentIndex < slidesData.length - 1) { currentIndex++; renderSlide(); } }
+    function prevSlide() { if (currentIndex > 0) { currentIndex--; renderSlide(); } }
+
+    window.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight') nextSlide(); if (e.key === 'ArrowLeft') prevSlide(); });
+    let touchStartX = 0;
+    document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', (e) => { let endX = e.changedTouches[0].screenX; if (endX < touchStartX - 50) nextSlide(); if (endX > touchStartX + 50) prevSlide(); });
+    prevBtn?.addEventListener('click', prevSlide);
+    nextBtn?.addEventListener('click', nextSlide);
+    
+    renderSlide();
+</script>
+</body>
+</html>
