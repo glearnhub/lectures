@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>STA 201 | Probability & Statistics I | Africa International University</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PptxGenJS for PPTX generation -->
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
+    <style>
+        /* AIU Red theme: #C8102E (primary red) */
+        .aiu-red { color: #C8102E; }
+        .aiu-red-bg { background: #C8102E; }
+        .aiu-border-red { border-color: #C8102E; }
+
+        .glass-card-aiu {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 16, 46, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), 0 0 20px rgba(200, 16, 46, 0.06);
+        }
+
+        .red-glow {
+            text-shadow: 0 0 20px rgba(200, 16, 46, 0.15), 0 0 40px rgba(200, 16, 46, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(200, 16, 46, 0.08);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #C8102E;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(200, 16, 46, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(200, 16, 46, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C8102E;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .comparison-table th {
+            background: rgba(200, 16, 46, 0.08);
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(200, 16, 46, 0.12);
+        }
+
+        .kenya-box {
+            background: rgba(200, 16, 46, 0.06);
+            border-left: 4px solid #C8102E;
+        }
+
+        .tip-box {
+            background: rgba(200, 16, 46, 0.05);
+            border-left: 4px solid #C8102E;
+        }
+
+        .noir-memory {
+            background: linear-gradient(135deg, #fef0f0, #fce8e8);
+            border: 1px solid #C8102E;
+        }
+
+        .download-btn {
+            transition: all 0.3s ease;
+            background: #C8102E;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(200, 16, 46, 0.3);
+        }
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(200, 16, 46, 0.4);
+            background: #A00D25;
+        }
+        .download-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .text-dark { color: #1a1a2e; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+        .text-dark-light { color: #777777; }
+        .bg-white-soft { background: #fafafa; }
+        .border-light { border-color: rgba(200, 16, 46, 0.15); }
+
+        /* Table styling for slides */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .data-table th {
+            background: rgba(200, 16, 46, 0.08);
+            color: #1a1a2e;
+            font-weight: 600;
+            padding: 0.5rem;
+            border: 1px solid rgba(200, 16, 46, 0.15);
+            text-align: left;
+        }
+        .data-table td {
+            padding: 0.5rem;
+            border: 1px solid rgba(200, 16, 46, 0.12);
+            color: #333333;
+        }
+        .data-table tr:nth-child(even) {
+            background: rgba(200, 16, 46, 0.03);
+        }
+        .data-table .highlight {
+            color: #C8102E;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-red-50/30 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#C8102E]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#C8102E]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#C8102E]/10">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#C8102E] flex items-center justify-center text-white font-bold text-lg">AIU</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#C8102E] font-bold tracking-wider">AFRICA INTERNATIONAL UNIVERSITY</p>
+                            <p class="text-[10px] text-dark-muted">STA 201 — Probability & Statistics I</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#C8102E]/30 backdrop-blur text-dark">1 / 24</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C8102E]/30 hover:bg-[#C8102E]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C8102E]/30 hover:bg-[#C8102E]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-[#C8102E] rounded-full" style="width: 4.2%"></div>
+                </div>
+                <p class="text-[10px] text-[#C8102E]/60 text-center mt-2 font-mono tracking-wider">✦ STA 201 — INTRODUCTION TO STATISTICS & DATA COLLECTION ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#C8102E]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#C8102E]/10">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // STA 201: PROBABILITY & STATISTICS I - WEEK 1
+        // Complete 24-slide presentation with all content from notes
+        // Including all tables, examples, and case studies
+        // PPTX download using PptxGenJS
+        // White background with appropriate text colors
+        // =============================================================
+
+        function downloadPPTX() {
+            const btn = document.querySelector('.download-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating PPTX...';
+
+            try {
+                const pptx = new PptxGenJS();
+                pptx.defineLayout({ name: 'WIDE', width: 13.33, height: 7.5 });
+                pptx.layout = 'WIDE';
+
+                const RED = 'C8102E';
+                const WHITE = 'FFFFFF';
+                const DARK = '1A1A2E';
+                const LIGHT_GRAY = 'F5F5F5';
+                const MEDIUM_GRAY = '666666';
+
+                function addSlideWithHeader(titleText) {
+                    const slide = pptx.addSlide();
+                    slide.background = { color: WHITE };
+                    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.7, fill: { color: RED } });
+                    slide.addText('AIU', { x: 0.3, y: 0.05, w: 0.8, h: 0.6, fontSize: 16, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                    slide.addText('AFRICA INTERNATIONAL UNIVERSITY', { x: 1.2, y: 0.05, w: 4.5, h: 0.6, fontSize: 11, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                    slide.addText('STA 201 — Probability & Statistics I', { x: 9.5, y: 0.05, w: 3.5, h: 0.6, fontSize: 10, color: WHITE, fontFace: 'Arial', align: 'right', valign: 'middle' });
+                    slide.addText(titleText, { x: 0.5, y: 1.0, w: 12.33, h: 0.7, fontSize: 26, color: RED, fontFace: 'Arial', bold: true, valign: 'middle' });
+                    slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 1.8, w: 12.33, h: 0.04, fill: { color: RED } });
+                    return slide;
+                }
+
+                function addBulletPoints(slide, items, yStart) {
+                    let yPos = yStart;
+                    items.forEach(item => {
+                        slide.addText(item, { x: 1.0, y: yPos, w: 11.0, h: 0.45, fontSize: 15, color: DARK, fontFace: 'Arial', valign: 'middle', bullet: true });
+                        yPos += 0.5;
+                    });
+                    return yPos;
+                }
+
+                function addNumberedList(slide, items, yStart) {
+                    let yPos = yStart;
+                    items.forEach((item, idx) => {
+                        slide.addText(`${idx+1}. ${item}`, { x: 1.0, y: yPos, w: 11.0, h: 0.45, fontSize: 14, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                        yPos += 0.48;
+                    });
+                    return yPos;
+                }
+
+                // ===== SLIDE 1: TITLE =====
+                let slide = pptx.addSlide();
+                slide.background = { color: WHITE };
+                slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.7, fill: { color: RED } });
+                slide.addText('AIU', { x: 0.3, y: 0.05, w: 0.8, h: 0.6, fontSize: 16, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                slide.addText('AFRICA INTERNATIONAL UNIVERSITY', { x: 1.2, y: 0.05, w: 4.5, h: 0.6, fontSize: 11, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                slide.addText('STA 201 — Probability & Statistics I', { x: 9.5, y: 0.05, w: 3.5, h: 0.6, fontSize: 10, color: WHITE, fontFace: 'Arial', align: 'right', valign: 'middle' });
+
+                slide.addShape(pptx.ShapeType.ellipse, { x: 5.8, y: 1.2, w: 1.8, h: 1.8, fill: { color: RED } });
+                slide.addText('AIU', { x: 5.8, y: 1.4, w: 1.8, h: 1.4, fontSize: 32, color: WHITE, fontFace: 'Arial', bold: true, align: 'center', valign: 'middle' });
+                slide.addText('STA 201 — Probability & Statistics I', { x: 0.5, y: 3.3, w: 12.33, h: 0.8, fontSize: 34, color: DARK, fontFace: 'Arial', bold: true, align: 'center', valign: 'middle', shadow: { type: 'outer', color: RED, blur: 8, offset: 1 } });
+                slide.addShape(pptx.ShapeType.rect, { x: 5.8, y: 4.2, w: 1.8, h: 0.06, fill: { color: RED } });
+                slide.addText('Week 1: Introduction to Statistics & Data Collection', { x: 0.5, y: 4.4, w: 12.33, h: 0.7, fontSize: 20, color: RED, fontFace: 'Arial', bold: true, align: 'center', valign: 'middle' });
+                slide.addText('Department of Mathematics · Undergraduate Programme · 3 Credit Hours', { x: 0.5, y: 5.4, w: 12.33, h: 0.5, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial', align: 'center', valign: 'middle' });
+
+                // ===== SLIDE 2: LEARNING OBJECTIVES =====
+                slide = addSlideWithHeader('Learning Objectives');
+                const objectives = [
+                    'Define statistics and explain its role in research, policy, and professional practice.',
+                    'Distinguish between descriptive and inferential statistics.',
+                    'Classify variables by type: nominal, ordinal, interval, and ratio.',
+                    'Identify the population and sample in a given study.',
+                    'Differentiate between a census and a sample survey, with their trade-offs.',
+                    'Describe and apply at least four sampling techniques.',
+                    'Evaluate the appropriateness of a sampling method for a given Kenyan context.'
+                ];
+                slide.addText('By the end of this topic, you should be able to:', { x: 0.5, y: 2.2, w: 12.33, h: 0.5, fontSize: 17, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                addBulletPoints(slide, objectives, 2.8);
+
+                // ===== SLIDE 3: WHAT IS STATISTICS? =====
+                slide = addSlideWithHeader('1. What is Statistics?');
+                slide.addText('Statistics is the science of collecting, organising, summarising, analysing, and interpreting data in order to draw conclusions and make decisions in the presence of uncertainty.', { x: 0.5, y: 2.2, w: 12.33, h: 1.0, fontSize: 16, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 3.4, w: 0.08, h: 0.8, fill: { color: RED } });
+                slide.addText('Etymology: The word statistics comes from the Latin "statisticum collegium" (council of state) and the Italian "statista" (statesman). Governments have collected data on populations, land, and wealth for thousands of years.', { x: 0.8, y: 3.4, w: 11.5, h: 0.8, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial', valign: 'middle' });
+
+                // ===== SLIDE 4: TWO MAIN BRANCHES OF STATISTICS =====
+                slide = addSlideWithHeader('1.1 Two Main Branches of Statistics');
+                slide.addText('Descriptive Statistics', { x: 0.8, y: 2.2, w: 5.5, h: 0.5, fontSize: 18, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Organises, summarises, and presents data in a meaningful way — using numbers, tables, and graphs. Answers: What does the data show?', { x: 1.0, y: 2.8, w: 5.0, h: 0.8, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                addBulletPoints(slide, ['Average monthly income across 47 counties (KNBS 2019)', 'Bar chart of university enrolment by gender', 'Percentage of households with electricity in Turkana'], 3.7);
+
+                slide.addText('Inferential Statistics', { x: 6.8, y: 2.2, w: 5.5, h: 0.5, fontSize: 18, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Uses data from a sample to make estimates, predictions, or decisions about a larger population. Answers: What can we conclude beyond this data?', { x: 7.0, y: 2.8, w: 5.0, h: 0.8, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                addBulletPoints(slide, ['Estimating the average income of all Kenyans from a sample', 'Testing whether a new malaria drug reduces mortality', 'Predicting Kenya\'s 2030 population from census trends'], 3.7);
+
+                // ===== SLIDE 5: WHY STATISTICS MATTERS IN KENYA =====
+                slide = addSlideWithHeader('1.2 Why Statistics Matters in Kenya');
+                slide.addText('Statistics underpins decision-making at every level — from village-level water projects to national development planning.', { x: 0.5, y: 2.2, w: 12.33, h: 0.5, fontSize: 15, color: DARK, fontFace: 'Arial' });
+
+                const kenyaData = [
+                    ['Institution / Context', 'How Statistics Is Used'],
+                    ['Kenya National Bureau of Statistics (KNBS)', 'Produces the national census, GDP estimates, CPI, and the Statistical Abstract'],
+                    ['Central Bank of Kenya (CBK)', 'Uses statistical models to set the benchmark interest rate, track inflation'],
+                    ['Ministry of Health / NASCOP', 'Uses surveillance data to track HIV/AIDS, TB, and malaria prevalence'],
+                    ['Independent Electoral & Boundaries Commission (IEBC)', 'Uses population statistics to delimit constituency boundaries'],
+                    ['Safaricom / Telecoms', 'Analyses transaction data to detect fraud, predict churn, and price services'],
+                    ['Agricultural sector (KTDA, NCPB)', 'Uses yield statistics and weather data to forecast harvests']
+                ];
+                let yPos = 2.9;
+                kenyaData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos, w: 4.5, h: 0.4, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 5.5, y: yPos, w: 6.5, h: 0.4, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos += 0.45;
+                });
+
+                // ===== SLIDE 6: POPULATION AND SAMPLE =====
+                slide = addSlideWithHeader('2.1 Population and Sample');
+                slide.addText('Population: The complete set of all individuals, objects, measurements, or events that share a characteristic of interest.', { x: 0.8, y: 2.2, w: 11.5, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.2, w: 0.08, h: 0.6, fill: { color: RED } });
+                slide.addText('Sample: A subset of the population actually selected for study. Used to make inferences about the population.', { x: 0.8, y: 2.9, w: 11.5, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.9, w: 0.08, h: 0.6, fill: { color: RED } });
+                slide.addText('Parameter: A numerical summary computed from the entire population. Usually unknown and estimated from the sample.', { x: 0.8, y: 3.6, w: 11.5, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 3.6, w: 0.08, h: 0.6, fill: { color: RED } });
+                slide.addText('Statistic: A numerical summary computed from the sample. Used to estimate a population parameter.', { x: 0.8, y: 4.3, w: 11.5, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 4.3, w: 0.08, h: 0.6, fill: { color: RED } });
+
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 5.1, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('Example: Average maize yield in Uasin Gishu — Population: All 120,000 farmers | Sample: 400 farmers | Parameter: True mean (unknown) | Statistic: x̄ = 17.9 bags/acre', { x: 0.8, y: 5.2, w: 11.5, h: 0.8, fontSize: 12, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 7: VARIABLES AND DATA =====
+                slide = addSlideWithHeader('2.2 Variables and Data');
+                slide.addText('A variable is any characteristic, number, or quantity that can be measured or counted across different members of a population.', { x: 0.5, y: 2.2, w: 12.33, h: 0.6, fontSize: 16, color: DARK, fontFace: 'Arial' });
+                slide.addText('Quantitative (Numerical)', { x: 0.8, y: 3.0, w: 5.5, h: 0.5, fontSize: 18, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Discrete: Countable values. E.g. number of children, number of matatus.', { x: 1.0, y: 3.5, w: 5.0, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addText('Continuous: Any value in an interval. E.g. height, rainfall in mm.', { x: 1.0, y: 4.0, w: 5.0, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addText('Qualitative (Categorical)', { x: 6.8, y: 3.0, w: 5.5, h: 0.5, fontSize: 18, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Takes category labels (no natural arithmetic). E.g. county of residence, type of crop grown, method of payment.', { x: 7.0, y: 3.5, w: 5.0, h: 1.0, fontSize: 14, color: DARK, fontFace: 'Arial' });
+
+                // ===== SLIDE 8: LEVELS OF MEASUREMENT (NOIR) =====
+                slide = addSlideWithHeader('3. Levels of Measurement (Types of Data)');
+                slide.addShape(pptx.ShapeType.rect, { x: 3.5, y: 2.1, w: 6.33, h: 0.6, fill: { color: '#fef0f0' }, line: { color: RED, width: 1 } });
+                slide.addText('N → O → I → R', { x: 3.5, y: 2.1, w: 6.33, h: 0.6, fontSize: 26, color: RED, fontFace: 'Arial', bold: true, align: 'center', valign: 'middle' });
+                slide.addText('Nominal · Ordinal · Interval · Ratio', { x: 0.5, y: 2.8, w: 12.33, h: 0.4, fontSize: 16, color: DARK, fontFace: 'Arial', align: 'center' });
+                slide.addText('Each level adds one property to the previous level.', { x: 0.5, y: 3.2, w: 12.33, h: 0.3, fontSize: 12, color: MEDIUM_GRAY, fontFace: 'Arial', align: 'center' });
+
+                const noirData = [
+                    ['Level', 'Description', 'Properties', 'Kenyan Example'],
+                    ['Nominal', 'Categories with no inherent order', 'Identity only', 'County of birth, mobile network'],
+                    ['Ordinal', 'Categories with a meaningful order', 'Identity + Rank', 'KCSE grade, customer satisfaction'],
+                    ['Interval', 'Numerical with equal intervals, no true zero', 'Identity + Rank + Equal intervals', 'Temperature in °C, year of birth'],
+                    ['Ratio', 'Numerical with equal intervals AND true zero', 'All of the above + True zero', 'Income in Ksh, age, weight, distance']
+                ];
+                let yPos2 = 3.6;
+                noirData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos2, w: 1.8, h: 0.42, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 2.8, y: yPos2, w: 2.8, h: 0.42, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 5.8, y: yPos2, w: 2.8, h: 0.42, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[3], { x: 8.8, y: yPos2, w: 3.5, h: 0.42, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos2 += 0.46;
+                });
+
+                // ===== SLIDE 9: CLASSIFYING VARIABLES EXAMPLE =====
+                slide = addSlideWithHeader('Example — Classifying Variables');
+                const varData = [
+                    ['Variable', 'Type', 'Level'],
+                    ['Number of children per household in Nairobi', 'Quantitative — Discrete', 'Ratio'],
+                    ['Preferred payment method (Cash / M-Pesa / Card)', 'Qualitative — Categorical', 'Nominal'],
+                    ['KCSE grade awarded to a student (A, B+, B, ...)', 'Qualitative — Categorical', 'Ordinal'],
+                    ['Monthly income in Ksh', 'Quantitative — Continuous', 'Ratio'],
+                    ['Year a person was born', 'Quantitative — Discrete', 'Interval'],
+                    ['County of residence', 'Qualitative — Categorical', 'Nominal'],
+                    ['Body mass index (BMI) of hospital patients', 'Quantitative — Continuous', 'Ratio']
+                ];
+                let yPos3 = 2.2;
+                varData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos3, w: 4.5, h: 0.4, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 5.5, y: yPos3, w: 3.5, h: 0.4, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 9.2, y: yPos3, w: 2.5, h: 0.4, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : '#B8860B', fontFace: 'Arial', bold: isHeader });
+                    yPos3 += 0.44;
+                });
+
+                // ===== SLIDE 10: CENSUS VS SAMPLE SURVEY =====
+                slide = addSlideWithHeader('4. Census vs Sample Survey');
+                const censusData = [
+                    ['Feature', 'Census', 'Sample Survey'],
+                    ['Coverage', 'Entire population', 'A representative subset'],
+                    ['Cost', 'Very high', 'Significantly lower'],
+                    ['Time required', 'Long (months to years)', 'Shorter (days to weeks)'],
+                    ['Accuracy', 'Complete data (if no non-response)', 'Subject to sampling error'],
+                    ['Feasibility', 'Difficult for large / dispersed populations', 'Feasible for most populations'],
+                    ['Use of results', 'Definitive baseline statistics', 'Estimates with margin of error'],
+                    ['Kenya example', 'KNBS Population & Housing Census (every 10 years)', 'KDHS, FinAccess Survey, Labour Force Survey']
+                ];
+                let yPos4 = 2.1;
+                censusData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos4, w: 2.5, h: 0.38, fontSize: isHeader ? 13 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 3.5, y: yPos4, w: 4.0, h: 0.38, fontSize: isHeader ? 13 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 7.8, y: yPos4, w: 4.5, h: 0.38, fontSize: isHeader ? 13 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos4 += 0.42;
+                });
+
+                // ===== SLIDE 11: KENYAN CASE STUDY - CENSUS =====
+                slide = addSlideWithHeader('🇰🇪 Kenyan Case Study — The Kenya Population & Housing Census');
+                slide.addText('The 2019 Kenya Population and Housing Census conducted by KNBS on the night of 24/25 August 2019 was Kenya\'s first fully digital census.', { x: 0.5, y: 2.2, w: 12.33, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial' });
+                addBulletPoints(slide, [
+                    'Covered all 47 counties and enumerated approximately 47.6 million Kenyans.',
+                    'Used digital devices (tablets) for data capture for the first time, replacing paper forms.',
+                    'Took approximately 3 years of planning and cost KSh 18.5 billion.',
+                    'Produced data on age, sex, education, employment, housing conditions, and disability.',
+                    'Results are used for constituency delimitation (IEBC), development planning (Vision 2030), and resource allocation (CRA).'
+                ], 2.9);
+                slide.addText('Why not conduct a census every year? Cost, time, and practical constraints. Between censuses, KNBS uses sample surveys to track changes.', { x: 0.5, y: 5.5, w: 12.33, h: 0.4, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 12: KENYAN CASE STUDY - KDHS =====
+                slide = addSlideWithHeader('🇰🇪 Kenyan Case Study — KDHS');
+                slide.addText('The KDHS is a nationally representative survey conducted approximately every five years (most recent: 2022).', { x: 0.5, y: 2.2, w: 12.33, h: 0.6, fontSize: 15, color: DARK, fontFace: 'Arial' });
+                addBulletPoints(slide, [
+                    'Target population: Women aged 15–49 and men aged 15–54 across Kenya.',
+                    'Sample size: approximately 42,000 households selected using stratified two-stage cluster sampling.',
+                    'Collects data on: fertility, family planning, maternal and child health, HIV prevalence, nutrition, and domestic violence.',
+                    'Results are used to set national health targets and monitor SDG indicators.',
+                    'Sampling design: Stratified two-stage cluster sampling — urban/rural by county; clusters selected first, then households within clusters.'
+                ], 2.9);
+
+                // ===== SLIDE 13: SAMPLING TECHNIQUES OVERVIEW =====
+                slide = addSlideWithHeader('5. Sampling Techniques');
+                slide.addText('Probability Sampling', { x: 0.8, y: 2.2, w: 5.5, h: 0.5, fontSize: 20, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Every member has a known, non-zero probability of being selected. Supports generalisation through probability theory.', { x: 1.0, y: 2.8, w: 5.0, h: 0.7, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addText('Includes: SRS, Stratified, Cluster, Systematic', { x: 1.0, y: 3.6, w: 5.0, h: 0.4, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                slide.addText('Non-Probability Sampling', { x: 6.8, y: 2.2, w: 5.5, h: 0.5, fontSize: 20, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Selection based on the researcher\'s judgement or convenience. Cannot support formal probability-based inference.', { x: 7.0, y: 2.8, w: 5.0, h: 0.7, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addText('Includes: Purposive, Convenience, Snowball, Quota', { x: 7.0, y: 3.6, w: 5.0, h: 0.4, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 14: COMPARISON OF SAMPLING METHODS =====
+                slide = addSlideWithHeader('5.1 Detailed Comparison of Sampling Methods');
+                const samplingData = [
+                    ['Method', 'Definition', 'Advantages', 'Limitations'],
+                    ['Simple Random Sampling (SRS)', 'Every member of the population has an equal and independent chance of selection', 'Free from systematic bias; supports probability calculations', 'Requires a complete sampling frame; impractical for very large/dispersed populations'],
+                    ['Stratified Sampling', 'Population divided into mutually exclusive strata; SRS applied within each stratum', 'Ensures representation of all subgroups; more precise estimates than SRS', 'Requires prior knowledge of population structure; complex to implement'],
+                    ['Cluster Sampling', 'Population divided into clusters; clusters selected at random, then all or some members within clusters are surveyed', 'Cost-effective for geographically dispersed populations; no full sampling frame needed', 'Higher sampling error than SRS; clusters must be representative of population'],
+                    ['Systematic Sampling', 'Every k-th element is selected from a list after a random starting point', 'Simple to implement; requires only a partial sampling frame', 'Periodic patterns in the list can introduce bias; not fully random'],
+                    ['Purposive / Judgement', 'Researcher deliberately selects units based on expertise or specific criteria', 'Useful for expert opinion studies and qualitative research', 'Highly subjective; results cannot be generalised using probability theory'],
+                    ['Convenience Sampling', 'Researcher selects the most readily available members of the population', 'Quick, easy, and inexpensive', 'Prone to severe selection bias; not suitable for formal inference']
+                ];
+                let yPos5 = 2.1;
+                samplingData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    const fontSize = isHeader ? 11 : 10;
+                    const color = isHeader ? RED : DARK;
+                    slide.addText(row[0], { x: 0.5, y: yPos5, w: 2.0, h: 0.35, fontSize: fontSize, color: color, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 2.6, y: yPos5, w: 3.0, h: 0.35, fontSize: fontSize, color: color, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 5.7, y: yPos5, w: 3.3, h: 0.35, fontSize: fontSize, color: color, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[3], { x: 9.1, y: yPos5, w: 3.8, h: 0.35, fontSize: fontSize, color: color, fontFace: 'Arial', bold: isHeader });
+                    yPos5 += 0.4;
+                });
+
+                // ===== SLIDE 15: SIMPLE RANDOM SAMPLING =====
+                slide = addSlideWithHeader('5.2 Simple Random Sampling — In Detail');
+                slide.addText('SRS with Replacement: Each selected unit is returned to the population before the next draw. The same unit may appear more than once.', { x: 0.5, y: 2.2, w: 12.33, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addText('SRS without Replacement: Each selected unit is removed from the pool for subsequent draws. No unit appears twice — more common in practice.', { x: 0.5, y: 2.8, w: 12.33, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 3.5, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('How to conduct SRS:', { x: 0.5, y: 3.7, w: 12.33, h: 0.4, fontSize: 16, color: RED, fontFace: 'Arial', bold: true });
+                addNumberedList(slide, [
+                    'Obtain or construct a complete sampling frame (list of all N population members).',
+                    'Assign each member a unique number from 1 to N.',
+                    'Use a random number table, computer-generated random numbers, or a ballot.',
+                    'Select n numbers; the corresponding members form the sample.'
+                ], 4.2);
+
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 5.8, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('Example: Selecting 50 students from a university with 2,000 enrolled students using SRS — obtain register, number 0001-2000, use RANDBETWEEN, select 50 unique numbers.', { x: 0.8, y: 5.9, w: 11.5, h: 0.6, fontSize: 11, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 16: STRATIFIED SAMPLING =====
+                slide = addSlideWithHeader('5.3 Stratified Sampling — In Detail');
+                slide.addText('Steps: Divide population into L mutually exclusive, exhaustive strata. Determine sample size n and allocate to each stratum. Draw independent SRS from within each stratum.', { x: 0.5, y: 2.2, w: 12.33, h: 0.7, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                const allocationData = [
+                    ['Method', 'Formula', 'When to use'],
+                    ['Equal / Uniform', 'nᵢ = n / L', 'When strata are similar in size and variability'],
+                    ['Proportional', 'nᵢ = n × (Nᵢ / N)', 'When strata sizes differ; ensures overall representativeness'],
+                    ['Optimal (Neyman)', 'nᵢ = n × (Nᵢσᵢ / ΣNⱼσⱼ)', 'When minimising variance matters and stratum SDs are known']
+                ];
+                let yPos6 = 3.0;
+                allocationData.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos6, w: 2.5, h: 0.38, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 3.5, y: yPos6, w: 4.0, h: 0.38, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 7.8, y: yPos6, w: 4.5, h: 0.38, fontSize: isHeader ? 13 : 12, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos6 += 0.42;
+                });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 4.7, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('🇰🇪 KDHS 2022: Kenya\'s 47 counties grouped into urban and rural sub-strata (~94 strata). Proportional allocation used. Within each stratum, enumeration areas selected by PPS.', { x: 0.5, y: 4.9, w: 12.33, h: 0.7, fontSize: 12, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 17: SYSTEMATIC SAMPLING =====
+                slide = addSlideWithHeader('5.4 Systematic Sampling — In Detail');
+                slide.addText('Steps: Determine N and n. Calculate k = N / n. Randomly select starting point r (1 ≤ r ≤ k). Select units r, r+k, r+2k, r+3k, ... until n units are chosen.', { x: 0.5, y: 2.2, w: 12.33, h: 0.7, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 3.1, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('Example — Systematic Sampling at a Matatu Stage', { x: 0.5, y: 3.3, w: 12.33, h: 0.4, fontSize: 16, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('Survey 60 commuters arriving at Machakos Country Bus Station between 7:00-9:00 am. Estimated 600 commuters arrive.', { x: 0.8, y: 3.8, w: 11.5, h: 0.5, fontSize: 13, color: DARK, fontFace: 'Arial' });
+                slide.addText('k = 600 / 60 = 10. Random start: r = 4. Sample: 4th, 14th, 24th, 34th, ... commuter to arrive.', { x: 0.8, y: 4.3, w: 11.5, h: 0.5, fontSize: 13, color: DARK, fontFace: 'Arial' });
+                slide.addText('⚠️ Caution: If commuters arrive in periodic "waves", systematic sampling could over-sample or under-sample specific types of travellers.', { x: 0.5, y: 4.9, w: 12.33, h: 0.4, fontSize: 12, color: '#B8860B', fontFace: 'Arial' });
+
+                // ===== SLIDE 18: CLUSTER SAMPLING =====
+                slide = addSlideWithHeader('5.5 Cluster Sampling — In Detail');
+                slide.addText('One-Stage Cluster Sampling: All members of selected clusters are surveyed. Example: Randomly select 10 schools; survey ALL students in each.', { x: 0.8, y: 2.2, w: 11.5, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.2, w: 0.08, h: 0.5, fill: { color: RED } });
+                slide.addText('Two-Stage Cluster Sampling: Clusters selected first (Stage 1), then a sample of members within each cluster (Stage 2). Example: Select 10 schools; then randomly select 30 students per school.', { x: 0.8, y: 2.9, w: 11.5, h: 0.5, fontSize: 14, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.9, w: 0.08, h: 0.5, fill: { color: RED } });
+
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 3.6, w: 12.33, h: 0.04, fill: { color: RED } });
+                slide.addText('🇰🇪 Huduma Centre Service Survey: 53 Huduma Centres as clusters. Stage 1: Randomly select 15 centres using PPS. Stage 2: At each centre, intercept every 5th visitor on randomly selected days.', { x: 0.5, y: 3.8, w: 12.33, h: 0.7, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial' });
+
+                // ===== SLIDE 19: SOURCES OF DATA =====
+                slide = addSlideWithHeader('6. Sources of Data');
+                slide.addText('Primary Data: Collected directly by the researcher for the current study.', { x: 0.8, y: 2.2, w: 11.5, h: 0.5, fontSize: 15, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.2, w: 0.08, h: 0.5, fill: { color: RED } });
+                slide.addText('Secondary Data: Already collected by someone else for a different purpose; re-used by the current researcher.', { x: 0.8, y: 2.8, w: 11.5, h: 0.5, fontSize: 15, color: DARK, fontFace: 'Arial' });
+                slide.addShape(pptx.ShapeType.rect, { x: 0.5, y: 2.8, w: 0.08, h: 0.5, fill: { color: RED } });
+
+                const dataMethods = [
+                    ['Method', 'Description & Suitability', 'Kenyan Application'],
+                    ['Questionnaire / Survey', 'Structured set of questions administered to respondents', 'FinAccess survey, KDHS, KNBS Labour Force Survey'],
+                    ['Interview', 'Direct verbal interaction (face-to-face or phone). Allows probing.', 'CBK interviews with bank executives; KRA compliance interviews'],
+                    ['Observation', 'Researcher directly watches and records events without intervention', 'Traffic flow counts on Thika Superhighway; wildlife census in Maasai Mara'],
+                    ['Experiment', 'Researcher manipulates one variable and controls others', 'Agricultural trials comparing fertiliser types on maize yield at KARI Njoro'],
+                    ['Administrative Records', 'Using data already collected for administrative purposes', 'Hospital birth records; KRA tax returns; NTSA accident reports']
+                ];
+                let yPos7 = 3.5;
+                dataMethods.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.8, y: yPos7, w: 2.5, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 3.5, y: yPos7, w: 4.5, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 8.2, y: yPos7, w: 4.0, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos7 += 0.4;
+                });
+
+                // ===== SLIDE 20: SOURCES OF ERROR =====
+                slide = addSlideWithHeader('7. Sources of Error in Data Collection');
+                const errors = [
+                    ['Error Type', 'Description', 'Kenyan Example / Remedy'],
+                    ['Sampling Error', 'Random variation between sample estimates and true population values', 'Sample mean income in Nairobi differs from true mean by chance. Reduced by increasing sample size.'],
+                    ['Coverage Error', 'Sampling frame does not perfectly represent the population', 'Using a phone directory excludes those without phones (~28% of adults, FinAccess 2021)'],
+                    ['Non-Response Error', 'Selected individuals do not respond or cannot be reached', 'Pastoralist communities in North Horr initially missed; additional enumeration required'],
+                    ['Measurement Error', 'Data recorded differs from the true value', 'Respondents underreporting income; enumerators rounding ages to multiples of 5 ("age heaping")'],
+                    ['Response Bias', 'Respondents give socially desirable or inaccurate answers', 'Overstating assets to appear wealthier; understating alcohol consumption']
+                ];
+                let yPos8 = 2.1;
+                errors.forEach((row, idx) => {
+                    const isHeader = idx === 0;
+                    slide.addText(row[0], { x: 0.5, y: yPos8, w: 2.2, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[1], { x: 2.9, y: yPos8, w: 3.8, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    slide.addText(row[2], { x: 6.9, y: yPos8, w: 5.5, h: 0.35, fontSize: isHeader ? 12 : 11, color: isHeader ? RED : DARK, fontFace: 'Arial', bold: isHeader });
+                    yPos8 += 0.4;
+                });
+
+                // ===== SLIDE 21: TOPIC SUMMARY =====
+                slide = addSlideWithHeader('8. Topic 1 Summary');
+                const summaryItems = [
+                    'Statistics: Science of collecting, organising, analysing, and interpreting data. Descriptive and Inferential.',
+                    'Population vs Sample: Population = all units. Sample = subset. Parameter = population summary. Statistic = sample summary.',
+                    'Census vs Survey: Census studies all; survey studies a sample. Trade-off: completeness vs cost and time.',
+                    'Levels of Measurement: Nominal → Ordinal → Interval → Ratio (NOIR). Higher levels support more analysis.',
+                    'Types of Variables: Quantitative (discrete/continuous) vs Qualitative (categorical). Determines appropriate methods.',
+                    'Probability Sampling: SRS, Stratified, Cluster, Systematic. Each has different properties and use cases.',
+                    'Non-Probability Sampling: Purposive, convenience, snowball. Not generalisable via probability theory.',
+                    'Data Sources: Primary (collected directly) vs Secondary (re-used). Methods include questionnaire, interview, observation, experiment, records.',
+                    'Errors: Sampling error (random); coverage, non-response, measurement, response bias (non-sampling). Good design minimises both.'
+                ];
+                addBulletPoints(slide, summaryItems, 2.1);
+
+                // ===== SLIDE 22: PROBLEM SET A =====
+                slide = addSlideWithHeader('Problem Set 1 — Section A');
+                slide.addText('Answer all questions. Show your reasoning clearly. Where asked to justify, give a brief explanation of no more than 3 sentences. (2 marks each)', { x: 0.5, y: 2.0, w: 12.33, h: 0.5, fontSize: 13, color: MEDIUM_GRAY, fontFace: 'Arial' });
+                addNumberedList(slide, [
+                    'Define the term "parameter" and explain how it differs from a "statistic". Give a Kenyan example of each.',
+                    'A researcher records the following for 100 Nairobi residents: (a) monthly income in Ksh, (b) neighbourhood (estate name), (c) satisfaction with county services (Very Satisfied / Satisfied / Neutral / Dissatisfied / Very Dissatisfied), (d) number of cars owned. State the level of measurement and variable type for each.',
+                    'Explain why a census of all informal traders in Gikomba Market might be impractical. Suggest an appropriate sampling method and justify your choice.',
+                    'Distinguish between a sampling frame and a population. Give an example where these two differ significantly in a Kenyan context.'
+                ], 2.6);
+
+                // ===== SLIDE 23: PROBLEM SET B & C =====
+                slide = addSlideWithHeader('Problem Set 1 — Sections B & C');
+                slide.addText('Section B — Applied Problems (5 marks each)', { x: 0.5, y: 2.0, w: 12.33, h: 0.4, fontSize: 14, color: RED, fontFace: 'Arial', bold: true });
+                addNumberedList(slide, [
+                    'A study wishes to estimate the average monthly expenditure of households in Nairobi County. The county has 4 sub-counties with household counts: Westlands (45,000), Starehe (38,000), Langata (52,000), and Dagoretti (41,000). A stratified sample of 400 households is to be drawn using proportional allocation. Calculate the number of households to be sampled from each sub-county. Show all workings.',
+                    'A health researcher uses systematic sampling to survey patients at Kenyatta National Hospital. In a typical day 480 outpatients are seen. The researcher wants to interview 40 patients. (a) Calculate the sampling interval k. (b) If the random start is patient number 7, list the first five patients selected. (c) State one potential bias that could affect this design at KNH and suggest how to reduce it.',
+                    'Read the following excerpt and answer the questions: "The 2022 KDHS collected data from 42,627 households selected from 1,782 clusters across Kenya\'s 47 counties. Urban and rural areas were treated as separate strata within each county." (a) Identify the study population. (b) What sampling method is described? (c) What are the strata? (d) Why was it not feasible to conduct a census for this study?'
+                ], 2.5);
+
+                slide.addText('Section C — Critical Thinking (8 marks)', { x: 0.5, y: 5.5, w: 12.33, h: 0.4, fontSize: 14, color: RED, fontFace: 'Arial', bold: true });
+                slide.addText('A television channel surveys viewers by asking them to send an SMS vote: "Do you support the new fuel levy? YES or NO?" Of 50,000 respondents, 72% say NO. The presenter concludes: "Kenyans overwhelmingly oppose the fuel levy." Critically evaluate this conclusion. In your answer: (a) identify the sampling method used, (b) identify at least two sources of bias, (c) explain whether the conclusion is statistically justified, and (d) propose a better data collection approach.', { x: 0.8, y: 5.9, w: 11.5, h: 0.8, fontSize: 11, color: DARK, fontFace: 'Arial' });
+
+                // ===== SLIDE 24: RECOMMENDED READING =====
+                slide = pptx.addSlide();
+                slide.background = { color: WHITE };
+                slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 13.33, h: 0.7, fill: { color: RED } });
+                slide.addText('AIU', { x: 0.3, y: 0.05, w: 0.8, h: 0.6, fontSize: 16, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                slide.addText('AFRICA INTERNATIONAL UNIVERSITY', { x: 1.2, y: 0.05, w: 4.5, h: 0.6, fontSize: 11, color: WHITE, fontFace: 'Arial', bold: true, valign: 'middle' });
+                slide.addText('STA 201 — Probability & Statistics I', { x: 9.5, y: 0.05, w: 3.5, h: 0.6, fontSize: 10, color: WHITE, fontFace: 'Arial', align: 'right', valign: 'middle' });
+
+                slide.addText('Recommended Reading', { x: 0.5, y: 1.0, w: 12.33, h: 0.7, fontSize: 28, color: RED, fontFace: 'Arial', bold: true, align: 'center', valign: 'middle' });
+                slide.addShape(pptx.ShapeType.rect, { x: 5.8, y: 1.8, w: 1.8, h: 0.04, fill: { color: RED } });
+
+                const readings = [
+                    'Walpole, Myers & Myers — Probability & Statistics for Engineers & Scientists (9th ed.): Chapter 1',
+                    'Devore — Probability and Statistics for Engineering and the Sciences (9th ed.): Chapter 1',
+                    'KNBS — Kenya Population and Housing Census 2019, Volume I — knbs.or.ke',
+                    'KDHS 2022 — Final Report, Chapter 1 — dhsprogram.com'
+                ];
+                addBulletPoints(slide, readings, 2.3);
+
+                slide.addShape(pptx.ShapeType.rect, { x: 5.8, y: 4.8, w: 1.8, h: 0.04, fill: { color: RED } });
+                slide.addText('Department of Mathematics · Africa International University', { x: 0.5, y: 5.0, w: 12.33, h: 0.5, fontSize: 14, color: MEDIUM_GRAY, fontFace: 'Arial', align: 'center', valign: 'middle' });
+                slide.addText('End of Week 1 Lecture Notes', { x: 0.5, y: 5.5, w: 12.33, h: 0.4, fontSize: 12, color: RED, fontFace: 'Arial', align: 'center', valign: 'middle' });
+
+                // Generate PPTX
+                pptx.writeFile({ fileName: 'STA201_Week1_Introduction_to_Statistics.pptx' })
+                    .then(() => {
+                        btn.disabled = false;
+                        btn.textContent = '📥 Download PPTX Presentation';
+                    })
+                    .catch((err) => {
+                        console.error('PPTX generation error:', err);
+                        btn.disabled = false;
+                        btn.textContent = '📥 Download PPTX Presentation';
+                        alert('There was an error generating the PPTX file. Please try again.');
+                    });
+
+            } catch (err) {
+                console.error('Error:', err);
+                btn.disabled = false;
+                btn.textContent = '📥 Download PPTX Presentation';
+                alert('There was an error generating the PPTX file. Please try again.');
+            }
+        }
+
+        // =============================================================
+        // SLIDE DATA FOR DISPLAY - All content from notes with tables
+        // =============================================================
+
+        const slidesData = [{
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#C8102E]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#C8102E] flex items-center justify-center shadow-[0_0_30px_rgba(200,16,46,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">AIU</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-[#C8102E] font-bold tracking-[0.3em] mb-1">AFRICA INTERNATIONAL UNIVERSITY</p>
+                            <p class="text-xs text-dark-muted mb-4">Department of Mathematics · Undergraduate Programme · 3 Credit Hours</p>
+                            <h1 class="text-3xl md:text-5xl font-extrabold red-glow mb-3 text-dark">STA 201 — Probability & Statistics I</h1>
+                            <div class="w-24 h-1 bg-[#C8102E] mx-auto mb-4"></div>
+                            <p class="text-2xl md:text-3xl font-bold text-[#C8102E]">Week 1: Introduction to Statistics & Data Collection</p>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#C8102E]/10 border border-[#C8102E]/20 text-dark text-sm">📊 Descriptive Stats</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C8102E]/10 border border-[#C8102E]/20 text-dark text-sm">🎯 Inferential Stats</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C8102E]/10 border border-[#C8102E]/20 text-dark text-sm">📋 Sampling</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C8102E]/10 border border-[#C8102E]/20 text-dark text-sm">🇰🇪 Kenyan Context</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-1 h-8 bg-[#C8102E]"></div>
+                            <h2 class="text-3xl md:text-4xl font-bold text-dark">Learning Objectives</h2>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Define statistics and explain its role in research, policy, and professional practice.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Distinguish between descriptive and inferential statistics.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Classify variables by type: nominal, ordinal, interval, and ratio.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Identify the population and sample in a given study.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Differentiate between a census and a sample survey, with their trade-offs.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Describe and apply at least four sampling techniques.</span></div>
+                            <div class="flex items-start gap-2 p-2 bg-[#C8102E]/5 rounded-lg col-span-2"><span class="text-[#C8102E] text-lg">•</span><span class="text-sm text-dark-secondary">Evaluate the appropriateness of a sampling method for a given Kenyan context.</span></div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">1. What is Statistics?</h2>
+                        <p class="text-dark-secondary leading-relaxed">Statistics is the science of <span class="text-[#C8102E] font-bold">collecting, organising, summarising, analysing, and interpreting</span> data in order to draw conclusions and make decisions in the presence of uncertainty.</p>
+                        <div class="tip-box p-3 rounded-lg mt-4">
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E] font-bold">Etymology:</span> The word statistics comes from the Latin <span class="italic">statisticum collegium</span> (council of state) and the Italian <span class="italic">statista</span> (statesman). Governments have collected data on populations, land, and wealth for thousands of years — from ancient Egyptian grain records to modern national censuses.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">1.1 Two Main Branches of Statistics</h2>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/15">
+                                <p class="font-bold text-[#C8102E] text-lg">Descriptive Statistics</p>
+                                <p class="text-sm text-dark-secondary">Organises, summarises, and presents data in a meaningful way — using numbers, tables, and graphs.</p>
+                                <p class="text-xs text-dark-muted mt-1">Answers: <span class="italic">What does the data show?</span></p>
+                                <ul class="bulleted-list text-sm text-dark-secondary mt-2">
+                                    <li>Average monthly income across 47 counties (KNBS 2019)</li>
+                                    <li>Bar chart of university enrolment by gender</li>
+                                    <li>Percentage of households with electricity in Turkana</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/15">
+                                <p class="font-bold text-[#C8102E] text-lg">Inferential Statistics</p>
+                                <p class="text-sm text-dark-secondary">Uses data from a sample to make estimates, predictions, or decisions about a larger population — with a measure of uncertainty.</p>
+                                <p class="text-xs text-dark-muted mt-1">Answers: <span class="italic">What can we conclude beyond this data?</span></p>
+                                <ul class="bulleted-list text-sm text-dark-secondary mt-2">
+                                    <li>Estimating the average income of all Kenyans from a sample</li>
+                                    <li>Testing whether a new malaria drug reduces mortality</li>
+                                    <li>Predicting Kenya's 2030 population from census trends</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">1.2 Why Statistics Matters in Kenya</h2>
+                        <p class="text-dark-secondary mb-4">Statistics underpins decision-making at every level — from village-level water projects to national development planning.</p>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead><tr><th>Institution / Context</th><th>How Statistics Is Used</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Kenya National Bureau of Statistics (KNBS)</td><td>Produces the national census, GDP estimates, CPI, and the Statistical Abstract</td></tr>
+                                    <tr><td class="highlight">Central Bank of Kenya (CBK)</td><td>Uses statistical models to set the benchmark interest rate, track inflation</td></tr>
+                                    <tr><td class="highlight">Ministry of Health / NASCOP</td><td>Uses surveillance data to track HIV/AIDS, TB, and malaria prevalence</td></tr>
+                                    <tr><td class="highlight">Independent Electoral & Boundaries Commission (IEBC)</td><td>Uses population statistics to delimit constituency boundaries</td></tr>
+                                    <tr><td class="highlight">Safaricom / Telecoms</td><td>Analyses transaction data to detect fraud, predict churn, and price services</td></tr>
+                                    <tr><td class="highlight">Agricultural sector (KTDA, NCPB)</td><td>Uses yield statistics and weather data to forecast harvests</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">2.1 Population and Sample</h2>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Population</p>
+                                <p class="text-sm text-dark-secondary">The complete set of all individuals, objects, measurements, or events that share a characteristic of interest and about which we wish to draw conclusions.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Sample</p>
+                                <p class="text-sm text-dark-secondary">A subset of the population actually selected for study. The sample is used to make inferences about the population.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Parameter</p>
+                                <p class="text-sm text-dark-secondary">A numerical summary (e.g. mean, proportion) computed from the entire population. Usually unknown and estimated from the sample.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Statistic</p>
+                                <p class="text-sm text-dark-secondary">A numerical summary computed from the sample. Used to estimate a population parameter. Statistics vary from sample to sample.</p>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-3 rounded-lg mt-4">
+                            <p class="font-bold text-[#C8102E]">Example — Population vs Sample in Kenya</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Study:</span> Average maize yield per acre among all smallholder farmers in Uasin Gishu County</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Population:</span> All smallholder farmers in Uasin Gishu County (≈120,000 households)</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Sample:</span> 400 farmers randomly selected from the county register</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Parameter:</span> True mean yield per acre for all 120,000 farmers, e.g. μ = 18.4 bags/acre</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Statistic:</span> Sample mean yield x̄ = 17.9 bags/acre from the 400 sampled farmers</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">2.2 Variables and Data</h2>
+                        <p class="text-dark-secondary">A <span class="text-[#C8102E] font-bold">variable</span> is any characteristic, number, or quantity that can be measured or counted across different members of a population. The values a variable takes are called <span class="text-[#C8102E] font-bold">data</span>.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-4">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-lg">Quantitative (Numerical)</p>
+                                <p class="text-sm text-dark-secondary"><span class="font-bold">Discrete:</span> Countable values. E.g. number of children in a household, number of matatus on a route.</p>
+                                <p class="text-sm text-dark-secondary"><span class="font-bold">Continuous:</span> Takes any value in an interval. E.g. height, rainfall in mm, temperature in Nairobi.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-lg">Qualitative (Categorical)</p>
+                                <p class="text-sm text-dark-secondary">Takes category labels (no natural arithmetic). E.g. county of residence, type of crop grown, method of payment (cash/M-Pesa/card).</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">3. Levels of Measurement (Types of Data)</h2>
+                        <div class="noir-memory p-4 rounded-lg mb-4 text-center">
+                            <p class="text-[#C8102E] font-bold text-xl">N → O → I → R</p>
+                            <p class="text-dark-secondary text-sm">Nominal · Ordinal · Interval · Ratio</p>
+                            <p class="text-dark-muted text-xs">Each level adds one property to the previous level.</p>
+                            <p class="text-dark-muted text-xs mt-1">The higher the level, the more statistical techniques are available.</p>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead><tr><th>Level</th><th>Description</th><th>Properties</th><th>Kenyan Example</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Nominal</td><td>Categories with no inherent order or numerical meaning</td><td>Identity only. Can only count frequencies. No ranking, no arithmetic.</td><td>County of birth (Nairobi, Mombasa, Kisumu); type of mobile network (Safaricom, Airtel, Telkom); religion.</td></tr>
+                                    <tr><td class="highlight">Ordinal</td><td>Categories with a meaningful order but unequal or unknown intervals</td><td>Identity + Rank. Can rank, but cannot add or subtract meaningfully.</td><td>Customer satisfaction (1=Very Poor ... 5=Excellent); education level (Primary, Secondary, Tertiary); KCSE grade (A, B, C, D, E).</td></tr>
+                                    <tr><td class="highlight">Interval</td><td>Numerical data with equal intervals between values but no true zero point</td><td>Identity + Rank + Equal intervals. Can add/subtract. Ratios are NOT meaningful.</td><td>Temperature in °C (0°C does not mean 'no heat'); year of birth; standardised test scores.</td></tr>
+                                    <tr><td class="highlight">Ratio</td><td>Numerical data with equal intervals AND a true zero (zero means none of the quantity)</td><td>Identity + Rank + Equal intervals + True zero. All arithmetic operations meaningful.</td><td>Income in Ksh; age in years; weight in kg; distance in km; number of livestock owned.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">Example — Classifying Variables</h2>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead><tr><th>Variable</th><th>Type</th><th>Level</th></tr></thead>
+                                <tbody>
+                                    <tr><td>Number of children per household in Nairobi</td><td>Quantitative — Discrete</td><td class="highlight">Ratio</td></tr>
+                                    <tr><td>Preferred payment method (Cash / M-Pesa / Card)</td><td>Qualitative — Categorical</td><td class="highlight">Nominal</td></tr>
+                                    <tr><td>KCSE grade awarded to a student (A, B+, B, ...)</td><td>Qualitative — Categorical</td><td class="highlight">Ordinal</td></tr>
+                                    <tr><td>Monthly income in Ksh</td><td>Quantitative — Continuous</td><td class="highlight">Ratio</td></tr>
+                                    <tr><td>Year a person was born</td><td>Quantitative — Discrete</td><td class="highlight">Interval</td></tr>
+                                    <tr><td>County of residence</td><td>Qualitative — Categorical</td><td class="highlight">Nominal</td></tr>
+                                    <tr><td>Body mass index (BMI) of hospital patients</td><td>Quantitative — Continuous</td><td class="highlight">Ratio</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">4. Census vs Sample Survey</h2>
+                        <div class="overflow-x-auto">
+                            <table class="data-table">
+                                <thead><tr><th>Feature</th><th>Census</th><th>Sample Survey</th></tr></thead>
+                                <tbody>
+                                    <tr><td><span class="highlight">Coverage</span></td><td>Entire population</td><td>A representative subset</td></tr>
+                                    <tr><td><span class="highlight">Cost</span></td><td>Very high</td><td>Significantly lower</td></tr>
+                                    <tr><td><span class="highlight">Time required</span></td><td>Long (months to years)</td><td>Shorter (days to weeks)</td></tr>
+                                    <tr><td><span class="highlight">Accuracy</span></td><td>Complete data (if no non-response)</td><td>Subject to sampling error</td></tr>
+                                    <tr><td><span class="highlight">Feasibility</span></td><td>Difficult for large / dispersed populations</td><td>Feasible for most populations</td></tr>
+                                    <tr><td><span class="highlight">Use of results</span></td><td>Definitive baseline statistics</td><td>Estimates with margin of error</td></tr>
+                                    <tr><td><span class="highlight">Kenya example</span></td><td>KNBS Population & Housing Census (every 10 years)</td><td>KDHS, FinAccess Survey, Labour Force Survey</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">🇰🇪 Kenyan Case Study — The Kenya Population & Housing Census</h2>
+                        <div class="kenya-box p-3 rounded-lg">
+                            <p class="text-sm text-dark-secondary">The <span class="text-[#C8102E] font-bold">2019 Kenya Population and Housing Census</span> conducted by KNBS on the night of 24/25 August 2019 was Kenya's first fully digital census.</p>
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li>Covered all 47 counties and enumerated approximately <span class="text-[#C8102E]">47.6 million</span> Kenyans.</li>
+                                <li>Used digital devices (tablets) for data capture for the first time, replacing paper forms.</li>
+                                <li>Took approximately 3 years of planning and cost <span class="text-[#C8102E]">KSh 18.5 billion</span>.</li>
+                                <li>Produced data on age, sex, education, employment, housing conditions, and disability.</li>
+                                <li>Results are used for constituency delimitation (IEBC), development planning (Vision 2030), and resource allocation (CRA).</li>
+                            </ul>
+                            <p class="text-sm text-dark-muted mt-2"><span class="text-[#C8102E]">Why not conduct a census every year?</span> Cost, time, and practical constraints. Between censuses, KNBS uses sample surveys to track changes.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">🇰🇪 Kenyan Case Study — KDHS</h2>
+                        <div class="kenya-box p-3 rounded-lg">
+                            <p class="text-sm text-dark-secondary">The <span class="text-[#C8102E] font-bold">Kenya Demographic & Health Survey (KDHS)</span> is a nationally representative survey conducted approximately every five years (most recent: 2022).</p>
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li>Target population: Women aged 15–49 and men aged 15–54 across Kenya.</li>
+                                <li>Sample size: approximately <span class="text-[#C8102E]">42,000 households</span> selected using stratified two-stage cluster sampling.</li>
+                                <li>Collects data on: fertility, family planning, maternal and child health, HIV prevalence, nutrition, and domestic violence.</li>
+                                <li>Results are used to set national health targets and monitor SDG indicators.</li>
+                            </ul>
+                            <p class="text-sm text-dark-muted mt-2"><span class="text-[#C8102E]">Sampling design used:</span> Stratified two-stage cluster sampling — the country is stratified into urban/rural by county; clusters (enumeration areas) are selected first, then households within clusters.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5. Sampling Techniques</h2>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/15">
+                                <p class="font-bold text-[#C8102E] text-lg">Probability Sampling</p>
+                                <p class="text-sm text-dark-secondary">Every member of the population has a known, non-zero probability of being selected. Supports generalisation through probability theory.</p>
+                                <p class="text-xs text-dark-muted mt-1">Includes: SRS, Stratified, Cluster, Systematic</p>
+                            </div>
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/15">
+                                <p class="font-bold text-[#C8102E] text-lg">Non-Probability Sampling</p>
+                                <p class="text-sm text-dark-secondary">Selection is based on the researcher's judgement or convenience. Cannot support formal probability-based inference. Used in exploratory and qualitative research.</p>
+                                <p class="text-xs text-dark-muted mt-1">Includes: Purposive, Convenience, Snowball, Quota</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5.1 Detailed Comparison of Sampling Methods</h2>
+                        <div class="overflow-x-auto">
+                            <table class="data-table text-xs">
+                                <thead><tr><th>Method</th><th>Definition</th><th>Advantages</th><th>Limitations</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Simple Random Sampling (SRS)</td><td>Every member of the population has an equal and independent chance of selection</td><td>Free from systematic bias; supports probability calculations</td><td>Requires a complete sampling frame; impractical for very large/dispersed populations</td></tr>
+                                    <tr><td class="highlight">Stratified Sampling</td><td>Population divided into mutually exclusive strata; SRS applied within each stratum</td><td>Ensures representation of all subgroups; more precise estimates than SRS</td><td>Requires prior knowledge of population structure; complex to implement</td></tr>
+                                    <tr><td class="highlight">Cluster Sampling</td><td>Population divided into clusters; clusters selected at random, then all or some members within clusters surveyed</td><td>Cost-effective for geographically dispersed populations; no full sampling frame needed</td><td>Higher sampling error than SRS; clusters must be representative of population</td></tr>
+                                    <tr><td class="highlight">Systematic Sampling</td><td>Every k-th element is selected from a list after a random starting point</td><td>Simple to implement; requires only a partial sampling frame</td><td>Periodic patterns in the list can introduce bias; not fully random</td></tr>
+                                    <tr><td class="highlight">Purposive / Judgement</td><td>Researcher deliberately selects units based on expertise or specific criteria</td><td>Useful for expert opinion studies and qualitative research</td><td>Highly subjective; results cannot be generalised using probability theory</td></tr>
+                                    <tr><td class="highlight">Convenience Sampling</td><td>Researcher selects the most readily available members of the population</td><td>Quick, easy, and inexpensive</td><td>Prone to severe selection bias; not suitable for formal inference</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5.2 Simple Random Sampling — In Detail</h2>
+                        <div class="space-y-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">SRS with Replacement</p>
+                                <p class="text-sm text-dark-secondary">Each selected unit is returned to the population before the next draw. The same unit may appear more than once. Easier to analyse mathematically; used in theoretical probability models.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">SRS without Replacement</p>
+                                <p class="text-sm text-dark-secondary">Each selected unit is removed from the pool for subsequent draws. No unit appears twice. More common in practice — ensures no individual is surveyed twice.</p>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-3 rounded-lg mt-4">
+                            <p class="font-bold text-[#C8102E]">How to conduct SRS:</p>
+                            <ol class="numbered-list text-sm text-dark-secondary">
+                                <li>Obtain or construct a complete sampling frame (list of all N population members).</li>
+                                <li>Assign each member a unique number from 1 to N.</li>
+                                <li>Use a random number table, computer-generated random numbers, or a ballot.</li>
+                                <li>Select n numbers; the corresponding members form the sample.</li>
+                            </ol>
+                            <p class="text-sm text-dark-secondary mt-2"><span class="text-[#C8102E]">Example:</span> A researcher wants to survey 50 students from a university with 2,000 enrolled students about M-Pesa usage. Obtain register, number 0001-2000, use RANDBETWEEN, select 50 unique numbers.</p>
+                            <p class="text-xs text-dark-muted">Limitation: Requires a complete, up-to-date student register. Geographically dispersed students may be hard to reach.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5.3 Stratified Sampling — In Detail</h2>
+                        <p class="text-dark-secondary">Used when the population has distinct, non-overlapping subgroups (strata) and the researcher wants to ensure each subgroup is represented in the sample.</p>
+                        <div class="space-y-2 mt-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Steps:</p>
+                                <ol class="numbered-list text-sm text-dark-secondary">
+                                    <li>Divide the population into L mutually exclusive, exhaustive strata (e.g. by county, gender, age group).</li>
+                                    <li>Determine the sample size n and allocate it to each stratum.</li>
+                                    <li>Draw an independent SRS from within each stratum.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="data-table text-sm">
+                                <thead><tr><th>Method</th><th>Formula</th><th>When to use</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Equal / Uniform</td><td>nᵢ = n / L</td><td>When strata are similar in size and variability</td></tr>
+                                    <tr><td class="highlight">Proportional</td><td>nᵢ = n × (Nᵢ / N)</td><td>When strata sizes differ; ensures overall representativeness</td></tr>
+                                    <tr><td class="highlight">Optimal (Neyman)</td><td>nᵢ = n × (Nᵢσᵢ / ΣNⱼσⱼ)</td><td>When minimising variance matters and stratum SDs are known</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="kenya-box p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#C8102E]">🇰🇪 KDHS 2022 — Stratified Sampling</p>
+                            <p class="text-sm text-dark-secondary">Kenya's 47 counties are grouped into urban and rural sub-strata, giving approximately 94 strata. Proportional allocation is used: counties with larger populations contribute more households. Within each stratum, enumeration areas (clusters) are selected by probability proportional to size (PPS).</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5.4 Systematic Sampling — In Detail</h2>
+                        <p class="text-dark-secondary">In systematic sampling, a random starting point is chosen, and every k-th unit on a list is selected thereafter.</p>
+                        <div class="space-y-2 mt-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Steps:</p>
+                                <ol class="numbered-list text-sm text-dark-secondary">
+                                    <li>Determine population size N and desired sample size n.</li>
+                                    <li>Calculate the sampling interval: k = N / n.</li>
+                                    <li>Randomly select a starting point r, where 1 ≤ r ≤ k.</li>
+                                    <li>Select units r, r+k, r+2k, r+3k, ... until n units are chosen.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#C8102E]">Example — Systematic Sampling at a Matatu Stage</p>
+                            <p class="text-sm text-dark-secondary">A researcher wants to survey 60 commuters arriving at the Machakos Country Bus Station between 7:00 and 9:00 am. An estimated 600 commuters arrive in this window.</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Sampling interval:</span> k = 600 / 60 = 10</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Random start:</span> r = 4</p>
+                            <p class="text-sm text-dark-secondary"><span class="text-[#C8102E]">Sample:</span> Interview the 4th, 14th, 24th, 34th, ... commuter to arrive.</p>
+                            <p class="text-xs text-dark-muted mt-1">⚠️ Caution: If commuters arrive in periodic 'waves' (e.g. every bus brings 10 passengers), systematic sampling could over-sample or under-sample specific types of travellers.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">5.5 Cluster Sampling — In Detail</h2>
+                        <p class="text-dark-secondary">Cluster sampling is ideal when a complete sampling frame is unavailable or when the population is geographically dispersed. The population is divided into clusters (usually natural groupings), clusters are randomly selected, and all or some members within selected clusters are surveyed.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-4">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E]">One-Stage Cluster Sampling</p>
+                                <p class="text-sm text-dark-secondary">All members of the selected clusters are surveyed. Example: Randomly select 10 secondary schools in Kisumu County; survey ALL students in each selected school.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E]">Two-Stage Cluster Sampling</p>
+                                <p class="text-sm text-dark-secondary">Clusters are selected first (Stage 1), then a sample of members within each cluster is selected (Stage 2). Example: Select 10 schools (Stage 1); then randomly select 30 students per school (Stage 2).</p>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#C8102E]">🇰🇪 Cluster Sampling — Huduma Centre Service Survey</p>
+                            <p class="text-sm text-dark-secondary">Population: All Kenyans who used a Huduma Centre in the last 12 months. Problem: No full sampling frame. Solution: The 53 Huduma Centres are treated as clusters. Stage 1: Randomly select 15 Huduma Centres using PPS sampling. Stage 2: At each selected centre, intercept every 5th visitor on randomly selected days.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">6. Sources of Data</h2>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Primary Data</p>
+                                <p class="text-sm text-dark-secondary">Collected directly by the researcher for the current study.</p>
+                                <p class="text-xs text-dark-muted mt-1">Examples: Administering a questionnaire to maize farmers in Nakuru; conducting a lab experiment; direct observation at a polling station.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Secondary Data</p>
+                                <p class="text-sm text-dark-secondary">Already collected by someone else for a different purpose; re-used by the current researcher.</p>
+                                <p class="text-xs text-dark-muted mt-1">Examples: KNBS Statistical Abstract; CBK Monetary Policy Reports; WHO disease data; Safaricom Annual Reports; World Bank Open Data.</p>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto mt-4">
+                            <table class="data-table text-sm">
+                                <thead><tr><th>Method</th><th>Description & Suitability</th><th>Kenyan Application</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Questionnaire / Survey</td><td>Structured set of questions administered to respondents. Can be self-administered, interviewer-administered, or online.</td><td>FinAccess household survey on financial inclusion; KDHS health survey; KNBS Labour Force Survey.</td></tr>
+                                    <tr><td class="highlight">Interview</td><td>Direct verbal interaction (face-to-face or phone). Allows probing and clarification.</td><td>CBK interviews with bank executives; KRA compliance interviews with SMEs.</td></tr>
+                                    <tr><td class="highlight">Observation</td><td>Researcher directly watches and records events without intervention.</td><td>Traffic flow counts on Thika Superhighway; wildlife census in Maasai Mara.</td></tr>
+                                    <tr><td class="highlight">Experiment</td><td>Researcher manipulates one variable and controls others to measure the effect.</td><td>Agricultural trials comparing two fertiliser types on maize yield at KARI Njoro.</td></tr>
+                                    <tr><td class="highlight">Administrative Records</td><td>Using data already collected for administrative purposes.</td><td>Hospital birth records; KRA tax returns; school attendance registers; NTSA accident reports.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">7. Sources of Error in Data Collection</h2>
+                        <div class="overflow-x-auto">
+                            <table class="data-table text-sm">
+                                <thead><tr><th>Error Type</th><th>Description</th><th>Kenyan Example / Remedy</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="highlight">Sampling Error</td><td>Random variation between sample estimates and true population values; present even in a perfectly designed sample.</td><td>Sample mean income in Nairobi differs from true mean by chance. Reduced by increasing sample size.</td></tr>
+                                    <tr><td class="highlight">Coverage Error</td><td>Occurs when the sampling frame does not perfectly represent the population.</td><td>Using a phone-number directory to survey Kenyans excludes those without phones (~28% of adults, FinAccess 2021).</td></tr>
+                                    <tr><td class="highlight">Non-Response Error</td><td>Occurs when selected individuals do not respond or cannot be reached.</td><td>In the 2019 Census, some pastoralist communities in North Horr were initially missed; additional enumeration was required.</td></tr>
+                                    <tr><td class="highlight">Measurement Error</td><td>Occurs when the data recorded differs from the true value.</td><td>Respondents underreporting income in a tax-related survey; enumerators rounding ages to multiples of 5 ('age heaping').</td></tr>
+                                    <tr><td class="highlight">Response Bias</td><td>Respondents give socially desirable or inaccurate answers.</td><td>Respondents overstating their assets to appear wealthier; understating alcohol consumption in a health survey.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">8. Topic 1 Summary</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Statistics:</span> <span class="text-dark-secondary">Science of collecting, organising, analysing, and interpreting data. Two branches: Descriptive and Inferential.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Population vs Sample:</span> <span class="text-dark-secondary">Population: all units of interest. Sample: subset studied. Parameter: population summary. Statistic: sample summary.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Census vs Survey:</span> <span class="text-dark-secondary">Census studies all; survey studies a sample. Trade-off: completeness vs cost and time.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Levels of Measurement:</span> <span class="text-dark-secondary">Nominal (name only) → Ordinal (+ rank) → Interval (+ equal gaps, no true zero) → Ratio (+ true zero). Higher levels support more analysis.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Types of Variables:</span> <span class="text-dark-secondary">Quantitative (discrete / continuous) vs Qualitative (categorical). Determines appropriate methods.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Probability Sampling:</span> <span class="text-dark-secondary">SRS: equal probability. Stratified: subgroup representation. Cluster: geographical groupings. Systematic: every k-th unit.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Non-Probability Sampling:</span> <span class="text-dark-secondary">Purposive, convenience, snowball. Not generalisable via probability theory.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg"><span class="text-[#C8102E] font-bold">Data Sources:</span> <span class="text-dark-secondary">Primary (collected directly) vs Secondary (re-used). Methods: questionnaire, interview, observation, experiment, records.</span></div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg col-span-2"><span class="text-[#C8102E] font-bold">Errors:</span> <span class="text-dark-secondary">Sampling error (random); coverage, non-response, measurement, response bias (non-sampling). Good design minimises both.</span></div>
+                        </div>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">Problem Set 1 — Section A</h2>
+                        <p class="text-dark-muted text-sm mb-3">Answer all questions. Show your reasoning clearly. Where asked to justify, give a brief explanation of no more than 3 sentences. (2 marks each)</p>
+                        <ol class="numbered-list text-sm text-dark-secondary">
+                            <li>Define the term 'parameter' and explain how it differs from a 'statistic'. Give a Kenyan example of each.</li>
+                            <li>A researcher records the following for 100 Nairobi residents: (a) monthly income in Ksh, (b) neighbourhood (estate name), (c) satisfaction with county services (Very Satisfied / Satisfied / Neutral / Dissatisfied / Very Dissatisfied), (d) number of cars owned. State the level of measurement and variable type for each.</li>
+                            <li>Explain why a census of all informal traders in Gikomba Market might be impractical. Suggest an appropriate sampling method and justify your choice.</li>
+                            <li>Distinguish between a sampling frame and a population. Give an example where these two differ significantly in a Kenyan context.</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">Problem Set 1 — Sections B & C</h2>
+                        <p class="text-dark-muted text-sm mb-3">Section B — Applied Problems (5 marks each)</p>
+                        <ol class="numbered-list text-sm text-dark-secondary">
+                            <li>A study wishes to estimate the average monthly expenditure of households in Nairobi County. The county has 4 sub-counties with the following household counts: Westlands (45,000), Starehe (38,000), Langata (52,000), and Dagoretti (41,000). A stratified sample of 400 households is to be drawn using proportional allocation. Calculate the number of households to be sampled from each sub-county. Show all workings.</li>
+                            <li>A health researcher uses systematic sampling to survey patients at Kenyatta National Hospital. In a typical day 480 outpatients are seen. The researcher wants to interview 40 patients. (a) Calculate the sampling interval k. (b) If the random start is patient number 7, list the first five patients selected. (c) State one potential bias that could affect this design at KNH and suggest how to reduce it.</li>
+                            <li>Read the following excerpt and answer the questions: "The 2022 KDHS collected data from 42,627 households selected from 1,782 clusters across Kenya's 47 counties. Urban and rural areas were treated as separate strata within each county." (a) Identify the study population. (b) What sampling method is described? (c) What are the strata? (d) Why was it not feasible to conduct a census for this study?</li>
+                        </ol>
+                        <p class="text-dark-muted text-sm mt-3">Section C — Critical Thinking (8 marks)</p>
+                        <p class="text-sm text-dark-secondary">A television channel surveys viewers by asking them to send an SMS vote answering: "Do you support the new fuel levy? YES or NO?" Of 50,000 respondents, 72% say NO. The presenter concludes: "Kenyans overwhelmingly oppose the fuel levy." Critically evaluate this conclusion. In your answer: (a) identify the sampling method used, (b) identify at least two sources of bias, (c) explain whether the conclusion is statistically justified, and (d) propose a better data collection approach.</p>
+                    </div>
+                `
+        }, {
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-12 text-center">
+                        <div class="flex justify-center mb-4">
+                            <div class="w-16 h-16 rounded-full bg-[#C8102E] flex items-center justify-center shadow-[0_0_30px_rgba(200,16,46,0.2)]">
+                                <span class="text-white font-extrabold text-xl">AIU</span>
+                            </div>
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#C8102E] mb-4">Recommended Reading</h2>
+                        <div class="text-left max-w-2xl mx-auto space-y-2 text-sm text-dark-secondary">
+                            <p>• Walpole, Myers & Myers — <span class="text-[#C8102E]">Probability & Statistics for Engineers & Scientists</span> (9th ed.): Chapter 1 (Introduction to Statistics and Data Analysis)</p>
+                            <p>• Devore — <span class="text-[#C8102E]">Probability and Statistics for Engineering and the Sciences</span> (9th ed.): Chapter 1 (Overview and Descriptive Statistics)</p>
+                            <p>• KNBS — <span class="text-[#C8102E]">Kenya Population and Housing Census 2019</span>, Volume I — knbs.or.ke</p>
+                            <p>• KDHS 2022 — <span class="text-[#C8102E]">Final Report</span>, Chapter 1 — dhsprogram.com</p>
+                        </div>
+                        <div class="w-24 h-1 bg-[#C8102E] mx-auto my-6"></div>
+                        <button onclick="downloadPPTX()" class="download-btn">📥 Download PPTX Presentation</button>
+                        <p class="text-dark-muted text-xs mt-2">Click to download the complete slides as a PowerPoint (PPTX) file</p>
+                        <div class="mt-6">
+                            <p class="text-dark-muted text-sm">Department of Mathematics · Africa International University</p>
+                            <p class="text-[#C8102E]/60 text-xs mt-1">End of Week 1 Lecture Notes</p>
+                        </div>
+                        <div class="mt-4 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
