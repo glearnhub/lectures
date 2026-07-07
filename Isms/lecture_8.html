@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Network Security | Comprehensive Lecture Notes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Cyber Security Theme: Dark Blue with Cyan/Red Accents */
+        .cyber-blue { color: #0A1628; }
+        .cyber-blue-bg { background: #0A1628; }
+        .cyber-cyan { color: #00D4FF; }
+        .cyber-cyan-bg { background: #00D4FF; }
+        .cyber-red { color: #FF1744; }
+        .cyber-red-bg { background: #FF1744; }
+        .cyber-border { border-color: #00D4FF; }
+
+        .glass-card-cyber {
+            background: rgba(10, 22, 40, 0.92);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 212, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 212, 255, 0.06);
+        }
+
+        .glass-card-cyber-light {
+            background: rgba(10, 22, 40, 0.75);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+        }
+
+        .cyber-glow {
+            text-shadow: 0 0 20px rgba(0, 212, 255, 0.3), 0 0 40px rgba(0, 212, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #0A1628, #050D1A);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(0, 212, 255, 0.08);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #00D4FF;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(0, 212, 255, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.06) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A1628;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00D4FF;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .code-block {
+            background: #0A0A1A;
+            border-left: 4px solid #00D4FF;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .case-study {
+            background: rgba(255, 23, 68, 0.06);
+            border-left: 4px solid #FF1744;
+        }
+
+        .discussion-box {
+            background: rgba(0, 212, 255, 0.05);
+            border-left: 4px solid #00D4FF;
+        }
+
+        .comparison-table th {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00D4FF;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(0, 212, 255, 0.12);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #CCCCCC;
+        }
+
+        .text-cyber-white { color: #E8E8E8; }
+        .text-cyber-gray { color: #AAAAAA; }
+        .text-cyber-muted { color: #777777; }
+    </style>
+</head>
+<body class="text-cyber-white overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-40 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-transparent via-cyan-900/5 to-black/50 pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#00D4FF]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#FF1744]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-[#0A1628]/95 to-transparent backdrop-blur-md border-b border-[#00D4FF]/10">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#00D4FF] flex items-center justify-center text-[#0A1628] font-bold text-lg">NS</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#00D4FF] font-bold tracking-wider">NETWORK SECURITY</p>
+                            <p class="text-[10px] text-cyber-gray">Comprehensive Lecture Notes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-[#0A1628]/80 px-3 py-1 rounded-full border border-[#00D4FF]/30 text-cyber-gray">1 / 20</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/5 backdrop-blur border border-[#00D4FF]/30 hover:bg-[#00D4FF]/20 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/5 backdrop-blur border border-[#00D4FF]/30 hover:bg-[#00D4FF]/20 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00D4FF" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-[#0A2A3A]/80 rounded-full overflow-hidden backdrop-blur-sm">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#00D4FF] to-[#FF1744] rounded-full" style="width: 5%"></div>
+                </div>
+                <p class="text-[10px] text-[#00D4FF]/60 text-center mt-2 font-mono tracking-wider">✦ NETWORK SECURITY — CIA TRIAD · FIREWALLS · IDS/IPS · VPNS · WIRELESS SECURITY ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#00D4FF]/40 text-[10px] font-mono bg-[#0A1628]/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#00D4FF]/10">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // NETWORK SECURITY - Complete Lecture Notes
+        // 20-slide presentation with all content from the document
+        // =============================================================
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#00D4FF]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#00D4FF] flex items-center justify-center shadow-[0_0_30px_rgba(0,212,255,0.3)]">
+                                    <span class="text-[#0A1628] font-extrabold text-2xl">NS</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-[#00D4FF] font-bold tracking-[0.3em] mb-1">NETWORK SECURITY</p>
+                            <h1 class="text-3xl md:text-5xl font-extrabold cyber-glow mb-3 text-white">Network Security</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#00D4FF] to-[#FF1744] mx-auto mb-4"></div>
+                            <p class="text-xl text-[#00D4FF] font-bold">Comprehensive Lecture Notes</p>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm text-cyber-gray">CIA Triad</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm text-cyber-gray">Firewalls</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm text-cyber-gray">IDS/IPS</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm text-cyber-gray">VPNs</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm text-cyber-gray">Wireless Security</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Introduction & CIA Triad
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">1. Introduction to Network Security</h2>
+                        <p class="text-cyber-gray leading-relaxed"><span class="text-[#00D4FF] font-bold">Definition:</span> Network Security is the practice of protecting computer networks and data from unauthorized access, misuse, modification, or denial of service.</p>
+                        <div class="mt-4 grid md:grid-cols-3 gap-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20 text-center">
+                                <p class="font-bold text-[#00D4FF] text-lg">Confidentiality</p>
+                                <p class="text-sm text-cyber-gray">Ensuring only authorized parties can access data (e.g., encryption).</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20 text-center">
+                                <p class="font-bold text-[#00D4FF] text-lg">Integrity</p>
+                                <p class="text-sm text-cyber-gray">Ensuring data is not altered in transit or storage (e.g., checksums, hashing).</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20 text-center">
+                                <p class="font-bold text-[#00D4FF] text-lg">Availability</p>
+                                <p class="text-sm text-cyber-gray">Ensuring systems and data are accessible when needed (e.g., DDoS protection).</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#FF1744]/5 rounded-lg border-l-4 border-[#FF1744]">
+                            <p class="text-sm text-cyber-gray"><span class="text-[#FF1744] font-bold">Common Threats:</span> Malware, Phishing, MITM, DoS/DDoS, Insider threats</p>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 Discussion: Name a recent cyberattack and identify which part of the CIA triad it violated.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 3 - Basic Security Principles & Colonial Pipeline Case Study
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Basic Security Principles</h2>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF]">Defense in Depth</p>
+                                <p class="text-sm text-cyber-gray">Layering multiple security controls (firewall + IDS + encryption + access control) so no single failure compromises the whole system.</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF]">Least Privilege</p>
+                                <p class="text-sm text-cyber-gray">Users/systems should only have the minimum access needed to perform their function.</p>
+                            </div>
+                        </div>
+                        <div class="case-study p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#FF1744]">Real-World Case Study: The Colonial Pipeline Attack (2021)</p>
+                            <p class="text-sm text-cyber-gray">A ransomware attack forced Colonial Pipeline to shut down operations for several days, causing fuel shortages. Root cause: A single compromised VPN account password (found on the dark web) lacked MFA. Primary casualty: <span class="text-[#FF1744]">Availability</span>.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Firewalls
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">2. Firewalls</h2>
+                        <p class="text-cyber-gray leading-relaxed"><span class="text-[#00D4FF] font-bold">Definition:</span> A firewall is a network security device/software that monitors and controls incoming and outgoing traffic based on predefined security rules, acting as a barrier between a trusted internal network and untrusted external networks.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#00D4FF]/5 rounded border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Packet-Filtering</p>
+                                <p class="text-xs text-cyber-gray">Inspects packet headers. Fast but limited.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Stateful Inspection</p>
+                                <p class="text-xs text-cyber-gray">Tracks connection state. More context-aware.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Proxy Firewall</p>
+                                <p class="text-xs text-cyber-gray">Application-level gateway. Thorough but slower.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Next-Generation (NGFW)</p>
+                                <p class="text-xs text-cyber-gray">Combines traditional firewall with DPI, IPS, app awareness.</p>
+                            </div>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 Why use both network AND host-based firewalls? (Defense in depth)</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - Firewall Rules & Target Case Study
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Firewall Rules & Placement</h2>
+                        <p class="text-cyber-gray"><span class="text-[#00D4FF] font-bold">How Firewall Rules Work:</span> Rules specify source IP/port, destination IP/port, protocol, and action (allow/deny).</p>
+                        <div class="code-block p-2 rounded mt-2">
+                            <pre class="text-sm text-green-400"># Example rule
+Block all incoming traffic on port 23 (Telnet) from any external IP.</pre>
+                        </div>
+                        <div class="case-study p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#FF1744]">Real-World Case Study: Target Data Breach (2013)</p>
+                            <p class="text-sm text-cyber-gray">Attackers stole credentials of a third-party HVAC vendor with remote access. Internal network was not properly segmented, allowing attackers to move from vendor's access point into payment systems. 40 million credit/debit cards stolen.</p>
+                            <p class="text-xs text-cyber-muted mt-1">Lesson: A firewall is only as effective as the network segmentation behind it.</p>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 What is the risk of leaving a rule too permissive (e.g., "allow all inbound traffic")?</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - Practical Firewall Exercise
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Practical Firewall Exercise</h2>
+                        <p class="text-cyber-gray">Scenario: You are the network administrator for a small office. Write firewall rules to:</p>
+                        <ol class="numbered-list text-cyber-gray">
+                            <li>Allow employees to browse the web (HTTP/HTTPS out)</li>
+                            <li>Allow remote staff to connect via a specific VPN port</li>
+                            <li>Block all inbound traffic on Telnet (port 23) and unused ports</li>
+                            <li>Allow the office's public web server to receive HTTPS traffic from anywhere</li>
+                        </ol>
+                        <div class="code-block p-2 rounded mt-2">
+                            <pre class="text-sm text-green-400"># Example rules
+1. Allow outbound TCP 80, 443 from internal network
+2. Allow inbound UDP 1194 (OpenVPN) from any IP
+3. Deny inbound TCP 23 from any IP
+4. Allow inbound TCP 443 to web server IP</pre>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - IDS/IPS
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">3. Intrusion Detection and Prevention Systems (IDS/IPS)</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-lg">IDS</p>
+                                <p class="text-sm text-cyber-gray">Monitors network/system traffic for suspicious activity and alerts administrators — it does not block traffic itself.</p>
+                            </div>
+                            <div class="p-3 bg-[#FF1744]/5 rounded-lg border border-[#FF1744]/20">
+                                <p class="font-bold text-[#FF1744] text-lg">IPS</p>
+                                <p class="text-sm text-cyber-gray">Similar to IDS but can actively block or prevent detected threats in real time.</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#00D4FF]/5 rounded border-l-4 border-[#00D4FF]">
+                            <p class="font-bold text-[#00D4FF] text-sm">Detection Methods:</p>
+                            <ul class="bulleted-list text-xs text-cyber-gray">
+                                <li><span class="text-[#00D4FF]">Signature-Based:</span> Matches known attack patterns. Effective but misses zero-day attacks.</li>
+                                <li><span class="text-[#00D4FF]">Anomaly-Based:</span> Flags deviations from "normal" behavior. Can catch novel attacks but may produce false positives.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 8 - IDS vs IPS vs Firewall & Target Case Study
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">IDS vs. IPS vs. Firewall</h2>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg text-center border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-xl">Firewall</p>
+                                <p class="text-sm text-cyber-gray">Controls access based on rules (like a locked gate).</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg text-center border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-xl">IDS</p>
+                                <p class="text-sm text-cyber-gray">Detects and alerts (like a security camera).</p>
+                            </div>
+                            <div class="p-3 bg-[#FF1744]/5 rounded-lg text-center border border-[#FF1744]/20">
+                                <p class="font-bold text-[#FF1744] text-xl">IPS</p>
+                                <p class="text-sm text-cyber-gray">Detects AND blocks (like a security guard).</p>
+                            </div>
+                        </div>
+                        <div class="case-study p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#FF1744]">Real-World Case Study: The Human Factor (Target Breach, continued)</p>
+                            <p class="text-sm text-cyber-gray">Target had a malware detection system (FireEye) that correctly flagged the attackers' malware. However, alerts were not acted upon quickly enough, allowing attackers to extract data for weeks.</p>
+                            <p class="text-xs text-cyber-muted mt-1">Lesson: IDS/IPS technology is only as strong as the people responding to its alerts.</p>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 When might a company prefer IDS (alert-only) over IPS (auto-block)?</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - Signature vs Anomaly Detection Examples
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Signature vs. Anomaly Detection</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF]">Signature-Based Example</p>
+                                <p class="text-sm text-cyber-gray">An IDS blocks a known malware file because its hash matches a database of previously identified ransomware.</p>
+                                <p class="text-xs text-cyber-muted mt-1">✅ Effective against known threats</p>
+                            </div>
+                            <div class="p-3 bg-[#FF1744]/5 rounded-lg border border-[#FF1744]/20">
+                                <p class="font-bold text-[#FF1744]">Anomaly-Based Example</p>
+                                <p class="text-sm text-cyber-gray">An IDS flags an employee's account because it suddenly starts downloading gigabytes of files at 3 AM — a deviation from normal behavior.</p>
+                                <p class="text-xs text-cyber-muted mt-1">✅ Can catch novel attacks</p>
+                            </div>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 What are the trade-offs between signature-based and anomaly-based detection?</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - VPNs
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">4. Virtual Private Networks (VPNs)</h2>
+                        <p class="text-cyber-gray leading-relaxed"><span class="text-[#00D4FF] font-bold">Definition:</span> A VPN creates a secure, encrypted connection ("tunnel") over a public network, allowing users to send/receive data as if their devices were directly connected to a private network.</p>
+                        <div class="mt-3 p-2 bg-[#00D4FF]/5 rounded border-l-4 border-[#00D4FF]">
+                            <p class="font-bold text-[#00D4FF] text-sm">How VPNs Work:</p>
+                            <p class="text-sm text-cyber-gray">Data is encrypted at the sender's device, sent through a secure "tunnel," and decrypted at the destination — hiding the content and often the user's real IP address.</p>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-2 mt-3">
+                            <div class="p-2 bg-[#00D4FF]/5 rounded text-center border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">IPsec</p>
+                                <p class="text-xs text-cyber-gray">Network layer, site-to-site</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded text-center border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">SSL/TLS</p>
+                                <p class="text-xs text-cyber-gray">Remote-access VPNs</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded text-center border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">WireGuard</p>
+                                <p class="text-xs text-cyber-gray">Lightweight, high-performance</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 11 - VPN Types, Use Cases & Colonial Pipeline
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Types of VPNs & Use Cases</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF]">Remote-Access VPN</p>
+                                <p class="text-sm text-cyber-gray">Connects an individual user to a private network remotely (e.g., an employee working from home).</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF]">Site-to-Site VPN</p>
+                                <p class="text-sm text-cyber-gray">Connects entire networks together (e.g., linking a company's branch office to headquarters).</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#00D4FF]/5 rounded border-l-4 border-[#00D4FF]">
+                            <p class="font-bold text-[#00D4FF] text-sm">Use Cases:</p>
+                            <ul class="bulleted-list text-xs text-cyber-gray">
+                                <li>Securing communication on public Wi-Fi</li>
+                                <li>Remote employee access to internal resources</li>
+                                <li>Bypassing geographic content restrictions</li>
+                            </ul>
+                        </div>
+                        <div class="case-study p-2 rounded-lg mt-2">
+                            <p class="font-bold text-[#FF1744] text-xs">Colonial Pipeline (2021):</p>
+                            <p class="text-xs text-cyber-gray">Compromised VPN account lacked MFA. The VPN was an older system not decommissioned. Lesson: VPN + MFA + regular audits are essential.</p>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-1">
+                            <p class="text-xs text-cyber-muted">💬 Does a VPN make you completely anonymous online? Discuss limitations.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - Wireless Security
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">5. Wireless Security</h2>
+                        <p class="text-cyber-gray leading-relaxed"><span class="text-[#00D4FF] font-bold">Why Wireless Needs Special Attention:</span> Unlike wired networks, wireless signals can be intercepted by anyone within range, without needing physical access.</p>
+                        <div class="mt-3 p-2 bg-[#00D4FF]/5 rounded border-l-4 border-[#00D4FF]">
+                            <p class="font-bold text-[#00D4FF] text-sm">Wireless Security Protocols (Evolution):</p>
+                            <ul class="bulleted-list text-xs text-cyber-gray">
+                                <li><span class="text-[#FF1744]">WEP:</span> Insecure, easily cracked — NEVER use today</li>
+                                <li><span class="text-[#FF1744]">WPA:</span> Improved but still has vulnerabilities</li>
+                                <li><span class="text-[#00D4FF]">WPA2:</span> Strong AES encryption, was the standard</li>
+                                <li><span class="text-[#00D4FF]">WPA3:</span> Current standard, stronger encryption, better protection</li>
+                            </ul>
+                        </div>
+                        <div class="discussion-box p-2 rounded-lg mt-2">
+                            <p class="text-xs text-cyber-muted">💬 Why is connecting to public/open Wi-Fi risky, and how does a VPN help?</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Wireless Threats & Best Practices
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Common Wireless Threats & Best Practices</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#FF1744]/5 rounded border border-[#FF1744]/20">
+                                <p class="font-bold text-[#FF1744] text-sm">Common Threats</p>
+                                <ul class="bulleted-list text-xs text-cyber-gray">
+                                    <li>Rogue Access Points</li>
+                                    <li>Evil Twin Attacks</li>
+                                    <li>Packet Sniffing</li>
+                                    <li>War Driving</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Best Practices</p>
+                                <ul class="bulleted-list text-xs text-cyber-gray">
+                                    <li>Use WPA3 (or WPA2 minimum)</li>
+                                    <li>Change default router credentials</li>
+                                    <li>Disable WPS</li>
+                                    <li>Use guest network for visitors</li>
+                                    <li>Regularly update firmware</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="case-study p-2 rounded-lg mt-2">
+                            <p class="font-bold text-[#FF1744] text-xs">Real-World: KRACK Attack (2017)</p>
+                            <p class="text-xs text-cyber-gray">Vulnerability in WPA2 allowed attackers to decrypt traffic. Led to widespread patches and drove development of WPA3.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Evil Twin Example & Practical Exercise
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Evil Twin Attacks & Practical Exercise</h2>
+                        <div class="case-study p-3 rounded-lg">
+                            <p class="font-bold text-[#FF1744]">Real-World Example: Evil Twin Attacks at Public Venues</p>
+                            <p class="text-sm text-cyber-gray">Security researchers have repeatedly demonstrated setting up fake "Free Airport WiFi" or "Free Coffee Shop WiFi" hotspots at conferences, capturing login credentials from users who unknowingly connect.</p>
+                            <p class="text-xs text-cyber-muted mt-1">Lesson: Always verify network names, avoid entering sensitive credentials on public Wi-Fi, and use a VPN.</p>
+                        </div>
+                        <div class="discussion-box p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#00D4FF] text-sm">Practical Exercise</p>
+                            <p class="text-sm text-cyber-gray">You are auditing a small business's wireless network. Identify which of the following are risks:</p>
+                            <ul class="bulleted-list text-xs text-cyber-gray">
+                                <li>Router still uses default admin password</li>
+                                <li>Network uses WPA2</li>
+                                <li>WPS is enabled</li>
+                                <li>Guests use same Wi-Fi as staff computers</li>
+                            </ul>
+                            <p class="text-xs text-cyber-muted mt-1">💬 For each risk, what specific action would you recommend?</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Layered Security Model
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Layered Security Model — Wrap-Up</h2>
+                        <p class="text-cyber-gray">These five topics build a layered security model:</p>
+                        <div class="space-y-2 mt-3">
+                            <div class="p-2 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF] text-sm">Firewalls</p>
+                                <p class="text-xs text-cyber-gray">Control what traffic is allowed in/out at the network boundary.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF] text-sm">IDS/IPS</p>
+                                <p class="text-xs text-cyber-gray">Watch for and respond to suspicious activity that gets past the firewall.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF] text-sm">VPNs</p>
+                                <p class="text-xs text-cyber-gray">Protect data in transit, especially over untrusted networks.</p>
+                            </div>
+                            <div class="p-2 bg-[#00D4FF]/5 rounded-lg border-l-4 border-[#00D4FF]">
+                                <p class="font-bold text-[#00D4FF] text-sm">Wireless Security</p>
+                                <p class="text-xs text-cyber-gray">Protect the entry point many attackers target first — the Wi-Fi network itself.</p>
+                            </div>
+                        </div>
+                        <p class="text-cyber-gray text-sm mt-2">All of this sits within the broader goal of network security: protecting <span class="text-[#00D4FF]">confidentiality</span>, <span class="text-[#00D4FF]">integrity</span>, and <span class="text-[#00D4FF]">availability</span>.</p>
+                    </div>
+                `
+        }, {
+            // Slide 16 - Closing Discussion Question
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Closing Discussion Question</h2>
+                        <div class="discussion-box p-6 rounded-lg text-center">
+                            <p class="text-xl text-white font-bold">If you could only implement ONE of these five security measures for a small business with a limited budget, which would you choose first, and why?</p>
+                            <div class="mt-4 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm">Firewalls</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm">IDS/IPS</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm">VPNs</span>
+                                <span class="px-3 py-1 rounded-full bg-[#00D4FF]/10 border border-[#00D4FF]/20 text-sm">Wireless Security</span>
+                            </div>
+                            <p class="text-cyber-muted text-sm mt-4">Consider: Cost, ease of implementation, biggest risk factor, and impact on business operations.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 17 - Summary of Key Concepts
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Key Concepts Summary</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse text-sm">
+                                <thead><tr class="border-b border-[#00D4FF]/20"><th class="p-2 text-[#00D4FF] text-left">Topic</th><th class="p-2 text-[#00D4FF] text-left">Key Takeaway</th></tr></thead>
+                                <tbody>
+                                    <tr class="border-b border-[#00D4FF]/10"><td class="p-2 font-bold text-[#00D4FF]">CIA Triad</td><td class="p-2 text-cyber-gray">Confidentiality, Integrity, Availability — the core goals of network security</td></tr>
+                                    <tr class="border-b border-[#00D4FF]/10"><td class="p-2 font-bold text-[#00D4FF]">Firewalls</td><td class="p-2 text-cyber-gray">Control traffic based on rules; layered defense is essential</td></tr>
+                                    <tr class="border-b border-[#00D4FF]/10"><td class="p-2 font-bold text-[#00D4FF]">IDS/IPS</td><td class="p-2 text-cyber-gray">IDS detects and alerts; IPS detects and blocks; both use signature/anomaly detection</td></tr>
+                                    <tr class="border-b border-[#00D4FF]/10"><td class="p-2 font-bold text-[#00D4FF]">VPNs</td><td class="p-2 text-cyber-gray">Create encrypted tunnels over public networks; must be paired with MFA</td></tr>
+                                    <tr><td class="p-2 font-bold text-[#00D4FF]">Wireless Security</td><td class="p-2 text-cyber-gray">Use WPA3; change defaults; disable WPS; separate guest networks</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 18 - Defense in Depth Diagram
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Defense in Depth</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 text-center">
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Physical</p>
+                                <p class="text-xs text-cyber-gray">Locks, guards, CCTV</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Network</p>
+                                <p class="text-xs text-cyber-gray">Firewalls, IDS/IPS, VPNs</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Host</p>
+                                <p class="text-xs text-cyber-gray">Antivirus, HIDS, patches</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Application</p>
+                                <p class="text-xs text-cyber-gray">Authentication, access control</p>
+                            </div>
+                            <div class="p-3 bg-[#00D4FF]/5 rounded-lg border border-[#00D4FF]/20">
+                                <p class="font-bold text-[#00D4FF] text-sm">Data</p>
+                                <p class="text-xs text-cyber-gray">Encryption, backups</p>
+                            </div>
+                        </div>
+                        <p class="text-cyber-gray text-sm text-center mt-3">Multiple layers of security — no single failure compromises the whole system.</p>
+                    </div>
+                `
+        }, {
+            // Slide 19 - Real-World Case Studies Recap
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#00D4FF] mb-4">Real-World Case Studies Recap</h2>
+                        <div class="space-y-3">
+                            <div class="p-2 bg-[#FF1744]/5 rounded-lg border-l-4 border-[#FF1744]">
+                                <p class="font-bold text-[#FF1744] text-sm">Colonial Pipeline (2021)</p>
+                                <p class="text-xs text-cyber-gray">Compromised VPN account without MFA led to ransomware attack. Lesson: MFA + decommission unused accounts.</p>
+                            </div>
+                            <div class="p-2 bg-[#FF1744]/5 rounded-lg border-l-4 border-[#FF1744]">
+                                <p class="font-bold text-[#FF1744] text-sm">Target Data Breach (2013)</p>
+                                <p class="text-xs text-cyber-gray">Third-party vendor credentials + lack of network segmentation. Lesson: Segment networks; restrict vendor access.</p>
+                            </div>
+                            <div class="p-2 bg-[#FF1744]/5 rounded-lg border-l-4 border-[#FF1744]">
+                                <p class="font-bold text-[#FF1744] text-sm">KRACK Attack (2017)</p>
+                                <p class="text-xs text-cyber-gray">WPA2 vulnerability allowed decryption of traffic. Lesson: Keep systems patched; adopt WPA3.</p>
+                            </div>
+                        </div>
+                        <p class="text-cyber-muted text-xs mt-2">💡 Each case study highlights the importance of layered security, proper configuration, and human factors.</p>
+                    </div>
+                `
+        }, {
+            // Slide 20 - Closing
+            content: () => `
+                    <div class="glass-card-cyber rounded-3xl p-12 md:p-16 text-center">
+                        <div class="text-5xl mb-4">🌐🔒🛡️</div>
+                        <h2 class="text-4xl md:text-5xl font-bold cyber-glow text-white">Thank You</h2>
+                        <p class="text-cyber-gray mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#00D4FF] mt-4 italic">"Security is not a product, but a process." — Bruce Schneier</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#00D4FF] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#FF1744] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#00D4FF] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-cyber-muted text-sm mt-6">Stay Secure, Stay Informed</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
