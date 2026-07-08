@@ -216,7 +216,7 @@
                         </div>
                     </div>
                     <div class="flex items-center gap-3">
-                        <span id="slideCounter" class="text-sm font-mono bg-[#0A1628]/80 px-3 py-1 rounded-full border border-[#D4AF37]/30 text-dp-gray">1 / 24</span>
+                        <span id="slideCounter" class="text-sm font-mono bg-[#0A1628]/80 px-3 py-1 rounded-full border border-[#D4AF37]/30 text-dp-gray">1 / 25</span>
                         <button id="prevBtn" class="p-2 rounded-full bg-white/5 backdrop-blur border border-[#D4AF37]/30 hover:bg-[#D4AF37]/20 transition-all duration-300 transform hover:scale-110">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
                         </button>
@@ -226,7 +226,7 @@
                     </div>
                 </div>
                 <div class="w-full h-1.5 bg-[#0A2A3A]/80 rounded-full overflow-hidden backdrop-blur-sm">
-                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#D4AF37] to-[#00B4D8] rounded-full" style="width: 4.2%"></div>
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#D4AF37] to-[#00B4D8] rounded-full" style="width: 4%"></div>
                 </div>
                 <p class="text-[10px] text-[#D4AF37]/60 text-center mt-2 font-mono tracking-wider">✦ DATA PROTECTION FUNDAMENTALS — KENYAN CONTEXT ✦</p>
             </div>
@@ -245,8 +245,8 @@
     <script>
         // =============================================================
         // DATA PROTECTION FUNDAMENTALS - Complete Lecture Notes
-        // 24-slide presentation with all content from the document
-        // Kenyan Context | Duration: 2.5 Hours
+        // All content preserved exactly as in the source document
+        // 25-slide presentation
         // =============================================================
 
         const slidesData = [{
@@ -261,6 +261,7 @@
                                 </div>
                             </div>
                             <p class="text-xs text-[#D4AF37] font-bold tracking-[0.3em] mb-1">INTRODUCTION TO INFORMATION SECURITY</p>
+                            <p class="text-xs text-dp-muted mb-2">Lesson Notes: Data Protection Fundamentals</p>
                             <p class="text-xs text-dp-muted mb-2">Duration: 2.5 Hours · Context: Kenya</p>
                             <h1 class="text-3xl md:text-5xl font-extrabold dp-glow mb-3 text-white">Data Protection Fundamentals</h1>
                             <div class="w-24 h-1 bg-gradient-to-r from-[#D4AF37] to-[#00B4D8] mx-auto mb-4"></div>
@@ -269,6 +270,8 @@
                                 <span class="px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-sm text-dp-gray">Personal vs Organisational Data</span>
                                 <span class="px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-sm text-dp-gray">Data Protection Principles</span>
                                 <span class="px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-sm text-dp-gray">Data Privacy Laws</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-sm text-dp-gray">Encryption and Data Security</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 text-sm text-dp-gray">Data Backup and Recovery</span>
                             </div>
                         </div>
                     </div>
@@ -278,31 +281,8 @@
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Lesson Outline</h2>
-                        <div class="grid md:grid-cols-2 gap-3">
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Importance of Data Protection</p>
-                                <p class="text-xs text-dp-gray">Why data protection matters in Kenya</p>
-                            </div>
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Personal vs Organisational Data</p>
-                                <p class="text-xs text-dp-gray">Key distinctions and examples</p>
-                            </div>
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Data Protection Principles</p>
-                                <p class="text-xs text-dp-gray">Seven core principles from DPA 2019</p>
-                            </div>
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Introduction to Data Privacy Laws</p>
-                                <p class="text-xs text-dp-gray">Kenyan legal framework & rights</p>
-                            </div>
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Encryption and Data Security</p>
-                                <p class="text-xs text-dp-gray">Protecting data in transit and at rest</p>
-                            </div>
-                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37]">Data Backup and Recovery</p>
-                                <p class="text-xs text-dp-gray">3-2-1 rule and recovery planning</p>
-                            </div>
+                        <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20">
+                            <p class="text-dp-gray"><span class="text-[#D4AF37] font-bold">Importance of Data Protection • Personal vs Organisational Data • Data Protection Principles • Introduction to Data Privacy Laws • Encryption and Data Security • Data Backup and Recovery</span></p>
                         </div>
                     </div>
                 `
@@ -311,41 +291,39 @@
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">1. Importance of Data Protection</h2>
-                        <p class="text-dp-gray leading-relaxed"><span class="text-[#D4AF37] font-bold">Data protection</span> refers to the practices, safeguards, and rules put in place to ensure that personal and organisational information is collected, stored, and used responsibly, and is kept safe from loss, theft, or misuse.</p>
-                        <div class="grid md:grid-cols-2 gap-2 mt-3">
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
-                                <p class="text-xs text-dp-gray"><span class="text-[#D4AF37]">Everyday transactions:</span> SIM registration, M-Pesa, Huduma Namba, bank accounts</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#00B4D8]">
-                                <p class="text-xs text-dp-gray"><span class="text-[#00B4D8]">Sensitive health data:</span> KNH, Aga Khan Hospital — patient records</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
-                                <p class="text-xs text-dp-gray"><span class="text-[#D4AF37]">Trust and reputation:</span> Data breaches damage customer trust</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#E63946]">
-                                <p class="text-xs text-dp-gray"><span class="text-[#E63946]">Legal consequences:</span> DPA 2019 fines up to KES 5 million or 1% turnover</p>
-                            </div>
+                        <p class="text-dp-gray leading-relaxed">Data protection refers to the practices, safeguards, and rules put in place to ensure that personal and organisational information is collected, stored, and used responsibly, and is kept safe from loss, theft, or misuse.</p>
+                        <div class="p-3 bg-[#D4AF37]/5 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Why It Matters</p>
+                            <ul class="bulleted-list text-sm text-dp-gray">
+                                <li><span class="text-[#D4AF37]">Everyday transactions:</span> Every time someone registers a SIM card with Safaricom, opens an M-Pesa account, applies for a Huduma Namba, or signs up for a bank account at Equity or KCB, they hand over personal data that must be protected.</li>
+                                <li><span class="text-[#D4AF37]">Sensitive health data:</span> Hospitals such as Kenyatta National Hospital and Aga Khan University Hospital hold sensitive patient records — misuse or leakage could cause real harm (discrimination, stigma, identity theft).</li>
+                                <li><span class="text-[#D4AF37]">Trust and reputation:</span> Data breaches damage trust. When a company loses customer data, people stop trusting it with their money or information.</li>
+                                <li><span class="text-[#D4AF37]">Financial loss:</span> Cybercrime, including data breaches, costs Kenyan businesses billions of shillings annually through fraud, extortion, and regulatory fines.</li>
+                                <li><span class="text-[#D4AF37]">Legal consequences:</span> Kenya's Data Protection Act, 2019 imposes penalties on organisations that fail to protect personal data — including fines of up to KES 5 million or 1% of annual turnover.</li>
+                                <li><span class="text-[#D4AF37]">National development:</span> Kenya's digital economy (mobile money, e-government services like eCitizen, e-commerce) depends on people trusting that their data is safe.</li>
+                            </ul>
                         </div>
                         <div class="discussion-box p-2 rounded-lg mt-2">
-                            <p class="text-xs text-dp-muted">💬 Discussion: Share an example of a time you were asked for personal information and whether you felt confident about how it would be used.</p>
+                            <p class="text-xs text-dp-muted">💬 Discussion Prompt: Ask learners to share an example of a time they were asked for personal information (e.g., at a cyber café, when registering a SIM, or applying for a loan app like Tala or Branch) and whether they felt confident about how that data would be used.</p>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 4 - Personal Data
+            // Slide 4 - Personal vs Organisational Data - Personal Data
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">2. Personal vs Organisational Data</h2>
                         <div class="p-3 bg-[#00B4D8]/5 rounded-lg border border-[#00B4D8]/20">
                             <p class="font-bold text-[#00B4D8] text-lg">Personal Data</p>
                             <p class="text-sm text-dp-gray">Information that relates to an identified or identifiable individual.</p>
-                            <ul class="bulleted-list text-xs text-dp-gray mt-1">
+                            <p class="font-bold text-[#D4AF37] text-sm mt-2">Examples in the Kenyan context:</p>
+                            <ul class="bulleted-list text-sm text-dp-gray">
                                 <li>National ID number, KRA PIN, passport number</li>
                                 <li>Phone number and M-Pesa transaction history</li>
                                 <li>Name, date of birth, home address</li>
-                                <li>Biometric data (Huduma Namba, SIM registration)</li>
-                                <li>Health records from clinics or hospitals</li>
-                                <li>Academic records (KCPE/KCSE, KUCCPS transcripts)</li>
+                                <li>Biometric data (fingerprints used for Huduma Namba or SIM registration)</li>
+                                <li>Health records from a clinic or hospital</li>
+                                <li>Academic records (KCPE/KCSE results, university transcripts from KUCCPS)</li>
                             </ul>
                         </div>
                     </div>
@@ -357,12 +335,12 @@
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Organisational Data</h2>
                         <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20">
                             <p class="font-bold text-[#D4AF37] text-lg">Organisational Data</p>
-                            <p class="text-sm text-dp-gray">Information that belongs to or is generated by a business, government agency, or institution — may include personal data but also covers broader business information.</p>
-                            <ul class="bulleted-list text-xs text-dp-gray mt-1">
-                                <li>Employee payroll records (Safaricom, KPLC)</li>
-                                <li>Customer databases (banks, Saccos)</li>
-                                <li>Business financial statements, strategic plans, trade secrets</li>
-                                <li>Government records (KRA, NTSA)</li>
+                            <p class="text-sm text-dp-gray">Information that belongs to or is generated by a business, government agency, or institution — it may include personal data but also covers broader business information.</p>
+                            <ul class="bulleted-list text-sm text-dp-gray mt-2">
+                                <li>Employee payroll records at a company like Safaricom or KPLC</li>
+                                <li>Customer databases held by a bank or Sacco</li>
+                                <li>Business financial statements, strategic plans, and trade secrets</li>
+                                <li>Government records held by agencies like KRA or the National Transport and Safety Authority (NTSA)</li>
                                 <li>Supplier contracts and procurement records</li>
                             </ul>
                         </div>
@@ -385,7 +363,7 @@
                             </table>
                         </div>
                         <div class="activity-box p-2 rounded-lg mt-2">
-                            <p class="text-xs text-dp-muted">📝 Activity: In pairs, list five pieces of data a Sacco would hold, then sort each into "personal" or "organisational."</p>
+                            <p class="text-xs text-dp-muted">📝 Activity: In pairs, learners list five pieces of data a Sacco would hold, then sort each into "personal" or "organisational."</p>
                         </div>
                     </div>
                 `
@@ -394,23 +372,23 @@
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">3. Data Protection Principles</h2>
-                        <p class="text-dp-gray">Kenya's <span class="text-[#D4AF37] font-bold">Data Protection Act, 2019</span> sets out core principles that mirror international standards (such as the EU's GDPR). Every organisation handling personal data must observe these:</p>
+                        <p class="text-dp-gray">Kenya's <span class="text-[#D4AF37] font-bold">Data Protection Act, 2019</span> sets out core principles that mirror international standards (such as the EU's GDPR). Every organisation handling personal data — from a small Sacco to Safaricom — must observe these:</p>
                         <div class="grid md:grid-cols-2 gap-2 mt-3">
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">1. Lawfulness, fairness, transparency</p>
-                                <p class="text-xs text-dp-gray">Data collected honestly; person must know why</p>
+                                <p class="font-bold text-[#D4AF37] text-sm">1. Lawfulness, fairness, and transparency</p>
+                                <p class="text-xs text-dp-gray">Data must be collected honestly and the person must know why. Example: when applying for a Fuliza loan, Safaricom/KCB must clearly explain how your data will be used.</p>
                             </div>
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">2. Purpose limitation</p>
-                                <p class="text-xs text-dp-gray">Data for one reason should not be repurposed without consent</p>
+                                <p class="text-xs text-dp-gray">Data collected for one reason (e.g., SIM registration for security purposes) should not be repurposed for something else, like unsolicited marketing, without consent.</p>
                             </div>
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">3. Data minimisation</p>
-                                <p class="text-xs text-dp-gray">Only collect what is necessary</p>
+                                <p class="text-xs text-dp-gray">Only collect what is necessary. A retail shop asking for your national ID number just to sell you a phone charger would violate this principle.</p>
                             </div>
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">4. Accuracy</p>
-                                <p class="text-xs text-dp-gray">Data held must be correct and up to date</p>
+                                <p class="text-xs text-dp-gray">Data held must be correct and kept up to date. Example: KRA must ensure your iTax records reflect accurate income details.</p>
                             </div>
                         </div>
                     </div>
@@ -423,35 +401,35 @@
                         <div class="grid md:grid-cols-3 gap-2">
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">5. Storage limitation</p>
-                                <p class="text-xs text-dp-gray">Data should not be kept longer than necessary</p>
+                                <p class="text-xs text-dp-gray">Data should not be kept longer than necessary. A cyber café should not retain your ID copy indefinitely after you've used their services.</p>
                             </div>
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">6. Integrity and confidentiality (security)</p>
-                                <p class="text-xs text-dp-gray">Data must be protected against unauthorised access, loss, or damage</p>
+                                <p class="text-xs text-dp-gray">Data must be protected against unauthorised access, loss, or damage — e.g., a hospital securing patient files from hackers.</p>
                             </div>
                             <div class="principle-card p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
                                 <p class="font-bold text-[#D4AF37] text-sm">7. Accountability</p>
-                                <p class="text-xs text-dp-gray">Data controller must demonstrate compliance to ODPC</p>
+                                <p class="text-xs text-dp-gray">The data controller (e.g., a bank) must be able to demonstrate compliance with these principles, and is answerable to the Office of the Data Protection Commissioner (ODPC).</p>
                             </div>
                         </div>
                         <div class="case-box p-2 rounded-lg mt-2">
-                            <p class="font-bold text-[#D4AF37] text-xs">Case Example (2020):</p>
-                            <p class="text-xs text-dp-gray">Several Kenyan loan apps were investigated for accessing users' phone contacts and messages without proper consent — violation of purpose limitation and data minimisation.</p>
+                            <p class="font-bold text-[#D4AF37] text-xs">Case Example</p>
+                            <p class="text-xs text-dp-gray">In 2020, several Kenyan loan apps were investigated for accessing users' phone contacts and messages without proper consent to shame defaulters — a clear violation of purpose limitation and data minimisation.</p>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 9 - Kenyan Legal Framework
+            // Slide 9 - Introduction to Data Privacy Laws
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">4. Introduction to Data Privacy Laws</h2>
                         <p class="font-bold text-[#00B4D8]">Kenyan Legal Framework</p>
                         <ul class="bulleted-list text-sm text-dp-gray">
-                            <li><span class="text-[#D4AF37] font-bold">The Constitution of Kenya, 2010, Article 31</span> — guarantees the right to privacy</li>
-                            <li><span class="text-[#D4AF37] font-bold">The Data Protection Act, 2019</span> — Kenya's primary data protection law, establishing the ODPC</li>
-                            <li><span class="text-[#D4AF37] font-bold">Data Protection (General) Regulations, 2021</span> — operational detail on consent and rights</li>
-                            <li><span class="text-[#D4AF37] font-bold">Computer Misuse and Cybercrimes Act, 2018</span> — unauthorised access, cyber fraud</li>
-                            <li><span class="text-[#D4AF37] font-bold">Kenya Information and Communications Act (KICA)</span> — SIM card registration rules</li>
+                            <li><span class="text-[#D4AF37] font-bold">The Constitution of Kenya, 2010, Article 31</span> — guarantees the right to privacy, including protection from unnecessary disclosure of personal information.</li>
+                            <li><span class="text-[#D4AF37] font-bold">The Data Protection Act, 2019</span> — Kenya's primary data protection law, establishing the Office of the Data Protection Commissioner (ODPC), and setting rules for collection, processing, and storage of personal data by both public and private bodies.</li>
+                            <li><span class="text-[#D4AF37] font-bold">Data Protection (General) Regulations, 2021</span> — provide operational detail on consent, data subject rights, and registration of data controllers/processors.</li>
+                            <li><span class="text-[#D4AF37] font-bold">Computer Misuse and Cybercrimes Act, 2018</span> — addresses unauthorised access, cyber fraud, and related offences (relevant alongside data protection).</li>
+                            <li><span class="text-[#D4AF37] font-bold">Kenya Information and Communications Act (KICA)</span> — governs telecommunications and electronic transactions, including SIM card registration rules.</li>
                         </ul>
                     </div>
                 `
@@ -460,149 +438,119 @@
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Rights of a Data Subject in Kenya</h2>
-                        <div class="grid md:grid-cols-2 gap-2">
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to be informed</p>
-                                <p class="text-xs text-dp-gray">of how data is used</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to access</p>
-                                <p class="text-xs text-dp-gray">their own data</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to correction</p>
-                                <p class="text-xs text-dp-gray">rectification of inaccurate data</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to object</p>
-                                <p class="text-xs text-dp-gray">to processing</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to deletion</p>
-                                <p class="text-xs text-dp-gray">"right to be forgotten"</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Right to lodge a complaint</p>
-                                <p class="text-xs text-dp-gray">with the ODPC</p>
-                            </div>
+                        <ul class="bulleted-list text-sm text-dp-gray">
+                            <li>Right to be informed of how data is used</li>
+                            <li>Right to access their data</li>
+                            <li>Right to correction/rectification of inaccurate data</li>
+                            <li>Right to object to processing</li>
+                            <li>Right to deletion ("right to be forgotten"), where applicable</li>
+                            <li>Right to lodge a complaint with the ODPC</li>
+                        </ul>
+                        <div class="p-3 bg-[#00B4D8]/5 rounded-lg mt-3 border border-[#00B4D8]/20">
+                            <p class="font-bold text-[#00B4D8] text-sm">Global Context (for comparison)</p>
+                            <p class="text-sm text-dp-gray"><span class="text-[#D4AF37]">GDPR (EU)</span> — a global benchmark that has influenced Kenya's law. Understanding these frameworks helps Kenyan businesses that handle data of EU citizens (e.g., BPO companies in Nairobi serving European clients) remain compliant internationally.</p>
                         </div>
                         <div class="discussion-box p-2 rounded-lg mt-2">
-                            <p class="text-xs text-dp-muted">💬 Do you know you can file a complaint with the ODPC if a company misuses your data?</p>
+                            <p class="text-xs text-dp-muted">💬 Discussion: Ask learners whether they know they can file a complaint with the ODPC if a company misuses their data, and briefly explain the process (writing a complaint, ODPC investigation, possible penalties).</p>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 11 - Global Context & Encryption Intro
+            // Slide 11 - Encryption and Data Security
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
-                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Global Context & Encryption</h2>
-                        <div class="p-2 bg-[#00B4D8]/5 rounded border border-[#00B4D8]/20">
-                            <p class="font-bold text-[#00B4D8] text-sm">Global Context (for comparison)</p>
-                            <p class="text-xs text-dp-gray"><span class="text-[#D4AF37]">GDPR (EU)</span> — a global benchmark that has influenced Kenya's law. Understanding these frameworks helps Kenyan businesses that handle data of EU citizens remain compliant internationally.</p>
-                        </div>
-                        <div class="mt-3 p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                            <p class="font-bold text-[#D4AF37] text-sm">5. Encryption and Data Security</p>
-                            <p class="text-xs text-dp-gray"><span class="text-[#D4AF37]">What Is Encryption?</span> Converting readable data (plaintext) into a coded format (ciphertext) that can only be read with the correct decryption key.</p>
-                        </div>
-                    </div>
-                `
-        }, {
-            // Slide 12 - Encryption Why It Matters Locally
-            content: () => `
-                    <div class="glass-card-dp rounded-3xl p-8 md:p-10">
-                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Why Encryption Matters Locally</h2>
-                        <ul class="bulleted-list text-sm text-dp-gray">
-                            <li><span class="text-[#D4AF37]">M-Pesa transactions</span> — encryption protects PINs and transaction data</li>
-                            <li><span class="text-[#D4AF37]">Online banking apps</span> — KCB-M, Equitel use HTTPS/TLS encryption</li>
-                            <li><span class="text-[#D4AF37]">WhatsApp</span> — end-to-end encryption so only sender and receiver can read messages</li>
-                        </ul>
-                        <div class="grid md:grid-cols-2 gap-2 mt-3">
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Symmetric Encryption</p>
-                                <p class="text-xs text-dp-gray">Same key to encrypt and decrypt (fast, bulk data)</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Asymmetric Encryption</p>
-                                <p class="text-xs text-dp-gray">Public key encrypts, private key decrypts (secure web browsing, digital signatures)</p>
-                            </div>
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">5. Encryption and Data Security</h2>
+                        <p class="font-bold text-[#00B4D8] text-lg">What Is Encryption?</p>
+                        <p class="text-dp-gray">Encryption is the process of converting readable data (plaintext) into a coded format (ciphertext) that can only be read by someone with the correct decryption key.</p>
+                        <div class="p-3 bg-[#D4AF37]/5 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Why It Matters Locally</p>
+                            <ul class="bulleted-list text-sm text-dp-gray">
+                                <li>M-Pesa transactions rely on encryption to protect PINs and transaction data as they move between your phone, Safaricom's systems, and banks.</li>
+                                <li>Online banking apps (e.g., KCB-M, Equitel) use encryption (HTTPS/TLS) to secure your login details and balances.</li>
+                                <li>WhatsApp, widely used across Kenya, uses end-to-end encryption so that only the sender and receiver can read a message — not even WhatsApp itself.</li>
+                            </ul>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 13 - Other Key Security Concepts
+            // Slide 12 - Types of Encryption & Other Security Concepts
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
-                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Other Key Security Concepts</h2>
-                        <div class="grid md:grid-cols-2 gap-2">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Types of Encryption & Other Key Security Concepts</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
                             <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Hashing</p>
-                                <p class="text-xs text-dp-gray">Turning data into fixed-length code; used to store passwords securely</p>
+                                <p class="font-bold text-[#D4AF37] text-sm">Symmetric encryption</p>
+                                <p class="text-xs text-dp-gray">Same key used to encrypt and decrypt (fast, used for bulk data).</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">HTTPS</p>
-                                <p class="text-xs text-dp-gray">Look for the padlock icon; indicates encrypted connection</p>
+                                <p class="font-bold text-[#D4AF37] text-sm">Asymmetric encryption</p>
+                                <p class="text-xs text-dp-gray">A public key encrypts, a private key decrypts (used in secure web browsing and digital signatures).</p>
                             </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Two-Factor Authentication (2FA)</p>
-                                <p class="text-xs text-dp-gray">OTP via SMS adds a second layer of protection</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border border-[#D4AF37]/20">
-                                <p class="font-bold text-[#D4AF37] text-sm">Firewalls & Antivirus</p>
-                                <p class="text-xs text-dp-gray">Protect organisational networks from external attacks</p>
-                            </div>
+                        </div>
+                        <div class="p-3 bg-[#00B4D8]/5 rounded-lg mt-3 border border-[#00B4D8]/20">
+                            <p class="font-bold text-[#00B4D8] text-sm">Other Key Security Concepts</p>
+                            <ul class="bulleted-list text-sm text-dp-gray">
+                                <li><span class="text-[#D4AF37]">Hashing</span> — turning data into a fixed-length code, often used to store passwords securely (so even the bank's IT staff can't see your actual password).</li>
+                                <li><span class="text-[#D4AF37]">HTTPS</span> — look for the padlock icon when banking online; it indicates the connection is encrypted.</li>
+                                <li><span class="text-[#D4AF37]">Two-Factor Authentication (2FA)</span> — e.g., receiving an OTP via SMS from your bank before completing a transaction, adding a second layer of protection beyond a password.</li>
+                                <li><span class="text-[#D4AF37]">Firewalls and antivirus software</span> — protect organisational networks (e.g., a Sacco's internal systems) from external attacks.</li>
+                                <li><span class="text-[#D4AF37]">Strong password practices</span> — avoiding simple passwords like "12345" or one's own name, especially for M-Pesa PINs and email accounts.</li>
+                            </ul>
                         </div>
                         <div class="case-box p-2 rounded-lg mt-2">
-                            <p class="font-bold text-[#D4AF37] text-xs">Practical Tip:</p>
-                            <p class="text-xs text-dp-gray">Never share your M-Pesa PIN, OTP, or bank password with anyone — including people claiming to be from "Safaricom" or "your bank" (common phishing/social engineering tactic in Kenya).</p>
+                            <p class="font-bold text-[#D4AF37] text-xs">Practical Tip</p>
+                            <p class="text-xs text-dp-gray">Never share your M-Pesa PIN, OTP, or bank password with anyone — including people claiming to be from "Safaricom" or "your bank," a common phishing/social engineering tactic in Kenya.</p>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 14 - Data Backup Introduction
+            // Slide 13 - Data Backup and Recovery
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">6. Data Backup and Recovery</h2>
-                        <p class="text-dp-gray"><span class="text-[#D4AF37] font-bold">What Is Data Backup?</span> Creating and storing copies of data so it can be restored if the original is lost, corrupted, deleted, or damaged (e.g., hardware failure, fire, theft, ransomware, human error).</p>
-                        <div class="grid md:grid-cols-2 gap-2 mt-3">
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
-                                <p class="text-xs text-dp-gray">A small business in Nairobi's CBD relying on one laptop risks losing everything in case of theft or a crashed hard drive.</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#00B4D8]">
-                                <p class="text-xs text-dp-gray">Government agencies and banks maintain backup data centres to ensure continuity if the main site fails.</p>
-                            </div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#E63946]">
-                                <p class="text-xs text-dp-gray">Ransomware attacks make backups essential — with a good backup, organisations can restore data without paying criminals.</p>
-                            </div>
+                        <p class="font-bold text-[#00B4D8] text-lg">What Is Data Backup?</p>
+                        <p class="text-dp-gray">Creating and storing copies of data so it can be restored if the original is lost, corrupted, deleted, or damaged (e.g., due to hardware failure, fire, theft, ransomware, or human error).</p>
+                        <div class="p-3 bg-[#D4AF37]/5 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Why It's Critical</p>
+                            <ul class="bulleted-list text-sm text-dp-gray">
+                                <li>A small business in Nairobi's CBD relying only on one laptop for its accounting records risks losing everything in case of theft or a crashed hard drive.</li>
+                                <li>Government agencies and banks maintain backup data centres (some Kenyan banks maintain disaster recovery sites outside Nairobi) to ensure continuity if the main site fails.</li>
+                                <li>Cyber-attacks like ransomware (which lock or encrypt your files until a ransom is paid) make backups essential — with a good backup, an organisation can restore data without paying criminals.</li>
+                            </ul>
                         </div>
                     </div>
                 `
         }, {
-            // Slide 15 - Types of Backup
+            // Slide 14 - Types of Backup
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Types of Backup</h2>
                         <div class="grid md:grid-cols-3 gap-3">
                             <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37] text-lg">Full Backup</p>
-                                <p class="text-xs text-dp-gray">A complete copy of all data</p>
+                                <p class="font-bold text-[#D4AF37] text-lg">Full backup</p>
+                                <p class="text-xs text-dp-gray">A complete copy of all data.</p>
                             </div>
                             <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37] text-lg">Incremental Backup</p>
-                                <p class="text-xs text-dp-gray">Only backs up data changed since the last backup (saves time and storage)</p>
+                                <p class="font-bold text-[#D4AF37] text-lg">Incremental backup</p>
+                                <p class="text-xs text-dp-gray">Only backs up data changed since the last backup (saves time and storage).</p>
                             </div>
                             <div class="p-3 bg-[#D4AF37]/5 rounded-lg border border-[#D4AF37]/20 text-center">
-                                <p class="font-bold text-[#D4AF37] text-lg">Differential Backup</p>
-                                <p class="text-xs text-dp-gray">Backs up all changes since the last full backup</p>
+                                <p class="font-bold text-[#D4AF37] text-lg">Differential backup</p>
+                                <p class="text-xs text-dp-gray">Backs up all changes since the last full backup.</p>
                             </div>
                         </div>
-                        <div class="mt-3 p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
-                            <p class="font-bold text-[#D4AF37] text-sm">Backup Storage Options:</p>
-                            <ul class="bulleted-list text-xs text-dp-gray">
-                                <li><span class="text-[#D4AF37]">Local backup</span> — external hard drives, USB flash disks</li>
-                                <li><span class="text-[#D4AF37]">Cloud backup</span> — Google Drive, OneDrive, Dropbox (increasingly used by Kenyan SMEs and students)</li>
-                                <li><span class="text-[#D4AF37]">Offsite backup</span> — physically stored in a different location (banks, hospitals)</li>
-                            </ul>
-                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Backup Storage Options
+            content: () => `
+                    <div class="glass-card-dp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Backup Storage Options</h2>
+                        <ul class="bulleted-list text-sm text-dp-gray">
+                            <li><span class="text-[#D4AF37] font-bold">Local backup</span> — external hard drives, USB flash disks (risk: can be stolen or damaged alongside the original device).</li>
+                            <li><span class="text-[#D4AF37] font-bold">Cloud backup</span> — services like Google Drive, Microsoft OneDrive, or Dropbox; increasingly used by Kenyan SMEs and students to store important documents.</li>
+                            <li><span class="text-[#D4AF37] font-bold">Offsite backup</span> — physically stored in a different location, used by larger institutions like banks and hospitals for disaster recovery.</li>
+                        </ul>
                     </div>
                 `
         }, {
@@ -616,12 +564,9 @@
                             <div class="backup-rule-item"><span class="text-[#E63946] text-2xl font-bold">1</span><br>Offsite Copy</div>
                         </div>
                         <div class="space-y-2 mt-3">
-                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#D4AF37]">3 Copies:</span> Keep 3 copies of your data (original + 2 backups)</div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#00B4D8]">2 Media Types:</span> On 2 different types of media (e.g., hard drive and cloud)</div>
-                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#E63946]">1 Offsite Copy:</span> With 1 copy stored offsite</div>
-                        </div>
-                        <div class="case-box p-2 rounded-lg mt-2">
-                            <p class="text-xs text-dp-gray">During floods or power surges (common in some parts of Kenya during rainy seasons), businesses without backups have permanently lost financial and customer records.</p>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#D4AF37]">Keep 3 copies of your data</span></div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#00B4D8]">On 2 different types of media (e.g., hard drive and cloud)</span></div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded"><span class="font-bold text-[#E63946]">With 1 copy stored offsite</span></div>
                         </div>
                     </div>
                 `
@@ -645,8 +590,9 @@
                                 <p class="text-xs text-dp-gray">Who is responsible for recovery actions</p>
                             </div>
                         </div>
-                        <div class="activity-box p-2 rounded-lg mt-2">
-                            <p class="text-xs text-dp-muted">📝 Suggested Activities: (1) Group discussion on recent data breach in Kenya, (2) Role play — customer requesting data rights, (3) Practical exercise — set up a simple free cloud backup.</p>
+                        <div class="case-box p-2 rounded-lg mt-2">
+                            <p class="font-bold text-[#D4AF37] text-xs">Local Example</p>
+                            <p class="text-xs text-dp-gray">During floods or power surges (common in some parts of Kenya during rainy seasons), businesses without backups have permanently lost financial and customer records — a strong argument for routine backups.</p>
                         </div>
                     </div>
                 `
@@ -657,7 +603,7 @@
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Summary / Key Takeaways</h2>
                         <ul class="bulleted-list text-sm text-dp-gray">
                             <li>Data protection safeguards both individuals and organisations from harm, financial loss, and legal penalties.</li>
-                            <li>Personal data belongs to individuals; organisational data belongs to institutions but may include personal data.</li>
+                            <li>Personal data belongs to individuals (ID numbers, phone numbers, health records); organisational data belongs to institutions but may include personal data.</li>
                             <li>The core principles — lawfulness, minimisation, accuracy, security, accountability — guide responsible data handling.</li>
                             <li>Kenya's Data Protection Act, 2019 and the ODPC give data subjects real rights and legal recourse.</li>
                             <li>Encryption, strong passwords, and 2FA are frontline defences against data theft.</li>
@@ -666,14 +612,26 @@
                     </div>
                 `
         }, {
-            // Slide 19 - Key Terms Glossary
+            // Slide 19 - Suggested Class Activities
+            content: () => `
+                    <div class="glass-card-dp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Suggested Class Activities</h2>
+                        <ul class="bulleted-list text-sm text-dp-gray">
+                            <li><span class="text-[#D4AF37]">Group discussion:</span> Identify a recent data breach or privacy issue in Kenya (news-based) and analyse which principle was violated.</li>
+                            <li><span class="text-[#D4AF37]">Role play:</span> A customer requesting their data rights from a bank's customer service desk.</li>
+                            <li><span class="text-[#D4AF37]">Practical exercise:</span> Learners set up a simple free cloud backup (e.g., Google Drive) for a sample folder of files.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 20 - Key Terms Glossary
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Key Terms Glossary</h2>
                         <div class="space-y-2">
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
                                 <p class="font-bold text-[#D4AF37] text-sm">Data Protection</p>
-                                <p class="text-xs text-dp-gray">Practices and safeguards to ensure personal and organisational information is collected, stored, and used responsibly</p>
+                                <p class="text-xs text-dp-gray">Practices, safeguards, and rules to ensure personal and organisational information is collected, stored, and used responsibly</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#00B4D8]">
                                 <p class="font-bold text-[#00B4D8] text-sm">Personal Data</p>
@@ -695,7 +653,7 @@
                     </div>
                 `
         }, {
-            // Slide 20 - Kenya Data Protection Act Quick Reference
+            // Slide 21 - Kenya Data Protection Act Quick Reference
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Kenya Data Protection Act 2019 — Quick Reference</h2>
@@ -720,7 +678,7 @@
                     </div>
                 `
         }, {
-            // Slide 21 - Scenario Discussion
+            // Slide 22 - Scenario Discussion
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Scenario Discussion</h2>
@@ -740,7 +698,7 @@
                     </div>
                 `
         }, {
-            // Slide 22 - ODPC Complaint Process
+            // Slide 23 - ODPC Complaint Process
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">ODPC Complaint Process</h2>
@@ -765,26 +723,26 @@
                     </div>
                 `
         }, {
-            // Slide 23 - Kenyan Data Protection Timeline
+            // Slide 24 - Kenyan Data Protection Timeline
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-8 md:p-10">
                         <h2 class="text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">Kenyan Data Protection Timeline</h2>
                         <div class="space-y-2">
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
                                 <p class="font-bold text-[#D4AF37] text-sm">2010</p>
-                                <p class="text-xs text-dp-gray">Constitution of Kenya, Article 31 — right to privacy</p>
+                                <p class="text-xs text-dp-gray">The Constitution of Kenya, 2010, Article 31 — guarantees the right to privacy</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#00B4D8]">
                                 <p class="font-bold text-[#00B4D8] text-sm">2018</p>
-                                <p class="text-xs text-dp-gray">Computer Misuse and Cybercrimes Act</p>
+                                <p class="text-xs text-dp-gray">Computer Misuse and Cybercrimes Act — addresses unauthorised access, cyber fraud</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
                                 <p class="font-bold text-[#D4AF37] text-sm">2019</p>
-                                <p class="text-xs text-dp-gray">Data Protection Act — Kenya's primary data protection law</p>
+                                <p class="text-xs text-dp-gray">The Data Protection Act — Kenya's primary data protection law, establishing the ODPC</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#00B4D8]">
                                 <p class="font-bold text-[#00B4D8] text-sm">2021</p>
-                                <p class="text-xs text-dp-gray">Data Protection (General) Regulations</p>
+                                <p class="text-xs text-dp-gray">Data Protection (General) Regulations — operational detail on consent, data subject rights</p>
                             </div>
                             <div class="p-2 bg-[#D4AF37]/5 rounded border-l-4 border-[#D4AF37]">
                                 <p class="font-bold text-[#D4AF37] text-sm">Present</p>
@@ -794,7 +752,7 @@
                     </div>
                 `
         }, {
-            // Slide 24 - Closing
+            // Slide 25 - Closing
             content: () => `
                     <div class="glass-card-dp rounded-3xl p-12 md:p-16 text-center">
                         <div class="text-5xl mb-4">🔐📋🇰🇪</div>
