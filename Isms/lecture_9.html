@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Physical Security | Study Notes</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Physical Security Theme: Dark Blue/Grey with Red/Accent */
+        .ps-dark { color: #0D1B2A; }
+        .ps-dark-bg { background: #0D1B2A; }
+        .ps-red { color: #D32F2F; }
+        .ps-red-bg { background: #D32F2F; }
+        .ps-gold { color: #D4AF37; }
+        .ps-gold-bg { background: #D4AF37; }
+        .ps-teal { color: #008080; }
+
+        .glass-card-ps {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(13, 27, 42, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(13, 27, 42, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #D32F2F;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(13, 27, 42, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 27, 42, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D32F2F;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .control-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+        }
+        .control-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .comparison-table th {
+            background: rgba(13, 27, 42, 0.06);
+            color: #0D1B2A;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(13, 27, 42, 0.1);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+
+        .layer-box {
+            background: rgba(13, 27, 42, 0.04);
+            border-left: 4px solid #D32F2F;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .cpted-box {
+            background: rgba(212, 175, 55, 0.08);
+            border-left: 4px solid #D4AF37;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .rt0-box {
+            background: rgba(0, 128, 128, 0.06);
+            border-left: 4px solid #008080;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-red-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#D32F2F]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#0D1B2A]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#D32F2F]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#D32F2F] flex items-center justify-center text-white font-bold text-lg">PS</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#D32F2F] font-bold tracking-wider">PHYSICAL SECURITY</p>
+                            <p class="text-[10px] text-dark-muted">Study Notes</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#D32F2F]/30 text-dark">1 / 15</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#D32F2F]/30 hover:bg-[#D32F2F]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D32F2F" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#D32F2F]/30 hover:bg-[#D32F2F]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D32F2F" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#D32F2F] to-[#D4AF37] rounded-full" style="width: 6.7%"></div>
+                </div>
+                <p class="text-[10px] text-[#D32F2F]/60 text-center mt-2 font-mono tracking-wider">✦ PHYSICAL SECURITY — CONTROLS · ENVIRONMENTAL · FACILITIES · SURVEILLANCE · DISASTER ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#D32F2F]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#D32F2F]/20">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // PHYSICAL SECURITY - Complete Study Notes
+        // 15-slide presentation with all content
+        // =============================================================
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#D32F2F]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#D32F2F] flex items-center justify-center shadow-[0_0_30px_rgba(211,47,47,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">PS</span>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#0D1B2A] mb-3">Physical Security</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#D32F2F] to-[#D4AF37] mx-auto mb-4"></div>
+                            <p class="text-xl text-dark-secondary">Study Notes</p>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#D32F2F]/10 border border-[#D32F2F]/20 text-sm text-dark-secondary">Physical Controls</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D32F2F]/10 border border-[#D32F2F]/20 text-sm text-dark-secondary">Environmental Threats</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D32F2F]/10 border border-[#D32F2F]/20 text-sm text-dark-secondary">Secure Facilities</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D32F2F]/10 border border-[#D32F2F]/20 text-sm text-dark-secondary">Surveillance</span>
+                                <span class="px-3 py-1 rounded-full bg-[#D32F2F]/10 border border-[#D32F2F]/20 text-sm text-dark-secondary">Disaster Preparedness</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Physical Security Controls Overview
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">1. Physical Security Controls</h2>
+                        <p class="text-dark-secondary leading-relaxed">Physical security controls are the measures used to protect people, facilities, equipment, and data from physical threats such as unauthorized access, theft, vandalism, and sabotage. Controls are typically grouped into layers, often described using the concept of <span class="font-bold text-[#D32F2F]">'defense in depth.'</span></p>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-2 mt-4">
+                            <div class="control-card p-2 bg-white rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-sm">Deterrent</p>
+                                <p class="text-xs text-dark-muted">Discourage attackers</p>
+                                <p class="text-xs text-dark-muted italic">Signs, guards, lighting</p>
+                            </div>
+                            <div class="control-card p-2 bg-white rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-sm">Preventive</p>
+                                <p class="text-xs text-dark-muted">Block unauthorized access</p>
+                                <p class="text-xs text-dark-muted italic">Locks, mantraps, guards</p>
+                            </div>
+                            <div class="control-card p-2 bg-white rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-sm">Detective</p>
+                                <p class="text-xs text-dark-muted">Identify incidents</p>
+                                <p class="text-xs text-dark-muted italic">CCTV, motion sensors</p>
+                            </div>
+                            <div class="control-card p-2 bg-white rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-sm">Corrective/Recovery</p>
+                                <p class="text-xs text-dark-muted">Restore after incident</p>
+                                <p class="text-xs text-dark-muted italic">Backup facilities, teams</p>
+                            </div>
+                            <div class="control-card p-2 bg-white rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-sm">Compensating</p>
+                                <p class="text-xs text-dark-muted">Alternative measures</p>
+                                <p class="text-xs text-dark-muted italic">When primary isn't feasible</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 3 - Layered Defense (Defense in Depth)
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Layered Defense (Defense in Depth)</h2>
+                        <div class="space-y-2">
+                            <div class="layer-box p-2">
+                                <p class="font-bold text-[#D32F2F]">Perimeter Layer</p>
+                                <p class="text-sm text-dark-secondary">Fencing, gates, natural barriers, perimeter lighting</p>
+                            </div>
+                            <div class="layer-box p-2">
+                                <p class="font-bold text-[#D32F2F]">Building Layer</p>
+                                <p class="text-sm text-dark-secondary">Doors, walls, windows, locks, mantraps/access vestibules</p>
+                            </div>
+                            <div class="layer-box p-2">
+                                <p class="font-bold text-[#D32F2F]">Interior Layer</p>
+                                <p class="text-sm text-dark-secondary">Badge access, security zones, cabinets/safes, cable locks</p>
+                            </div>
+                            <div class="layer-box p-2">
+                                <p class="font-bold text-[#D32F2F]">Asset Layer</p>
+                                <p class="text-sm text-dark-secondary">Server racks, locked enclosures, tamper-evident seals</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#0D1B2A]/5 rounded-lg text-center">
+                            <p class="text-sm text-dark-muted">Each layer provides protection — if one fails, others still guard the asset.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Access Control Mechanisms
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Access Control Mechanisms</h2>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <div class="p-3 bg-[#D32F2F]/5 rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F] text-lg">Something You Know</p>
+                                <p class="text-sm text-dark-secondary">PIN codes, passwords</p>
+                            </div>
+                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg text-center border border-[#D4AF37]/20">
+                                <p class="font-bold text-[#D4AF37] text-lg">Something You Have</p>
+                                <p class="text-sm text-dark-secondary">Keycards, badges, tokens</p>
+                            </div>
+                            <div class="p-3 bg-[#008080]/5 rounded-lg text-center border border-[#008080]/20">
+                                <p class="font-bold text-[#008080] text-lg">Something You Are</p>
+                                <p class="text-sm text-dark-secondary">Biometrics (fingerprint, iris, facial recognition)</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                            <p class="text-sm text-dark-secondary"><span class="font-bold text-[#D32F2F]">Multi-factor:</span> Combinations increase assurance for high-security areas.</p>
+                            <p class="text-sm text-dark-secondary"><span class="font-bold text-[#D32F2F]">Piggybacking/Tailgating prevention:</span> Mantraps, turnstiles, security personnel.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - Environmental Threats
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2. Environmental Threats</h2>
+                        <p class="text-dark-secondary">Environmental threats are natural or man-made conditions that can damage facilities, equipment, or endanger personnel. Unlike deliberate attacks, these often arise from external conditions or system failures.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                                <p class="font-bold text-[#D32F2F]">Natural Threats</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Fire — leading cause of facility damage</li>
+                                    <li>Flooding — water damage to equipment</li>
+                                    <li>Earthquakes, hurricanes, tornadoes</li>
+                                    <li>Extreme temperatures and humidity</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Man-Made / Utility Threats</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Power failures and surges</li>
+                                    <li>HVAC failure — overheating equipment</li>
+                                    <li>Water leaks from plumbing</li>
+                                    <li>Electromagnetic interference (EMI)</li>
+                                    <li>Chemical spills or hazardous material</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - Mitigation Approaches
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Mitigation Approaches</h2>
+                        <div class="space-y-3">
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                                <p class="font-bold text-[#D32F2F]">Fire Detection and Suppression</p>
+                                <p class="text-sm text-dark-secondary">Smoke detectors, heat detectors, sprinkler systems, clean-agent gas suppression (for data centers)</p>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Environmental Monitoring</p>
+                                <p class="text-sm text-dark-secondary">Temperature/humidity sensors with automated alerts</p>
+                            </div>
+                            <div class="p-2 bg-[#008080]/5 rounded-lg border-l-4 border-[#008080]">
+                                <p class="font-bold text-[#008080]">Redundant Power</p>
+                                <p class="text-sm text-dark-secondary">UPS units, backup generators, dual power feeds</p>
+                            </div>
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Site Selection</p>
+                                <p class="text-sm text-dark-secondary">Avoiding flood zones, seismic fault lines, and areas prone to severe weather</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - Secure Facilities Management
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">3. Secure Facilities Management</h2>
+                        <p class="text-dark-secondary">Facilities management involves the design, construction, and ongoing operation of buildings and sites in ways that support security objectives.</p>
+                        <div class="cpted-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Site and Facility Design</p>
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li><span class="font-bold">CPTED:</span> Crime Prevention Through Environmental Design — using landscaping, lighting, and layout to naturally deter crime</li>
+                                <li><span class="font-bold">Zoning:</span> Separating public, semi-restricted, and restricted areas</li>
+                                <li>Single points of entry/exit for controlled access, with emergency exits properly alarmed</li>
+                                <li>Data centers located away from exterior walls, windows, and ground floors</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 8 - Operational Management & Personnel Security
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Operational Management & Personnel Security</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Operational Management</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Visitor management: sign-in logs, escorts, temporary badges</li>
+                                    <li>Asset tracking and inventory control</li>
+                                    <li>Maintenance schedules for locks, alarms, fire suppression, HVAC</li>
+                                    <li>Vendor and contractor access policies</li>
+                                    <li>Secure disposal of media and hardware (degaussing, shredding, certified destruction)</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                                <p class="font-bold text-[#D32F2F]">Personnel Security</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Background checks for employees and contractors</li>
+                                    <li>Security awareness training on physical security policies</li>
+                                    <li>Clear desk / clear screen policies</li>
+                                    <li>Termination procedures: prompt revocation of badges, keys, and system access</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - Surveillance and Monitoring Systems
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">4. Surveillance and Monitoring Systems</h2>
+                        <p class="text-dark-secondary">Surveillance and monitoring systems provide continuous oversight of a facility, supporting both deterrence and detection.</p>
+                        <div class="grid md:grid-cols-3 gap-3 mt-3">
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg text-center border border-[#D32F2F]/20">
+                                <p class="font-bold text-[#D32F2F]">Video Surveillance</p>
+                                <p class="text-xs text-dark-secondary">CCTV at entrances, exits, parking, sensitive zones</p>
+                                <p class="text-xs text-dark-muted mt-1">Fixed, PTZ, dome, infrared/night-vision</p>
+                                <p class="text-xs text-dark-muted">Video analytics: motion detection, facial recognition</p>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg text-center border border-[#D4AF37]/20">
+                                <p class="font-bold text-[#D4AF37]">Intrusion Detection</p>
+                                <p class="text-xs text-dark-secondary">Motion sensors (infrared, microwave, ultrasonic)</p>
+                                <p class="text-xs text-dark-muted mt-1">Door/window contact sensors</p>
+                                <p class="text-xs text-dark-muted">Glass-break detectors, vibration sensors</p>
+                            </div>
+                            <div class="p-2 bg-[#008080]/5 rounded-lg text-center border border-[#008080]/20">
+                                <p class="font-bold text-[#008080]">Monitoring & Response</p>
+                                <p class="text-xs text-dark-secondary">Security Operations Center (SOC)</p>
+                                <p class="text-xs text-dark-muted mt-1">Guard patrols supplementing electronic monitoring</p>
+                                <p class="text-xs text-dark-muted">Converged security: physical + IT security integration</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - Monitoring and Response Details
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Monitoring and Response</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#D32F2F]">Security Operations Centers (SOC)</span> — centralized, real-time monitoring</li>
+                            <li><span class="font-bold text-[#D4AF37]">Guard patrols</span> — supplementing electronic monitoring</li>
+                            <li><span class="font-bold text-[#008080]">Logging and audit trails</span> — for access events and alarm triggers</li>
+                            <li><span class="font-bold text-[#0D1B2A]">Integration of physical security systems with IT security</span> — converged security for a unified response</li>
+                        </ul>
+                        <div class="mt-3 p-2 bg-[#0D1B2A]/5 rounded-lg text-center">
+                            <p class="text-sm text-dark-secondary">Effective monitoring requires both <span class="font-bold text-[#D32F2F]">technology</span> and <span class="font-bold text-[#D4AF37]">human response</span>.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 11 - Disaster Preparedness
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5. Disaster Preparedness</h2>
+                        <p class="text-dark-secondary">Disaster preparedness focuses on planning for, responding to, and recovering from events that disrupt normal operations, whether natural, technical, or human-caused.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                                <p class="font-bold text-[#D32F2F]">Planning Frameworks</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li><span class="font-bold">BCP:</span> Business Continuity Planning — keeps critical functions running</li>
+                                    <li><span class="font-bold">DRP:</span> Disaster Recovery Planning — restoring IT systems and data</li>
+                                    <li><span class="font-bold">Risk Assessment & BIA:</span> Identify critical assets and acceptable downtime (RTO/RPO)</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Key Preparedness Measures</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Redundant/backup facilities: hot sites, warm sites, cold sites</li>
+                                    <li>Regular data backups with offsite or cloud storage</li>
+                                    <li>Emergency response plans: evacuation routes, assembly points</li>
+                                    <li>Regular drills and tabletop exercises</li>
+                                    <li>Communication plans for staff, stakeholders, customers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - Recovery Concepts
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Recovery Concepts</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="rt0-box p-3 rounded-lg">
+                                <p class="font-bold text-[#008080] text-lg">Recovery Time Objective (RTO)</p>
+                                <p class="text-sm text-dark-secondary">Maximum acceptable time to restore a system or process.</p>
+                                <p class="text-xs text-dark-muted mt-1">Example: "We must restore email within 4 hours"</p>
+                            </div>
+                            <div class="rt0-box p-3 rounded-lg">
+                                <p class="font-bold text-[#008080] text-lg">Recovery Point Objective (RPO)</p>
+                                <p class="text-sm text-dark-secondary">Maximum acceptable amount of data loss, measured in time.</p>
+                                <p class="text-xs text-dark-muted mt-1">Example: "We can accept losing up to 15 minutes of transactions"</p>
+                            </div>
+                        </div>
+                        <div class="mt-3 p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                            <p class="font-bold text-[#D32F2F]">Post-Incident Review</p>
+                            <p class="text-sm text-dark-secondary">Analyzing response effectiveness and updating plans accordingly.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Summary
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Summary of Key Concepts</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#D32F2F]/5 rounded-lg border-l-4 border-[#D32F2F]">
+                                <p class="font-bold text-[#D32F2F]">Physical Controls</p>
+                                <p class="text-sm text-dark-secondary">Deterrent, preventive, detective, corrective, compensating — layered for defense in depth</p>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Environmental Threats</p>
+                                <p class="text-sm text-dark-secondary">Natural (fire, flood) and man-made (power failure, HVAC) — mitigated with monitoring, redundancy, and site selection</p>
+                            </div>
+                            <div class="p-2 bg-[#008080]/5 rounded-lg border-l-4 border-[#008080]">
+                                <p class="font-bold text-[#008080]">Secure Facilities</p>
+                                <p class="text-sm text-dark-secondary">CPTED design, zoning, visitor management, personnel security, and termination procedures</p>
+                            </div>
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Surveillance & Disaster</p>
+                                <p class="text-sm text-dark-secondary">CCTV, intrusion detection, SOC monitoring, BCP/DRP planning, RTO/RPO, and post-incident review</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Key Takeaways
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Key Takeaways</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>Physical security is a <span class="font-bold text-[#D32F2F]">layered defense</span> — each layer protects the next.</li>
+                            <li>Controls are categorized as <span class="font-bold text-[#D32F2F]">deterrent, preventive, detective, corrective, and compensating</span>.</li>
+                            <li>Access control relies on <span class="font-bold text-[#D4AF37]">something you know, have, or are</span> — multi-factor is strongest.</li>
+                            <li>Environmental threats — both natural and man-made — require <span class="font-bold text-[#008080]">monitoring, redundancy, and mitigation</span>.</li>
+                            <li>Secure facilities management includes <span class="font-bold text-[#0D1B2A]">CPTED design, zoning, visitor management, and personnel security</span>.</li>
+                            <li>Surveillance combines <span class="font-bold text-[#D32F2F]">CCTV, intrusion detection, and SOC monitoring</span> for continuous oversight.</li>
+                            <li>Disaster preparedness requires <span class="font-bold text-[#D4AF37]">BCP/DRP planning, RTO/RPO definition, regular drills, and post-incident review</span>.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Closing
+            content: () => `
+                    <div class="glass-card-ps rounded-3xl p-12 md:p-16 text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-[#0D1B2A]">Thank You</h2>
+                        <div class="w-24 h-1 bg-gradient-to-r from-[#D32F2F] to-[#D4AF37] mx-auto my-4"></div>
+                        <p class="text-dark-secondary mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#D32F2F] mt-4 italic">"Security is not a product, but a process — and physical security is its foundation."</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#D32F2F] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#D32F2F] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-dark-muted text-sm mt-6">Stay Secure · Protect Your Assets</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
