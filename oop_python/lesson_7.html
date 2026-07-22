@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Python | File Handling, Exception Handling & Input Validation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .oop-dark { color: #0D1B2A; }
+        .oop-dark-bg { background: #0D1B2A; }
+        .oop-purple { color: #6A0DAD; }
+        .oop-purple-bg { background: #6A0DAD; }
+        .oop-green { color: #008000; }
+        .oop-green-bg { background: #008000; }
+        .oop-red { color: #C0392B; }
+        .oop-red-bg { background: #C0392B; }
+        .oop-blue { color: #2979FF; }
+        .oop-blue-bg { background: #2979FF; }
+
+        .glass-card-oop {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(13, 27, 42, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, monospace;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(106, 13, 173, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #6A0DAD;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(106, 13, 173, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(106, 13, 173, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6A0DAD;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .code-block {
+            background: #0A0A1A;
+            border-left: 4px solid #6A0DAD;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-block pre {
+            color: #8be9fd;
+        }
+
+        .key-point {
+            background: rgba(106, 13, 173, 0.06);
+            border-left: 4px solid #6A0DAD;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .tip-box {
+            background: rgba(0, 128, 0, 0.06);
+            border-left: 4px solid #008000;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .warning-box {
+            background: rgba(192, 57, 43, 0.06);
+            border-left: 4px solid #C0392B;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .comparison-table th {
+            background: rgba(106, 13, 173, 0.06);
+            color: #0D1B2A;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-purple-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#6A0DAD]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#008000]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#6A0DAD]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#6A0DAD] flex items-center justify-center text-white font-bold text-lg">PY</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#6A0DAD] font-bold tracking-wider">PYTHON</p>
+                            <p class="text-[10px] text-dark-muted">File Handling, Exception Handling & Input Validation</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#6A0DAD]/30 text-dark">1 / 22</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#6A0DAD]/30 hover:bg-[#6A0DAD]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A0DAD" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#6A0DAD]/30 hover:bg-[#6A0DAD]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A0DAD" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#6A0DAD] to-[#008000] rounded-full" style="width: 4.5%"></div>
+                </div>
+                <p class="text-[10px] text-[#6A0DAD]/60 text-center mt-2 font-mono tracking-wider">✦ FILE HANDLING · EXCEPTION HANDLING · INPUT VALIDATION ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#6A0DAD]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#6A0DAD]/20">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // FILE HANDLING, EXCEPTION HANDLING & INPUT VALIDATION
+        // Complete 22-slide presentation with expanded file handling
+        // =============================================================
+
+        function makeCodeBlock(code) {
+            const escaped = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `
+                <div class="code-block p-3 rounded-lg overflow-x-auto">
+                    <pre class="text-sm font-mono whitespace-pre-wrap">${escaped}</pre>
+                </div>
+            `;
+        }
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#6A0DAD]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#6A0DAD] flex items-center justify-center shadow-[0_0_30px_rgba(106,13,173,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">PY</span>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#0D1B2A] mb-3">File Handling, Exception Handling & Input Validation</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#6A0DAD] to-[#008000] mx-auto mb-4"></div>
+                            <p class="text-xl text-dark-secondary">Python Programming Essentials</p>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Reading Files</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Writing Files</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Exception Handling</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Input Validation</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Introduction to File Handling
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">1. Introduction to File Handling</h2>
+                        <p class="text-dark-secondary leading-relaxed">File handling is the process of storing, retrieving, and manipulating data stored in files on your computer's storage system. Python provides built-in functions to work with files using the <span class="font-bold text-[#6A0DAD]">open()</span> function.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#6A0DAD]/5 rounded-lg border-l-4 border-[#6A0DAD]">
+                                <p class="font-bold text-[#6A0DAD] text-sm">Why File Handling Matters</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Data persistence — data survives after program ends</li>
+                                    <li>Share data between programs</li>
+                                    <li>Process large datasets</li>
+                                    <li>Store configuration and settings</li>
+                                    <li>Log application activity</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#008000]/5 rounded-lg border-l-4 border-[#008000]">
+                                <p class="font-bold text-[#008000] text-sm">File Types</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">Text files:</span> .txt, .csv, .json, .xml</li>
+                                    <li><span class="font-bold">Binary files:</span> .jpg, .png, .pdf, .exe</li>
+                                    <li><span class="font-bold">Python can handle both</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 3 - File Modes
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">File Modes</h2>
+                        <div class="overflow-x-auto">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th>Mode</th><th>Description</th><th>Action</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="font-bold text-[#6A0DAD]">"r"</td><td>Read (default)</td><td>Opens a file for reading. Error if file doesn't exist.</td></tr>
+                                    <tr><td class="font-bold text-[#008000]">"w"</td><td>Write</td><td>Opens a file for writing. Creates/overwrites file.</td></tr>
+                                    <tr><td class="font-bold text-[#2979FF]">"a"</td><td>Append</td><td>Opens a file for appending. Creates file if it doesn't exist.</td></tr>
+                                    <tr><td class="font-bold text-[#C0392B]">"x"</td><td>Exclusive creation</td><td>Creates a new file. Error if file exists.</td></tr>
+                                    <tr><td class="font-bold text-[#6A0DAD]">"r+"</td><td>Read and Write</td><td>Opens for reading and writing. Error if file doesn't exist.</td></tr>
+                                    <tr><td class="font-bold text-[#008000]">"w+"</td><td>Write and Read</td><td>Opens for writing and reading. Creates/overwrites file.</td></tr>
+                                    <tr><td class="font-bold text-[#2979FF]">"a+"</td><td>Append and Read</td><td>Opens for appending and reading. Creates file if it doesn't exist.</td></tr>
+                                    <tr><td class="font-bold text-[#C0392B]">"b"</td><td>Binary mode</td><td>Used with other modes (e.g., "rb", "wb") for binary files.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Reading Files - Basic
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">2. Reading Files</h2>
+                        <p class="font-bold text-[#6A0DAD] text-lg">Basic File Reading</p>
+                        ${makeCodeBlock(`# Reading entire file as a string
+with open("example.txt", "r") as file:
+    content = file.read()
+    print(content)
+
+# Reading line by line
+with open("example.txt", "r") as file:
+    for line in file:
+        print(line.strip())  # strip() removes trailing newline
+
+# Reading into a list of lines
+with open("example.txt", "r") as file:
+    lines = file.readlines()
+    print(lines)`)}
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Key points:</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">with open(...)</span> automatically closes the file when done (best practice)</li>
+                                <li><span class="font-bold">.read()</span> reads the entire file as a single string</li>
+                                <li><span class="font-bold">.readlines()</span> returns a list of all lines</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - Reading Files - Advanced
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Reading Files — Advanced Techniques</h2>
+                        ${makeCodeBlock(`# Reading a specific number of characters
+with open("example.txt", "r") as file:
+    first_10 = file.read(10)
+    print(f"First 10 chars: {first_10}")
+
+# Reading line by line with while loop
+with open("example.txt", "r") as file:
+    while True:
+        line = file.readline()
+        if not line:
+            break
+        print(line.strip())
+
+# Using seek() to move file pointer
+with open("example.txt", "r") as file:
+    file.seek(10)  # Move to position 10
+    content = file.read(20)
+    print(content)
+    print(f"Current position: {file.tell()}")`)}
+                    </div>
+                `
+        }, {
+            // Slide 6 - Writing Files
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">3. Writing Files</h2>
+                        ${makeCodeBlock(`# Writing (overwrites existing content)
+with open("example.txt", "w") as file:
+    file.write("Hello, World!\\n")
+    file.write("This is a new line.\\n")
+
+# Appending (adds to existing content)
+with open("example.txt", "a") as file:
+    file.write("This line is appended.\\n")
+
+# Writing multiple lines from a list
+lines = ["Line 1\\n", "Line 2\\n", "Line 3\\n"]
+with open("example.txt", "w") as file:
+    file.writelines(lines)
+
+# Using print() to write to file
+with open("example.txt", "w") as file:
+    print("This goes to the file", file=file)
+    print("Another line", file=file)`)}
+                        <div class="warning-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#C0392B] text-sm">⚠️ Warning:</p>
+                            <p class="text-xs text-dark-secondary">"w" mode <span class="font-bold">erases the file first</span> — use carefully! Use "a" if you want to preserve existing content.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - CSV File Handling
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">CSV File Handling</h2>
+                        ${makeCodeBlock(`import csv
+
+# Reading a CSV file
+with open("data.csv", "r") as file:
+    reader = csv.reader(file)
+    for row in reader:
+        print(row)
+
+# Reading with headers
+with open("data.csv", "r") as file:
+    reader = csv.DictReader(file)
+    for row in reader:
+        print(row["Name"], row["Age"])
+
+# Writing a CSV file
+with open("output.csv", "w", newline="") as file:
+    writer = csv.writer(file)
+    writer.writerow(["Name", "Age", "Course"])
+    writer.writerow(["John", 20, "Computer Science"])
+    writer.writerow(["Mary", 22, "Mathematics"])
+
+# Writing with headers
+with open("output.csv", "w", newline="") as file:
+    fieldnames = ["Name", "Age", "Course"]
+    writer = csv.DictWriter(file, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerow({"Name": "John", "Age": 20, "Course": "Computer Science"})`)}
+                    </div>
+                `
+        }, {
+            // Slide 8 - JSON File Handling
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">JSON File Handling</h2>
+                        ${makeCodeBlock(`import json
+
+# Writing JSON data
+data = {
+    "name": "John",
+    "age": 20,
+    "course": "Computer Science",
+    "grades": [85, 90, 78]
+}
+
+with open("data.json", "w") as file:
+    json.dump(data, file, indent=4)
+
+# Reading JSON data
+with open("data.json", "r") as file:
+    loaded_data = json.load(file)
+    print(loaded_data["name"])
+    print(loaded_data["grades"])
+
+# Pretty printing JSON
+json_string = json.dumps(data, indent=2)
+print(json_string)`)}
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Key points:</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">json.dump()</span> writes to a file</li>
+                                <li><span class="font-bold">json.load()</span> reads from a file</li>
+                                <li><span class="font-bold">json.dumps()</span> converts to a string</li>
+                                <li><span class="font-bold">indent</span> makes the output readable</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - Working with Binary Files
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Working with Binary Files</h2>
+                        ${makeCodeBlock(`# Reading a binary file
+with open("image.jpg", "rb") as file:
+    data = file.read()
+    print(f"Read {len(data)} bytes")
+
+# Writing a binary file
+with open("copy.jpg", "wb") as file:
+    file.write(data)
+
+# Copying a binary file
+with open("image.jpg", "rb") as source:
+    with open("copy.jpg", "wb") as destination:
+        for chunk in iter(lambda: source.read(4096), b''):
+            destination.write(chunk)
+        print("File copied successfully")`)}
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#008000] text-sm">Key points:</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">"rb"</span> mode for reading binary files</li>
+                                <li><span class="font-bold">"wb"</span> mode for writing binary files</li>
+                                <li>Reading in chunks is memory-efficient for large files</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - File Existence and Permissions
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">File Existence and Permissions</h2>
+                        ${makeCodeBlock(`import os
+
+# Check if file exists
+if os.path.exists("example.txt"):
+    print("File exists")
+else:
+    print("File not found")
+
+# Check if it's a file or directory
+if os.path.isfile("example.txt"):
+    print("It's a file")
+
+if os.path.isdir("my_folder"):
+    print("It's a directory")
+
+# Get file size
+size = os.path.getsize("example.txt")
+print(f"File size: {size} bytes")
+
+# Check file permissions (Unix/Linux)
+if os.access("example.txt", os.R_OK):
+    print("File is readable")
+if os.access("example.txt", os.W_OK):
+    print("File is writable")`)}
+                    </div>
+                `
+        }, {
+            // Slide 11 - File and Directory Operations
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">File and Directory Operations</h2>
+                        ${makeCodeBlock(`import os
+import shutil
+
+# Rename a file
+os.rename("old_name.txt", "new_name.txt")
+
+# Delete a file
+os.remove("unwanted.txt")
+
+# Create a directory
+os.mkdir("new_folder")
+
+# Remove an empty directory
+os.rmdir("empty_folder")
+
+# Remove a non-empty directory
+shutil.rmtree("non_empty_folder")
+
+# Copy a file
+shutil.copy("source.txt", "destination.txt")
+
+# Move a file
+shutil.move("source.txt", "new_location/source.txt")
+
+# List files in a directory
+for file in os.listdir("my_folder"):
+    print(file)`)}
+                    </div>
+                `
+        }, {
+            // Slide 12 - Exception Handling
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">4. Exception Handling</h2>
+                        <p class="text-dark-secondary">Used to prevent a program from crashing when something goes wrong.</p>
+                        ${makeCodeBlock(`try:
+    age = int(input("Enter age: "))
+except ValueError:
+    print("Invalid input — age must be a number.")
+except Exception as e:
+    print(f"Unexpected error: {e}")
+else:
+    print("Age accepted:", age)
+finally:
+    print("Input attempt finished.")`)}
+                        <div class="grid md:grid-cols-2 gap-2 mt-3">
+                            <div class="p-2 bg-[#6A0DAD]/5 rounded-lg border-l-4 border-[#6A0DAD]">
+                                <p class="font-bold text-[#6A0DAD] text-sm">Key points:</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">try</span> — code that might raise an error</li>
+                                    <li><span class="font-bold">except</span> — handles a specific error type</li>
+                                    <li><span class="font-bold">else</span> — runs only if no exception occurred</li>
+                                    <li><span class="font-bold">finally</span> — always runs, useful for cleanup</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#008000]/5 rounded-lg border-l-4 border-[#008000]">
+                                <p class="font-bold text-[#008000] text-sm">Common exceptions:</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>ValueError</li><li>FileNotFoundError</li>
+                                    <li>ZeroDivisionError</li><li>TypeError</li>
+                                    <li>IndexError</li><li>KeyError</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Exception Handling with Files
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Exception Handling with Files</h2>
+                        ${makeCodeBlock(`try:
+    with open("data.txt", "r") as file:
+        content = file.read()
+        print(content)
+except FileNotFoundError:
+    print("File not found. Please check the filename.")
+except PermissionError:
+    print("You don't have permission to read this file.")
+except IOError as e:
+    print(f"An I/O error occurred: {e}")
+except Exception as e:
+    print(f"An unexpected error occurred: {e}")
+else:
+    print("File read successfully!")
+finally:
+    print("File operation attempt completed.")`)}
+                        <div class="warning-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#C0392B] text-sm">⚠️ Best Practice:</p>
+                            <p class="text-xs text-dark-secondary">Always handle <span class="font-bold">FileNotFoundError</span> and <span class="font-bold">PermissionError</span> when working with files to provide user-friendly feedback.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Raising Exceptions
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Raising Exceptions</h2>
+                        ${makeCodeBlock(`# Custom validation with raise
+def validate_age(age):
+    if age < 0:
+        raise ValueError("Age cannot be negative")
+    if age > 150:
+        raise ValueError("Age cannot exceed 150")
+    return age
+
+try:
+    age = validate_age(-5)
+except ValueError as e:
+    print(f"Validation error: {e}")
+
+# Re-raising exceptions
+def process_file(filename):
+    try:
+        with open(filename, "r") as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File {filename} not found")
+        raise  # Re-raise to let calling code handle it
+
+# Creating custom exceptions
+class InvalidAgeError(Exception):
+    pass
+
+def validate_age_custom(age):
+    if age < 0:
+        raise InvalidAgeError("Age cannot be negative")
+    return age`)}
+                    </div>
+                `
+        }, {
+            // Slide 15 - Input Validation
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">5. Input Validation</h2>
+                        <p class="text-dark-secondary">Ensures user input meets expected rules before it's used.</p>
+                        ${makeCodeBlock(`def get_valid_age():
+    while True:
+        try:
+            age = int(input("Enter age: "))
+            if age <= 0 or age > 120:
+                print("Age must be between 1 and 120.")
+                continue
+            return age
+        except ValueError:
+            print("Please enter a valid number.")`)}
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Key points:</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li>Combine <span class="font-bold">try/except</span> with logical checks (range, format)</li>
+                                <li>Use loops (<span class="font-bold">while True</span>) to keep asking until valid input is given</li>
+                                <li><span class="font-bold">Validate early</span> — don't let bad data reach the rest of your program</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 16 - String Validation
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">String Validation</h2>
+                        ${makeCodeBlock(`def get_valid_name():
+    while True:
+        name = input("Enter name: ").strip()
+        if len(name) == 0:
+            print("Name cannot be empty.")
+            continue
+        if any(char.isdigit() for char in name):
+            print("Name should not contain numbers.")
+            continue
+        if len(name) < 2:
+            print("Name must be at least 2 characters long.")
+            continue
+        return name
+
+def get_valid_email():
+    while True:
+        email = input("Enter email: ").strip()
+        if "@" not in email:
+            print("Invalid email format. Must contain '@'.")
+            continue
+        if "." not in email:
+            print("Invalid email format. Must contain '.'.")
+            continue
+        return email`)}
+                    </div>
+                `
+        }, {
+            // Slide 17 - Numeric Validation
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Numeric Validation</h2>
+                        ${makeCodeBlock(`def get_valid_positive_integer():
+    while True:
+        try:
+            value = int(input("Enter a positive integer: "))
+            if value <= 0:
+                print("Please enter a positive number.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid integer.")
+
+def get_valid_float_in_range(min_val, max_val):
+    while True:
+        try:
+            value = float(input(f"Enter a number between {min_val} and {max_val}: "))
+            if value < min_val or value > max_val:
+                print(f"Number must be between {min_val} and {max_val}.")
+                continue
+            return value
+        except ValueError:
+            print("Please enter a valid number.")`)}
+                    </div>
+                `
+        }, {
+            // Slide 18 - Menu Choice Validation
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Menu Choice Validation</h2>
+                        ${makeCodeBlock(`def show_menu():
+    print("1. Option 1")
+    print("2. Option 2")
+    print("3. Option 3")
+    print("4. Exit")
+
+def get_menu_choice():
+    while True:
+        try:
+            choice = int(input("Select an option: "))
+            if choice not in [1, 2, 3, 4]:
+                print("Invalid choice. Please select 1-4.")
+                continue
+            return choice
+        except ValueError:
+            print("Please enter a number.")
+
+# Alternative with dictionary
+def get_menu_choice_dict():
+    menu = {
+        "1": "Add",
+        "2": "Edit",
+        "3": "Delete",
+        "4": "Exit"
+    }
+    while True:
+        choice = input("Select option (1-4): ").strip()
+        if choice in menu:
+            return choice
+        print("Invalid choice. Please select 1-4.")`)}
+                    </div>
+                `
+        }, {
+            // Slide 19 - Combining All Concepts
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Combining All Concepts</h2>
+                        ${makeCodeBlock(`import csv
+import json
+import os
+
+def read_safe_file(filename):
+    try:
+        with open(filename, "r") as file:
+            return file.read()
+    except FileNotFoundError:
+        print(f"File '{filename}' not found.")
+        return None
+    except PermissionError:
+        print(f"No permission to read '{filename}'.")
+        return None
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return None
+
+def write_safe_file(filename, content):
+    try:
+        with open(filename, "w") as file:
+            file.write(content)
+        return True
+    except PermissionError:
+        print(f"No permission to write to '{filename}'.")
+        return False
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return False
+
+def get_valid_filename():
+    while True:
+        filename = input("Enter filename: ").strip()
+        if not filename:
+            print("Filename cannot be empty.")
+            continue
+        if any(char in filename for char in "\\/:*?\"<>|"):
+            print("Invalid characters in filename.")
+            continue
+        return filename`)}
+                    </div>
+                `
+        }, {
+            // Slide 20 - Best Practices
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">File Handling Best Practices</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#6A0DAD]">Always use "with" statements</span> — they automatically close files</li>
+                            <li><span class="font-bold text-[#008000]">Handle exceptions gracefully</span> — FileNotFoundError, PermissionError</li>
+                            <li><span class="font-bold text-[#C0392B]">Validate input before using it</span> — check types and ranges</li>
+                            <li><span class="font-bold text-[#2979FF]">Use appropriate file modes</span> — "r" for reading, "w" for writing, "a" for appending</li>
+                            <li><span class="font-bold text-[#6A0DAD]">Close files when done</span> — with statement does this automatically</li>
+                            <li><span class="font-bold text-[#008000]">Use encoding</span> — specify encoding='utf-8' for text files</li>
+                            <li><span class="font-bold text-[#C0392B]">Avoid hardcoding file paths</span> — use variables or config files</li>
+                            <li><span class="font-bold text-[#2979FF]">Test with both existing and non-existent files</span></li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 21 - Summary
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#6A0DAD] mb-4">Summary</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#6A0DAD]">File I/O</span> (open, read, write) allows data persistence</li>
+                            <li><span class="font-bold text-[#008000]">try/except/else/finally</span> prevents crashes and improves user experience</li>
+                            <li><span class="font-bold text-[#C0392B]">Input validation</span> checks both type and logical validity</li>
+                            <li><span class="font-bold text-[#2979FF]">Different file modes</span> serve different purposes (r, w, a, rb, wb)</li>
+                            <li><span class="font-bold text-[#6A0DAD]">CSV and JSON</span> are common data formats for structured data</li>
+                            <li><span class="font-bold text-[#008000]">Combining these skills</span> creates robust, user-friendly programs</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 22 - Closing
+            content: () => `
+                    <div class="glass-card-oop rounded-3xl p-12 md:p-16 text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-[#0D1B2A]">Thank You</h2>
+                        <div class="w-24 h-1 bg-gradient-to-r from-[#6A0DAD] to-[#008000] mx-auto my-4"></div>
+                        <p class="text-dark-secondary mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#6A0DAD] mt-4 italic">"Good code doesn't just work — it handles errors gracefully and validates input wisely."</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#6A0DAD] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#008000] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#6A0DAD] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-dark-muted text-sm mt-6">Practice · Validate · Handle Exceptions</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
