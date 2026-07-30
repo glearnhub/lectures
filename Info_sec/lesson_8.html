@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Week 10: Security Policies | Information Security</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Security Policy Theme: Dark Blue with Gold/Red Accents */
+        .sp-dark { color: #0D1B2A; }
+        .sp-dark-bg { background: #0D1B2A; }
+        .sp-gold { color: #D4AF37; }
+        .sp-gold-bg { background: #D4AF37; }
+        .sp-red { color: #C0392B; }
+        .sp-red-bg { background: #C0392B; }
+        .sp-teal { color: #008080; }
+
+        .glass-card-sp {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(13, 27, 42, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(13, 27, 42, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(13, 27, 42, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(13, 27, 42, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .policy-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+        }
+        .policy-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .comparison-table th {
+            background: rgba(13, 27, 42, 0.06);
+            color: #0D1B2A;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(13, 27, 42, 0.1);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+
+        .kenya-box {
+            background: rgba(212, 175, 55, 0.08);
+            border-left: 4px solid #D4AF37;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .law-box {
+            background: rgba(192, 57, 43, 0.06);
+            border-left: 4px solid #C0392B;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .ethics-box {
+            background: rgba(0, 128, 128, 0.06);
+            border-left: 4px solid #008080;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .role-card {
+            transition: all 0.2s ease;
+        }
+        .role-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-yellow-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#0D1B2A]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#D4AF37]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#0D1B2A] flex items-center justify-center text-[#D4AF37] font-bold text-lg">SP</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#0D1B2A] font-bold tracking-wider">WEEK 10: SECURITY POLICIES</p>
+                            <p class="text-[10px] text-dark-muted">Information Security</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#D4AF37]/30 text-dark">1 / 20</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#D4AF37]/30 hover:bg-[#D4AF37]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B2A" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#D4AF37]/30 hover:bg-[#D4AF37]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D1B2A" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#0D1B2A] to-[#D4AF37] rounded-full" style="width: 5%"></div>
+                </div>
+                <p class="text-[10px] text-[#0D1B2A]/60 text-center mt-2 font-mono tracking-wider">✦ SECURITY POLICIES · CYBER LAW · IPR · ETHICS · COMPLIANCE ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#D4AF37]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#D4AF37]/20">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // WEEK 10: SECURITY POLICIES - Complete Notes
+        // 20-slide presentation with all content
+        // =============================================================
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#D4AF37]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#0D1B2A] flex items-center justify-center shadow-[0_0_30px_rgba(13,27,42,0.15)]">
+                                    <span class="text-[#D4AF37] font-extrabold text-2xl">SP</span>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#0D1B2A] mb-3">Lesson 8: Security Policies Ethics, and
+Legal Issues
+</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#0D1B2A] to-[#D4AF37] mx-auto mb-4"></div>
+                            <p class="text-xl text-dark-secondary">Information Security</p>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#0D1B2A]/10 border border-[#0D1B2A]/20 text-sm text-dark-secondary">Security Policies</span>
+                                <span class="px-3 py-1 rounded-full bg-[#0D1B2A]/10 border border-[#0D1B2A]/20 text-sm text-dark-secondary">Cyber Law</span>
+                                <span class="px-3 py-1 rounded-full bg-[#0D1B2A]/10 border border-[#0D1B2A]/20 text-sm text-dark-secondary">Intellectual Property</span>
+                                <span class="px-3 py-1 rounded-full bg-[#0D1B2A]/10 border border-[#0D1B2A]/20 text-sm text-dark-secondary">Ethics</span>
+                                <span class="px-3 py-1 rounded-full bg-[#0D1B2A]/10 border border-[#0D1B2A]/20 text-sm text-dark-secondary">Compliance</span>
+                            </div>
+                            <p class="text-xs text-dark-muted mt-4">Kenyan Context</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Meaning and Role of Security Policies
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">1. Meaning and Role of Security Policies</h2>
+                        <p class="text-dark-secondary leading-relaxed">A security policy is a formal, written statement of rules and procedures that defines how an organisation protects its information assets — data, systems, networks, and physical infrastructure — from threats like unauthorised access, loss, or damage.</p>
+                        <div class="kenya-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Kenyan example:</p>
+                            <p class="text-sm text-dark-secondary">Safaricom, operator of M-Pesa, relies on strict internal policies to control staff access to customer mobile money data. A lapse — e.g., an employee improperly handling a SIM-swap request — can enable fraud and trigger penalties from the CA and ODPC.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-2 mt-3">
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A] text-sm">Role of Security Policies</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Set direction: turn intent into enforceable rules</li>
+                                    <li>Assign responsibility: define who owns assets</li>
+                                    <li>Reduce risk: minimum standards lower impact</li>
+                                    <li>Support legal compliance: e.g., ODPC requirements</li>
+                                    <li>Ensure consistency: same rules across branches</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 3 - Types of Security Policies - Overview
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2. Types of Security Policies</h2>
+                        <div class="grid md:grid-cols-3 gap-3">
+                            <div class="policy-card p-3 bg-white rounded-lg text-center border border-[#0D1B2A]/10">
+                                <p class="font-bold text-[#0D1B2A] text-lg">Organisational (Master) Policy</p>
+                                <p class="text-xs text-dark-muted">Board-approved, top-level commitment</p>
+                                <p class="text-xs text-dark-secondary mt-1">Example: CBK requires every licensed bank to have a board-approved Information Security Policy.</p>
+                            </div>
+                            <div class="policy-card p-3 bg-white rounded-lg text-center border border-[#D4AF37]/20">
+                                <p class="font-bold text-[#D4AF37] text-lg">Issue-Specific Policies</p>
+                                <p class="text-xs text-dark-muted">AUP, Password, BYOD, Remote Work, Data Classification, Incident Response</p>
+                                <p class="text-xs text-dark-secondary mt-1">Example: Banks enforcing 90-day password changes.</p>
+                            </div>
+                            <div class="policy-card p-3 bg-white rounded-lg text-center border border-[#C0392B]/20">
+                                <p class="font-bold text-[#C0392B] text-lg">System-Specific Policies</p>
+                                <p class="text-xs text-dark-muted">Narrow technical policies for one system</p>
+                                <p class="text-xs text-dark-secondary mt-1">Example: Firewall configuration for KRA's iTax database.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Issue-Specific Policies (Part 1)
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Issue-Specific Policies (Part 1)</h2>
+                        <div class="space-y-2">
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#0D1B2A] shadow-sm">
+                                <p class="font-bold text-[#0D1B2A] text-sm">Acceptable Use Policy (AUP)</p>
+                                <p class="text-xs text-dark-secondary">Rules for using company computers, email and internet (e.g., a university restricting Wi-Fi use for piracy)</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#D4AF37] shadow-sm">
+                                <p class="font-bold text-[#D4AF37] text-sm">Password & Access Control Policy</p>
+                                <p class="text-xs text-dark-secondary">Password complexity, MFA, account lock-out (e.g., banks enforcing 90-day password changes)</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#C0392B] shadow-sm">
+                                <p class="font-bold text-[#C0392B] text-sm">BYOD Policy</p>
+                                <p class="text-xs text-dark-secondary">Governs personal phones/laptops accessing work systems, common where staff use personal Android devices for work email and M-Pesa</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#008080] shadow-sm">
+                                <p class="font-bold text-[#008080] text-sm">Remote Work Policy</p>
+                                <p class="text-xs text-dark-secondary">Securing home networks/VPNs, widely adopted by Kenyan banks and BPOs since COVID-19</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - Issue-Specific Policies (Part 2)
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Issue-Specific Policies (Part 2)</h2>
+                        <div class="space-y-2">
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#0D1B2A] shadow-sm">
+                                <p class="font-bold text-[#0D1B2A] text-sm">Data Classification Policy</p>
+                                <p class="text-xs text-dark-secondary">Labels data as public, internal, confidential, or restricted (e.g., Huduma Namba data as highly restricted)</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#D4AF37] shadow-sm">
+                                <p class="font-bold text-[#D4AF37] text-sm">Incident Response Policy</p>
+                                <p class="text-xs text-dark-secondary">How breaches are detected, reported and handled (e.g., a SIM-swap fraud incident)</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#C0392B] shadow-sm">
+                                <p class="font-bold text-[#C0392B] text-sm">Other Policy Types</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">Physical Security Policy:</span> Biometric access & armed guards at Nairobi bank data centres</li>
+                                    <li><span class="font-bold">Network Security Policy:</span> Separating core telecom network from customer billing systems</li>
+                                    <li><span class="font-bold">Disaster Recovery Policy:</span> Banks keeping backup data centres outside Nairobi</li>
+                                    <li><span class="font-bold">Vendor Security Policy:</span> Requiring security audits of third-party app developers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - Cyber Laws and Regulations Overview
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">3. Cyber Laws and Regulations (Kenya)</h2>
+                        <div class="law-box p-2 rounded-lg">
+                            <p class="font-bold text-[#C0392B]">Article 31 of the Constitution of Kenya</p>
+                            <p class="text-sm text-dark-secondary">Guarantees the right to privacy and underpins all data protection law that followed.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Computer Misuse and Cybercrimes Act, 2018</p>
+                                <p class="text-xs text-dark-secondary">Kenya's main cybercrime law. Criminalises unauthorised access, cyber espionage, phishing, cyber harassment, identity theft and cyber terrorism. Established the NC4.</p>
+                                <p class="text-xs text-dark-muted mt-1">Amended 2024/2025 — penalties up to KSh 10 million or lengthy imprisonment.</p>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37] text-sm">Data Protection Act, 2019</p>
+                                <p class="text-xs text-dark-secondary">Regulates collection, processing and transfer of personal data. Established ODPC.</p>
+                                <p class="text-xs text-dark-muted mt-1">Breaches must be reported within 72 hours (24 hours for critical infrastructure). Fines up to KSh 5 million or 1% of turnover.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - Data Protection Act - Kenyan Example
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Data Protection Act — Kenyan Example</h2>
+                        <div class="kenya-box p-3 rounded-lg">
+                            <p class="font-bold text-[#D4AF37]">Kenyan example:</p>
+                            <p class="text-sm text-dark-secondary">Banks and mobile money providers must register as data controllers and show that customer KYC data (ID numbers, phone numbers, transaction history) is lawfully protected.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A] text-sm">Other Instruments</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">KICA, 1998:</span> Established the Communications Authority of Kenya (CA), which hosts KE-CIRT/CC</li>
+                                    <li><span class="font-bold">CBK Guidelines, 2019:</span> Minimum standards for banks and mobile-money operators</li>
+                                    <li><span class="font-bold">Access to Information Act, 2016:</span> Balances public access with protection of sensitive data</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border border-[#0D1B2A]/10">
+                                <p class="font-bold text-[#D4AF37] text-sm">Law / Body Summary</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">Computer Misuse Act:</span> 2018 (amended 2024/25) — Cybercrime offences, NC4</li>
+                                    <li><span class="font-bold">Data Protection Act:</span> 2019 — Personal data processing; ODPC</li>
+                                    <li><span class="font-bold">KICA:</span> 1998 (amended) — ICT sector regulation; CA</li>
+                                    <li><span class="font-bold">CBK Guidelines:</span> 2019 — Banks and payment providers</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 8 - Intellectual Property Rights
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">4. Intellectual Property Rights (IPR)</h2>
+                        <p class="text-dark-secondary">IP refers to creations of the mind — software code, algorithms, trademarks, trade secrets — that can be legally owned. In information security, this means protecting proprietary systems and avoiding infringement (e.g., pirated software).</p>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th>Type</th><th>Protects</th><th>Kenyan Example</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="font-bold text-[#0D1B2A]">Copyright</td><td>Software/source code</td><td>Apps built by Nairobi fintech startups ('Silicon Savannah')</td></tr>
+                                    <tr><td class="font-bold text-[#D4AF37]">Patents</td><td>Inventions/processes</td><td>Locally invented tech registered via KIPI</td></tr>
+                                    <tr><td class="font-bold text-[#C0392B]">Trademarks</td><td>Brand names/logos</td><td>The 'M-Pesa' name and logo</td></tr>
+                                    <tr><td class="font-bold text-[#008080]">Trade Secrets</td><td>Confidential know-how</td><td>A bank's proprietary credit-scoring algorithm</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="kenya-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Kenyan example:</p>
+                            <p class="text-sm text-dark-secondary">Fake M-Pesa apps and 'smishing' SMS messages are both a trademark infringement and a cybercrime offence — showing how IP and cybersecurity law overlap.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - IP Institutions
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Intellectual Property Institutions in Kenya</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A] text-lg">KIPI</p>
+                                <p class="text-sm text-dark-secondary">Kenya Industrial Property Institute</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Administers patents, designs and trademarks</li>
+                                    <li>Protects inventions and industrial designs</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37] text-lg">KECOBO</p>
+                                <p class="text-sm text-dark-secondary">Kenya Copyright Board</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Administers copyright under the Copyright Act</li>
+                                    <li>Includes software and creative works</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - Ethical Issues in Information Security
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5. Ethical Issues in Information Security</h2>
+                        <div class="space-y-2">
+                            <div class="ethics-box p-2 rounded-lg">
+                                <p class="font-bold text-[#008080]">Privacy vs. Surveillance</p>
+                                <p class="text-sm text-dark-secondary">Monitoring employee or citizen communications risks overreach, e.g., debate over proposed ISP subscriber-tracking rules in Kenya.</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Responsible Disclosure</p>
+                                <p class="text-sm text-dark-secondary">How a researcher who finds a flaw in a portal like eCitizen should report it, without exposing the public to greater risk.</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Ethical vs. Malicious Hacking</p>
+                                <p class="text-sm text-dark-secondary">Same skills can be used for penetration testing or, as seen in some Kenyan mobile-money fraud cases, insider-assisted theft.</p>
+                            </div>
+                            <div class="p-2 bg-white rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Data Ownership and Consent</p>
+                                <p class="text-sm text-dark-secondary">Who truly owns customer transaction data, and whether it can be reused without explicit consent.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 11 - Ethics - Professional Codes & Fair Access
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Ethics — Professional Codes & Fair Access</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Professional Codes of Conduct</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>ISACA</li>
+                                    <li>(ISC)²</li>
+                                    <li>Computer Society of Kenya</li>
+                                </ul>
+                                <p class="text-xs text-dark-muted mt-1">Expect integrity, confidentiality and competence.</p>
+                            </div>
+                            <div class="p-3 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Fair Access</p>
+                                <p class="text-sm text-dark-secondary">Strong authentication (e.g., app-based 2FA) should not exclude rural users who rely on basic phones and USSD banking.</p>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Ethical Challenge:</p>
+                            <p class="text-sm text-dark-secondary">Balancing security with accessibility and privacy is an ongoing ethical challenge in Kenya's digital transformation.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - Compliance and Regulatory Requirements
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">6. Compliance and Regulatory Requirements</h2>
+                        <p class="text-dark-secondary">Compliance means conforming to laws, regulations and standards relevant to an organisation, usually verified through audits and regulator inspections.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Key Kenyan Regulators</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li><span class="font-bold">ODPC</span> — Enforces Data Protection Act; investigates complaints</li>
+                                    <li><span class="font-bold">CA</span> — Regulates telecoms/ICT; hosts KE-CIRT/CC</li>
+                                    <li><span class="font-bold">CBK</span> — Sets cybersecurity standards for banks</li>
+                                    <li><span class="font-bold">KECOBO / KIPI</span> — Enforce copyright and industrial property rights</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">Core Obligations</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Register as a data controller/processor with the ODPC</li>
+                                    <li>Conduct Data Protection Impact Assessments for high-risk processing</li>
+                                    <li>Report breaches within 72 hours (24 hours for critical infrastructure)</li>
+                                    <li>Appoint a Data Protection Officer where required</li>
+                                    <li>Apply safeguards before transferring personal data outside Kenya</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Consequences of Non-Compliance
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Consequences of Non-Compliance</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Financial Penalties</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>ODPC fines up to KSh 5 million or 1% of annual turnover</li>
+                                    <li>Criminal penalties up to KSh 3 million or 10 years' imprisonment under Data Protection Act</li>
+                                    <li>Up to KSh 10 million or imprisonment for serious cybercrime offences</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Other Consequences</p>
+                                <ul class="bulleted-list text-sm text-dark-secondary">
+                                    <li>Reputational damage</li>
+                                    <li>Possible loss of regulatory licence (e.g., CBK approval for a payment provider)</li>
+                                    <li>Loss of customer trust</li>
+                                    <li>Operational disruption</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="kenya-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Key Insight:</p>
+                            <p class="text-sm text-dark-secondary">Non-compliance carries both <span class="font-bold text-[#C0392B]">financial</span> and <span class="font-bold text-[#0D1B2A]">reputational</span> consequences that can threaten business viability.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Discussion Questions
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Discussion Questions</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li>What three issue-specific policies should a Nairobi SACCO launching a mobile lending app put in place first, and why?</li>
+                            <li>Should employers monitor personal WhatsApp use on company phones? Weigh this against the Data Protection Act.</li>
+                            <li>How do the ODPC, CA and CBK mandates overlap in regulating information security in Kenya?</li>
+                        </ol>
+                        <div class="ethics-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#008080]">Debate Points:</p>
+                            <p class="text-sm text-dark-secondary">These questions explore the balance between <span class="font-bold">security, privacy, and compliance</span> in the Kenyan context.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Summary
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Summary</h2>
+                        <p class="text-dark-secondary">Information security rests on:</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#0D1B2A]">Well-designed policies</span> — organisational, issue-specific, system-specific</li>
+                            <li><span class="font-bold text-[#C0392B]">Kenyan cyber law</span> — Computer Misuse and Cybercrimes Act, Data Protection Act, KICA and CBK guidelines</li>
+                            <li><span class="font-bold text-[#D4AF37]">Intellectual property rights</span> — administered by KIPI and KECOBO</li>
+                            <li><span class="font-bold text-[#008080]">Professional ethics</span> — guiding responsible behaviour</li>
+                            <li><span class="font-bold text-[#C0392B]">Compliance obligations</span> — with real financial and legal consequences</li>
+                        </ul>
+                        <div class="kenya-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#D4AF37]">Key Message:</p>
+                            <p class="text-sm text-dark-secondary">Security is not just about technology — it is about <span class="font-bold">governance, law, ethics, and accountability</span>.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 16 - Key Takeaways
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Key Takeaways</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#0D1B2A]">Security policies</span> are the governance foundation — turning management intent into enforceable rules.</li>
+                            <li><span class="font-bold text-[#D4AF37]">Three types:</span> Organisational (master), Issue-Specific, and System-Specific policies.</li>
+                            <li><span class="font-bold text-[#C0392B]">Kenya's cyber law framework</span> includes the Computer Misuse and Cybercrimes Act, Data Protection Act, KICA, and CBK guidelines.</li>
+                            <li><span class="font-bold text-[#D4AF37]">Intellectual Property</span> is protected by KIPI (patents, trademarks) and KECOBO (copyright).</li>
+                            <li><span class="font-bold text-[#008080]">Ethical issues</span> include privacy vs surveillance, responsible disclosure, and fair access.</li>
+                            <li><span class="font-bold text-[#C0392B]">Compliance</span> with regulations is enforced by ODPC, CA, CBK, KECOBO, and KIPI — with significant penalties for non-compliance.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 17 - Policy Framework Visual
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Security Policy Framework</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
+                            <div class="p-3 bg-[#0D1B2A] rounded-lg text-white">
+                                <p class="font-bold text-[#D4AF37]">Organisational Policy</p>
+                                <p class="text-xs">Board-approved<br>Top-level commitment<br>Overall responsibility (CISO)</p>
+                            </div>
+                            <div class="p-3 bg-[#D4AF37] rounded-lg text-[#0D1B2A]">
+                                <p class="font-bold">Issue-Specific Policies</p>
+                                <p class="text-xs">AUP · Password · BYOD<br>Remote Work · Data Classification<br>Incident Response</p>
+                            </div>
+                            <div class="p-3 bg-[#C0392B] rounded-lg text-white">
+                                <p class="font-bold text-[#D4AF37]">System-Specific Policies</p>
+                                <p class="text-xs">Firewall config<br>Access control<br>Database security</p>
+                            </div>
+                        </div>
+                        <p class="text-center text-dark-muted text-xs mt-3">Policies cascade from high-level governance to technical implementation.</p>
+                    </div>
+                `
+        }, {
+            // Slide 18 - Kenyan Regulatory Landscape
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Kenyan Regulatory Landscape</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">ODPC</p>
+                                <p class="text-xs text-dark-secondary">Data Protection Act enforcement · Investigates complaints · Issues fines</p>
+                            </div>
+                            <div class="p-2 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">CA</p>
+                                <p class="text-xs text-dark-secondary">Telecoms/ICT regulation · Hosts KE-CIRT/CC</p>
+                            </div>
+                            <div class="p-2 bg-[#D4AF37]/5 rounded-lg border-l-4 border-[#D4AF37]">
+                                <p class="font-bold text-[#D4AF37]">CBK</p>
+                                <p class="text-xs text-dark-secondary">Cybersecurity standards for banks and payment providers</p>
+                            </div>
+                            <div class="p-2 bg-[#008080]/5 rounded-lg border-l-4 border-[#008080]">
+                                <p class="font-bold text-[#008080]">KECOBO / KIPI</p>
+                                <p class="text-xs text-dark-secondary">Copyright and industrial property rights enforcement</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 19 - Quick Quiz
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Quick Quiz</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li>What is the difference between an organisational policy and an issue-specific policy?</li>
+                            <li>Name three Kenyan laws that regulate information security.</li>
+                            <li>What is the role of KIPI in protecting intellectual property?</li>
+                            <li>What is responsible disclosure?</li>
+                            <li>What are the consequences of non-compliance with the Data Protection Act?</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            // Slide 20 - Closing
+            content: () => `
+                    <div class="glass-card-sp rounded-3xl p-12 md:p-16 text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-[#0D1B2A]">Thank You</h2>
+                        <div class="w-24 h-1 bg-gradient-to-r from-[#0D1B2A] to-[#D4AF37] mx-auto my-4"></div>
+                        <p class="text-dark-secondary mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#D4AF37] mt-4 italic">"Security policies are not just documents — they are the foundation of trust, accountability, and resilience in the digital age."</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#0D1B2A] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#D4AF37] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#0D1B2A] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-dark-muted text-sm mt-6">Stay Secure · Stay Compliant · Stay Ethical</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>

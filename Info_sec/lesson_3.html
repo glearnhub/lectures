@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Lesson 3: Cyber Threats and Malware | Cybersecurity</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Threat Theme: Dark Blue with Red/Green Accents */
+        .threat-dark { color: #0D1B2A; }
+        .threat-dark-bg { background: #0D1B2A; }
+        .threat-red { color: #C0392B; }
+        .threat-red-bg { background: #C0392B; }
+        .threat-green { color: #27AE60; }
+        .threat-green-bg { background: #27AE60; }
+        .threat-blue { color: #2979FF; }
+        .threat-blue-bg { background: #2979FF; }
+        .threat-orange { color: #E67E22; }
+        .threat-orange-bg { background: #E67E22; }
+
+        .glass-card-threat {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(13, 27, 42, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(192, 57, 43, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #C0392B;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(192, 57, 43, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(192, 57, 43, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C0392B;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .code-block {
+            background: #0A0A1A;
+            border-left: 4px solid #C0392B;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .key-point {
+            background: rgba(192, 57, 43, 0.06);
+            border-left: 4px solid #C0392B;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .tip-box {
+            background: rgba(39, 174, 96, 0.06);
+            border-left: 4px solid #27AE60;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .comparison-table th {
+            background: rgba(192, 57, 43, 0.06);
+            color: #0D1B2A;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(192, 57, 43, 0.1);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+
+        .malware-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+        }
+        .malware-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .spread-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+        }
+        .spread-card:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .signs-box {
+            background: rgba(230, 126, 34, 0.06);
+            border-left: 4px solid #E67E22;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .av-box {
+            background: rgba(41, 121, 255, 0.06);
+            border-left: 4px solid #2979FF;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-red-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#C0392B]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#2979FF]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#C0392B]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#C0392B] flex items-center justify-center text-white font-bold text-lg">CT</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#C0392B] font-bold tracking-wider">LESSON 3: CYBER THREATS</p>
+                            <p class="text-[10px] text-dark-muted">Malware & Cybersecurity</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#C0392B]/30 text-dark">1 / 19</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C0392B]/30 hover:bg-[#C0392B]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C0392B]/30 hover:bg-[#C0392B]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C0392B" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#C0392B] to-[#27AE60] rounded-full" style="width: 5.3%"></div>
+                </div>
+                <p class="text-[10px] text-[#C0392B]/60 text-center mt-2 font-mono tracking-wider">✦ CYBER THREATS · MALWARE · SPREAD · DETECTION · TOOLS ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#C0392B]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#C0392B]/20">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // LESSON 3: CYBER THREATS AND MALWARE
+        // Complete 19-slide presentation with all content
+        // =============================================================
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#C0392B]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#C0392B] flex items-center justify-center shadow-[0_0_30px_rgba(192,57,43,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">CT</span>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#0D1B2A] mb-3">Lesson 3: Cyber Threats and Malware</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#C0392B] to-[#27AE60] mx-auto mb-4"></div>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#C0392B]/10 border border-[#C0392B]/20 text-sm text-dark-secondary">Cyber Threats</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C0392B]/10 border border-[#C0392B]/20 text-sm text-dark-secondary">Malware Types</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C0392B]/10 border border-[#C0392B]/20 text-sm text-dark-secondary">Spread Vectors</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C0392B]/10 border border-[#C0392B]/20 text-sm text-dark-secondary">Detection & Removal</span>
+                                <span class="px-3 py-1 rounded-full bg-[#C0392B]/10 border border-[#C0392B]/20 text-sm text-dark-secondary">Antivirus Tools</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Learning Objectives
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Learning Objectives</h2>
+                        <p class="text-dark-secondary mb-3">By the end of this lesson, students should be able to:</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>Identify and describe major categories of cyber threats</li>
+                            <li>Distinguish between different types of malware and how each behaves</li>
+                            <li>Explain how malware spreads across systems and networks</li>
+                            <li>Recognize common signs of infection and outline basic remediation steps</li>
+                            <li>Understand the role of antivirus and anti-malware tools in defense</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 3 - Types of Cyber Threats
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">1. Types of Cyber Threats</h2>
+                        <p class="text-dark-secondary">A <span class="font-bold text-[#C0392B]">cyber threat</span> is any circumstance or event with the potential to cause harm to an information system through unauthorized access, destruction, disclosure, modification of data, or denial of service.</p>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th>Category</th><th>Description</th><th>Example</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="font-bold text-[#C0392B]">Malware-based threats</td><td>Malicious software designed to damage, disrupt, or gain unauthorized access</td><td>Viruses, worms, ransomware</td></tr>
+                                    <tr><td class="font-bold text-[#27AE60]">Social engineering</td><td>Manipulating people into revealing information or performing actions</td><td>Phishing emails, pretexting</td></tr>
+                                    <tr><td class="font-bold text-[#2979FF]">Network-based attacks</td><td>Exploiting weaknesses in network protocols or infrastructure</td><td>DoS, Man-in-the-Middle</td></tr>
+                                    <tr><td class="font-bold text-[#E67E22]">Insider threats</td><td>Harm caused by individuals within an organization</td><td>Disgruntled employee leaking data</td></tr>
+                                    <tr><td class="font-bold text-[#C0392B]">Advanced Persistent Threats (APTs)</td><td>Prolonged, targeted attacks often by organized groups</td><td>Nation-state espionage campaigns</td></tr>
+                                    <tr><td class="font-bold text-[#0D1B2A]">Physical threats</td><td>Threats involving physical access to hardware</td><td>Theft of a laptop containing sensitive data</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#C0392B] text-sm">Key distinction:</p>
+                            <p class="text-xs text-dark-secondary">Not all cyber threats involve malware. Some rely purely on deception (social engineering) or exploiting technical/network flaws without installing malicious code.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Motivations Behind Cyber Threats
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Motivations Behind Cyber Threats</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Financial gain</p>
+                                <p class="text-sm text-dark-secondary">Theft of banking details, ransomware payouts</p>
+                            </div>
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Espionage</p>
+                                <p class="text-sm text-dark-secondary">Stealing trade secrets or government intelligence</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Disruption/sabotage</p>
+                                <p class="text-sm text-dark-secondary">Damaging infrastructure or operations</p>
+                            </div>
+                            <div class="p-3 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60]">Hacktivism</p>
+                                <p class="text-sm text-dark-secondary">Promoting political or social causes</p>
+                            </div>
+                            <div class="p-3 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A] col-span-2">
+                                <p class="font-bold text-[#0D1B2A]">Notoriety</p>
+                                <p class="text-sm text-dark-secondary">Demonstrating technical skill</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - Malware Overview
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2. Malware: Overview</h2>
+                        <p class="text-dark-secondary"><span class="font-bold text-[#C0392B]">Malware</span> ("malicious software") is any software intentionally designed to cause damage to a computer, server, client, or network.</p>
+                        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+                            <div class="malware-card p-3 bg-white rounded-lg text-center border border-[#C0392B]/20">
+                                <p class="font-bold text-[#C0392B] text-lg">Virus</p>
+                                <p class="text-xs text-dark-muted">Attaches to files, needs host</p>
+                            </div>
+                            <div class="malware-card p-3 bg-white rounded-lg text-center border border-[#27AE60]/20">
+                                <p class="font-bold text-[#27AE60] text-lg">Worm</p>
+                                <p class="text-xs text-dark-muted">Self-replicating, no host needed</p>
+                            </div>
+                            <div class="malware-card p-3 bg-white rounded-lg text-center border border-[#2979FF]/20">
+                                <p class="font-bold text-[#2979FF] text-lg">Trojan</p>
+                                <p class="text-xs text-dark-muted">Disguised as legitimate software</p>
+                            </div>
+                            <div class="malware-card p-3 bg-white rounded-lg text-center border border-[#E67E22]/20">
+                                <p class="font-bold text-[#E67E22] text-lg">Ransomware</p>
+                                <p class="text-xs text-dark-muted">Encrypts files, demands payment</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - Viruses
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2.1 Viruses</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Definition</p>
+                                <p class="text-sm text-dark-secondary">A virus is a piece of code that <span class="font-bold">attaches itself to a legitimate program or file</span> and requires a host to execute.</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Spread Mechanism</p>
+                                <p class="text-sm text-dark-secondary">Typically needs <span class="font-bold">human action</span> to spread (e.g., opening an infected file or running a program).</p>
+                            </div>
+                            <div class="p-3 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60]">Effects</p>
+                                <p class="text-sm text-dark-secondary">Corrupting files, slowing systems, displaying unwanted messages, or destroying data.</p>
+                            </div>
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Example Concept</p>
+                                <p class="text-sm text-dark-secondary">A macro virus embedded in a spreadsheet that activates when the file is opened and macros are enabled.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - Worms
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2.2 Worms</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60]">Definition</p>
+                                <p class="text-sm text-dark-secondary">A worm is <span class="font-bold">self-replicating</span> and does <span class="font-bold">not require a host file or human interaction</span> to spread.</p>
+                            </div>
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Spread Mechanism</p>
+                                <p class="text-sm text-dark-secondary">Exploits vulnerabilities in operating systems or networks to move from one machine to another automatically.</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Impact</p>
+                                <p class="text-sm text-dark-secondary">Can propagate extremely quickly and consume large amounts of bandwidth.</p>
+                            </div>
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Key Difference</p>
+                                <p class="text-sm text-dark-secondary">Worms travel across networks on their own; viruses need an infected file to be shared or executed.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 8 - Trojans
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2.3 Trojans (Trojan Horses)</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Definition</p>
+                                <p class="text-sm text-dark-secondary">Named after the Greek myth, a Trojan <span class="font-bold">disguises itself as legitimate or desirable software</span> to trick users into installing it.</p>
+                            </div>
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Key Trait</p>
+                                <p class="text-sm text-dark-secondary">Unlike viruses and worms, Trojans <span class="font-bold">do not self-replicate</span>.</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Capabilities</p>
+                                <p class="text-sm text-dark-secondary">May open a "backdoor," steal data, install additional malware, or give an attacker remote control.</p>
+                            </div>
+                            <div class="p-3 bg-[#0D1B2A]/5 rounded-lg border-l-4 border-[#0D1B2A]">
+                                <p class="font-bold text-[#0D1B2A]">Common Disguises</p>
+                                <p class="text-sm text-dark-secondary">Fake software updates, cracked/pirated applications, seemingly harmless email attachments.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - Ransomware
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2.4 Ransomware</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Definition</p>
+                                <p class="text-sm text-dark-secondary">Ransomware <span class="font-bold">encrypts a victim's files or locks them out of their system</span>, then demands payment (a "ransom") in exchange for restoring access.</p>
+                            </div>
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Two Common Types</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">Crypto-ransomware:</span> Encrypts files</li>
+                                    <li><span class="font-bold">Locker ransomware:</span> Locks the user out of the entire device</li>
+                                </ul>
+                            </div>
+                            <div class="p-3 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60]">Spread</p>
+                                <p class="text-sm text-dark-secondary">Often spreads via phishing emails, malicious attachments, or exploited vulnerabilities.</p>
+                            </div>
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Important Note</p>
+                                <p class="text-sm text-dark-secondary">Paying the ransom does not guarantee file recovery and may encourage further attacks. <span class="font-bold">Prevention</span> (backups, patching, user awareness) is the primary defense.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - Malware Comparison Table
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Malware Comparison Table</h2>
+                        <div class="overflow-x-auto">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th>Malware Type</th><th>Self-Replicating?</th><th>Needs Host File?</th><th>Needs User Action?</th><th>Primary Goal</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="font-bold text-[#C0392B]">Virus</td><td>Yes</td><td>Yes</td><td>Yes</td><td>Corrupt/damage files</td></tr>
+                                    <tr><td class="font-bold text-[#27AE60]">Worm</td><td>Yes</td><td>No</td><td>No</td><td>Spread rapidly, consume resources</td></tr>
+                                    <tr><td class="font-bold text-[#2979FF]">Trojan</td><td>No</td><td>No</td><td>Yes (tricked)</td><td>Deceive, open backdoor</td></tr>
+                                    <tr><td class="font-bold text-[#E67E22]">Ransomware</td><td>Varies</td><td>Varies</td><td>Often yes</td><td>Extort payment</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 11 - Spyware
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">3. Spyware and Adware</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-lg">Spyware</p>
+                                <p class="text-sm text-dark-secondary">Software that <span class="font-bold">secretly monitors and collects information</span> about a user's activity without their consent.</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary mt-2">
+                                    <li>Can capture keystrokes (keyloggers)</li>
+                                    <li>Browsing habits, login credentials</li>
+                                    <li>Often bundled with free downloads</li>
+                                </ul>
+                                <p class="text-xs text-[#C0392B] mt-1">Risks: identity theft, financial fraud, loss of privacy</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-lg">Adware</p>
+                                <p class="text-sm text-dark-secondary">Software that <span class="font-bold">automatically displays or downloads unwanted advertisements</span>, often as pop-ups or banners.</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary mt-2">
+                                    <li>Slows down system performance</li>
+                                    <li>Tracks browsing behavior for targeted ads</li>
+                                    <li>Redirects browsers to unsafe websites</li>
+                                </ul>
+                                <p class="text-xs text-[#E67E22] mt-1">Considered "grayware" — intrusive but not always destructive</p>
+                            </div>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#C0392B] text-sm">Key Distinction</p>
+                            <p class="text-xs text-dark-secondary">Spyware is about <span class="font-bold">covert data collection</span>; adware is about <span class="font-bold">unwanted advertising</span>, though they can overlap.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - How Malware Spreads
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">4. How Malware Spreads</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="spread-card p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">1. Email attachments and links</p>
+                                <p class="text-xs text-dark-secondary">Malicious files disguised as invoices, resumes; links to infected downloads</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60] text-sm">2. Phishing and social engineering</p>
+                                <p class="text-xs text-dark-secondary">Tricking users into clicking links, entering credentials, or enabling macros</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF] text-sm">3. Infected removable media</p>
+                                <p class="text-xs text-dark-secondary">USB drives or external hard disks with auto-executing malware</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">4. Drive-by downloads</p>
+                                <p class="text-xs text-dark-secondary">Malware downloaded when visiting a compromised website, sometimes without any click</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">5. Software vulnerabilities/exploits</p>
+                                <p class="text-xs text-dark-secondary">Attackers exploit unpatched security flaws in operating systems or applications</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60] text-sm">6. Malicious or pirated software</p>
+                                <p class="text-xs text-dark-secondary">Cracked software, fake updates, or unofficial app stores with hidden malware</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Spread Mechanisms (Continued)
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">How Malware Spreads (Continued)</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="spread-card p-2 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF] text-sm">7. Network propagation</p>
+                                <p class="text-xs text-dark-secondary">Worms and some ransomware variants spread automatically across connected devices on a network.</p>
+                            </div>
+                            <div class="spread-card p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">8. Malvertising</p>
+                                <p class="text-xs text-dark-secondary">Malicious code hidden within online advertisements on otherwise legitimate websites.</p>
+                            </div>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#C0392B] text-sm">Why This Matters</p>
+                            <p class="text-xs text-dark-secondary">Most infections rely on a combination of a <span class="font-bold">technical vulnerability</span> and <span class="font-bold">human behavior</span> (e.g., clicking a link). This is why cybersecurity defense involves both technical controls (patching, firewalls) and user education (recognizing phishing attempts).</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Signs of Infection
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5. Detecting and Removing Malware</h2>
+                        <p class="font-bold text-[#E67E22] text-lg">5.1 Common Signs of Infection</p>
+                        <div class="signs-box p-2 rounded-lg">
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li>Unusually slow system performance or frequent crashes</li>
+                                <li>Unexpected pop-ups or changes to browser settings/homepage</li>
+                                <li>Programs opening, closing, or installing without user action</li>
+                                <li>Unfamiliar programs running at startup</li>
+                                <li>Increased network activity or data usage without explanation</li>
+                                <li>Files becoming encrypted, missing, or renamed unexpectedly</li>
+                                <li>Disabled security software (antivirus turned off without user action)</li>
+                                <li>Unusual account activity (e.g., emails sent that the user didn't write)</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Detection Techniques
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5.2 Detection Techniques</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-3 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF]">Signature-based detection</p>
+                                <p class="text-sm text-dark-secondary">Comparing files against a database of known malware "signatures" (patterns of malicious code).</p>
+                            </div>
+                            <div class="p-3 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60]">Heuristic/behavioral analysis</p>
+                                <p class="text-sm text-dark-secondary">Monitoring how a program behaves to catch new or modified malware that doesn't match a known signature.</p>
+                            </div>
+                            <div class="p-3 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22]">Sandboxing</p>
+                                <p class="text-sm text-dark-secondary">Running suspicious files in an isolated environment to observe behavior safely.</p>
+                            </div>
+                            <div class="p-3 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B]">Regular system scans</p>
+                                <p class="text-sm text-dark-secondary">Scheduled full-system and quick scans using security software.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 16 - General Removal Steps
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5.3 General Removal Steps</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li><span class="font-bold text-[#C0392B]">Isolate the system</span> — Disconnect from the network to prevent further spread or data exfiltration.</li>
+                            <li><span class="font-bold text-[#2979FF]">Identify the threat</span> — Run a full antivirus/anti-malware scan to detect and classify the infection.</li>
+                            <li><span class="font-bold text-[#27AE60]">Quarantine or remove</span> — Use security software to quarantine or delete the malicious files.</li>
+                            <li><span class="font-bold text-[#E67E22]">Update and patch</span> — Ensure the operating system and software are updated to close the vulnerability.</li>
+                            <li><span class="font-bold text-[#0D1B2A]">Restore data</span> — Recover affected files from clean, verified backups if needed.</li>
+                            <li><span class="font-bold text-[#C0392B]">Change credentials</span> — Reset passwords for accounts that may have been compromised.</li>
+                            <li><span class="font-bold text-[#2979FF]">Monitor</span> — Continue monitoring the system for unusual activity after remediation.</li>
+                        </ol>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-xs text-dark-muted">💡 Note: Severe infections (e.g., advanced ransomware or rootkits) may require professional incident response support or a full system reimage.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 17 - Antivirus and Anti-malware Tools
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">6. Antivirus and Anti-malware Tools</h2>
+                        <div class="av-box p-2 rounded-lg">
+                            <p class="font-bold text-[#2979FF]">6.1 Purpose</p>
+                            <p class="text-sm text-dark-secondary">Antivirus (AV) and anti-malware tools are software designed to <span class="font-bold">prevent, detect, and remove malicious software</span> from a system.</p>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-2 mt-3">
+                            <div class="p-2 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF] text-sm">Core Functions</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Real-time protection</li>
+                                    <li>Scheduled and on-demand scanning</li>
+                                    <li>Quarantine</li>
+                                    <li>Automatic updates</li>
+                                    <li>Web and email protection</li>
+                                    <li>Firewall integration</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Antivirus vs. Anti-malware</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li><span class="font-bold">Antivirus:</span> Traditional focus on viruses and worms</li>
+                                    <li><span class="font-bold">Anti-malware:</span> Broader range: spyware, adware, ransomware, trojans</li>
+                                    <li>Modern usage: terms are largely used interchangeably</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 18 - Best Practices for AV Tools
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">6.4 Best Practices for Using AV Tools</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>Keep antivirus/anti-malware software <span class="font-bold text-[#C0392B]">updated</span> at all times.</li>
+                            <li>Enable <span class="font-bold text-[#2979FF]">real-time/active protection</span>, not just manual scans.</li>
+                            <li>Run <span class="font-bold text-[#27AE60]">regular full-system scans</span> in addition to real-time monitoring.</li>
+                            <li>Combine antivirus software with other defenses: <span class="font-bold text-[#E67E22]">firewalls, regular OS/software patching, strong passwords, and user awareness training</span>.</li>
+                            <li>Avoid running multiple full antivirus suites simultaneously (they can conflict); use <span class="font-bold text-[#0D1B2A]">one primary solution</span>, optionally supplemented by an on-demand scanner.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 19 - Summary & Discussion
+            content: () => `
+                    <div class="glass-card-threat rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Summary & Discussion</h2>
+                        <div class="key-point p-3 rounded-lg">
+                            <p class="font-bold text-[#C0392B]">Summary</p>
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li>Cyber threats take many forms, with malware being one of the most prevalent categories.</li>
+                                <li><span class="font-bold">Viruses, worms, Trojans, and ransomware</span> differ mainly in how they spread and their intended impact.</li>
+                                <li><span class="font-bold">Spyware and adware</span> focus on covert monitoring and unwanted advertising, respectively.</li>
+                                <li>Malware typically spreads through a mix of <span class="font-bold">technical vulnerabilities</span> and <span class="font-bold">human error/social engineering</span>.</li>
+                                <li>Recognizing infection signs early and following structured detection/removal steps limits damage.</li>
+                                <li><span class="font-bold">Antivirus and anti-malware tools</span> remain a core layer of defense but work best as part of a broader security strategy.</li>
+                            </ul>
+                        </div>
+                        <div class="discussion-box p-3 rounded-lg mt-3" style="background: rgba(39,174,96,0.06); border-left: 4px solid #27AE60;">
+                            <p class="font-bold text-[#27AE60]">Discussion Questions</p>
+                            <ol class="numbered-list text-sm text-dark-secondary">
+                                <li>Why might a worm cause more widespread damage in a short time compared to a virus?</li>
+                                <li>How does the disguise strategy of a Trojan differ from the self-replication strategy of a virus or worm?</li>
+                                <li>What combination of technical and behavioral defenses would best reduce the risk of ransomware in an organization?</li>
+                                <li>Why is signature-based detection alone insufficient against modern, rapidly evolving malware?</li>
+                            </ol>
+                        </div>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>

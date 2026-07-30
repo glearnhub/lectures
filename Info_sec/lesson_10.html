@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Lesson 10: Emerging Threats, Future Trends & Course Review</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Future Trends Theme: Dark Purple with Cyan/Green Accents */
+        .ft-dark { color: #0D1B2A; }
+        .ft-dark-bg { background: #0D1B2A; }
+        .ft-purple { color: #6A0DAD; }
+        .ft-purple-bg { background: #6A0DAD; }
+        .ft-cyan { color: #00B4D8; }
+        .ft-cyan-bg { background: #00B4D8; }
+        .ft-green { color: #27AE60; }
+        .ft-green-bg { background: #27AE60; }
+        .ft-red { color: #C0392B; }
+        .ft-red-bg { background: #C0392B; }
+        .ft-orange { color: #E67E22; }
+        .ft-orange-bg { background: #E67E22; }
+
+        .glass-card-ft {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(13, 27, 42, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(106, 13, 173, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #6A0DAD;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(106, 13, 173, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(106, 13, 173, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6A0DAD;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .key-point {
+            background: rgba(106, 13, 173, 0.06);
+            border-left: 4px solid #6A0DAD;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .tip-box {
+            background: rgba(39, 174, 96, 0.06);
+            border-left: 4px solid #27AE60;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .comparison-table th {
+            background: rgba(106, 13, 173, 0.06);
+            color: #0D1B2A;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(106, 13, 173, 0.1);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+
+        .threat-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(13, 27, 42, 0.08);
+        }
+        .threat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .review-box {
+            background: rgba(0, 180, 216, 0.06);
+            border-left: 4px solid #00B4D8;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .dual-role {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .dual-role-item {
+            background: rgba(106, 13, 173, 0.05);
+            border: 1px solid #6A0DAD;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            min-width: 180px;
+            flex: 1;
+        }
+        .dual-role-item.defense {
+            border-color: #27AE60;
+            background: rgba(39, 174, 96, 0.05);
+        }
+        .dual-role-item.attack {
+            border-color: #C0392B;
+            background: rgba(192, 57, 43, 0.05);
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-purple-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#6A0DAD]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#00B4D8]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#6A0DAD]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#6A0DAD] flex items-center justify-center text-white font-bold text-lg">FT</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#6A0DAD] font-bold tracking-wider">LESSON 10: EMERGING THREATS</p>
+                            <p class="text-[10px] text-dark-muted">Future Trends & Course Review</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#6A0DAD]/30 text-dark">1 / 21</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#6A0DAD]/30 hover:bg-[#6A0DAD]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A0DAD" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#6A0DAD]/30 hover:bg-[#6A0DAD]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6A0DAD" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-gradient-to-r from-[#6A0DAD] to-[#00B4D8] rounded-full" style="width: 4.8%"></div>
+                </div>
+                <p class="text-[10px] text-[#6A0DAD]/60 text-center mt-2 font-mono tracking-wider">✦ EMERGING THREATS · AI · IOT · CLOUD · FUTURE TRENDS · COURSE REVIEW ✦</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#6A0DAD]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#6A0DAD]/20">
+                ↑↓ Scroll • ← → Navigate slides
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // LESSON 10: EMERGING THREATS, FUTURE TRENDS & COURSE REVIEW
+        // Complete 21-slide presentation with all content
+        // =============================================================
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#6A0DAD]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#6A0DAD] flex items-center justify-center shadow-[0_0_30px_rgba(106,13,173,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">FT</span>
+                                </div>
+                            </div>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#0D1B2A] mb-3">Lesson 10: Emerging Threats, Future Trends & Course Review</h1>
+                            <div class="w-24 h-1 bg-gradient-to-r from-[#6A0DAD] to-[#00B4D8] mx-auto mb-4"></div>
+                            <div class="mt-6 flex gap-3 justify-center flex-wrap">
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Emerging Threats</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">AI in Security</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">IoT Security</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Cloud Security</span>
+                                <span class="px-3 py-1 rounded-full bg-[#6A0DAD]/10 border border-[#6A0DAD]/20 text-sm text-dark-secondary">Course Review</span>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Learning Objectives
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Learning Objectives</h2>
+                        <p class="text-dark-secondary mb-3">By the end of this lesson, students should be able to:</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>Identify emerging cybersecurity threats and explain why the threat landscape keeps evolving</li>
+                            <li>Explain both the offensive and defensive roles of artificial intelligence in security</li>
+                            <li>Describe key security challenges specific to IoT devices</li>
+                            <li>Explain current trends and challenges in cloud security</li>
+                            <li>Discuss broader trajectories shaping the future of information security</li>
+                            <li>Review and consolidate key concepts from across the course</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 3 - Emerging Cybersecurity Threats
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">1. Emerging Cybersecurity Threats</h2>
+                        <p class="text-dark-secondary">The threat landscape is not static — as technology evolves, so do attacker techniques. Emerging threats often exploit new technologies, remote/hybrid work environments, and increasingly sophisticated automation.</p>
+                        <div class="grid md:grid-cols-2 gap-2 mt-3">
+                            <div class="threat-card p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Ransomware-as-a-Service (RaaS)</p>
+                                <p class="text-xs text-dark-secondary">Ransomware toolkits sold or leased to less skilled attackers, lowering the barrier to entry.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Supply chain attacks</p>
+                                <p class="text-xs text-dark-secondary">Compromising a trusted vendor or software update mechanism to infiltrate many organizations at once.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#6A0DAD]/5 rounded-lg border-l-4 border-[#6A0DAD]">
+                                <p class="font-bold text-[#6A0DAD] text-sm">Deepfakes and synthetic media</p>
+                                <p class="text-xs text-dark-secondary">Using AI-generated audio/video to impersonate individuals for fraud or disinformation.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF] text-sm">AI-powered phishing</p>
+                                <p class="text-xs text-dark-secondary">Highly personalized, convincingly written phishing messages generated at scale.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Zero-day exploits</p>
+                                <p class="text-xs text-dark-secondary">Attacks targeting vulnerabilities unknown to vendors, before a patch exists.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Cloud misconfigurations</p>
+                                <p class="text-xs text-dark-secondary">Increasingly common as organizations migrate more infrastructure to the cloud.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - Emerging Threats (Continued)
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Emerging Threats (Continued)</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="threat-card p-2 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60] text-sm">Attacks on critical infrastructure</p>
+                                <p class="text-xs text-dark-secondary">Targeting power grids, water systems, and healthcare through operational technology (OT) networks.</p>
+                            </div>
+                            <div class="threat-card p-2 bg-[#00B4D8]/5 rounded-lg border-l-4 border-[#00B4D8]">
+                                <p class="font-bold text-[#00B4D8] text-sm">Quantum computing risk (long-term)</p>
+                                <p class="text-xs text-dark-secondary">Future quantum computers may eventually break current encryption standards, prompting research into "post-quantum cryptography."</p>
+                            </div>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Why This Matters</p>
+                            <p class="text-xs text-dark-secondary">Understanding emerging threats isn't about memorizing every new technique — it's about recognizing the <span class="font-bold">patterns</span>: attackers exploit new technology adoption, automation, and trust relationships faster than defenses can adapt.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - AI in Security
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">2. Artificial Intelligence in Security</h2>
+                        <p class="text-dark-secondary">AI plays a <span class="font-bold text-[#6A0DAD]">dual role</span> in cybersecurity — as both a powerful defensive tool and a capability attackers increasingly leverage.</p>
+                        <div class="dual-role mt-3">
+                            <div class="dual-role-item defense">
+                                <p class="font-bold text-[#27AE60] text-lg">AI for Defense</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary text-left">
+                                    <li>Anomaly and behavioral detection</li>
+                                    <li>Automated threat response</li>
+                                    <li>Predictive analytics</li>
+                                    <li>Spam and phishing filtering</li>
+                                    <li>Vulnerability scanning</li>
+                                </ul>
+                            </div>
+                            <div class="dual-role-item attack">
+                                <p class="font-bold text-[#C0392B] text-lg">AI as an Attack Tool</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary text-left">
+                                    <li>Automated, adaptive malware</li>
+                                    <li>AI-generated phishing and social engineering</li>
+                                    <li>Deepfake-enabled fraud</li>
+                                    <li>Automated vulnerability discovery</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Key Takeaway</p>
+                            <p class="text-xs text-dark-secondary">AI is a <span class="font-bold">force multiplier</span> for both defenders and attackers. Effective security strategy involves not just deploying AI-based defenses, but also understanding how AI might be used against an organization.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - IoT Security
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">3. Internet of Things (IoT) Security</h2>
+                        <p class="text-dark-secondary"><span class="font-bold text-[#00B4D8]">IoT (Internet of Things)</span> refers to the growing network of physical devices — sensors, cameras, appliances, wearables, industrial equipment — connected to the internet.</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Why IoT Devices Are Vulnerable</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Limited processing power</li>
+                                    <li>Weak or default credentials</li>
+                                    <li>Infrequent updates/patching</li>
+                                    <li>Large attack surface</li>
+                                    <li>Diverse ecosystem — lack of standardization</li>
+                                </ul>
+                            </div>
+                            <div class="p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Common IoT Threats</p>
+                                <ul class="bulleted-list text-xs text-dark-secondary">
+                                    <li>Botnets (e.g., DDoS attacks)</li>
+                                    <li>Unauthorized surveillance</li>
+                                    <li>Data interception</li>
+                                    <li>Lateral movement — using IoT as foothold</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - IoT Best Practices
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Best Practices for IoT Security</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#27AE60]">Change default credentials</span> immediately upon setup</li>
+                            <li><span class="font-bold text-[#2979FF]">Keep firmware and software updated</span></li>
+                            <li><span class="font-bold text-[#C0392B]">Segment IoT devices</span> on a separate network from critical systems</li>
+                            <li><span class="font-bold text-[#E67E22]">Disable unnecessary features</span> and services on devices</li>
+                            <li><span class="font-bold text-[#6A0DAD]">Choose devices</span> from manufacturers with a track record of security support</li>
+                        </ul>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-xs text-dark-muted">💡 Every connected device is a potential entry point into a network. Treat IoT devices as part of your overall security posture.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 8 - Cloud Security Trends
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">4. Cloud Security Trends</h2>
+                        <p class="text-dark-secondary">As organizations increasingly migrate infrastructure, applications, and data to the cloud, security practices must adapt to this shared environment.</p>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#2979FF] text-sm">The Shared Responsibility Model</p>
+                            <p class="text-xs text-dark-secondary">Cloud security is a <span class="font-bold">shared responsibility</span> between the cloud provider and the customer:</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">Provider responsibility</span> – Securing the underlying infrastructure</li>
+                                <li><span class="font-bold">Customer responsibility</span> – Securing data, access controls, application configurations, and identity management</li>
+                            </ul>
+                            <p class="text-xs text-[#C0392B] mt-1">⚠️ Misunderstanding this division is one of the most common causes of cloud security incidents.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - Cloud Security Trends (Continued)
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Key Cloud Security Trends</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="p-2 bg-[#00B4D8]/5 rounded-lg border-l-4 border-[#00B4D8]">
+                                <p class="font-bold text-[#00B4D8] text-sm">Zero Trust Architecture</p>
+                                <p class="text-xs text-dark-secondary">Assuming no user or device is inherently trustworthy; continuously verifying identity and access.</p>
+                            </div>
+                            <div class="p-2 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60] text-sm">Identity and Access Management (IAM)</p>
+                                <p class="text-xs text-dark-secondary">Centralized control over who can access what, using MFA and least-privilege principles.</p>
+                            </div>
+                            <div class="p-2 bg-[#6A0DAD]/5 rounded-lg border-l-4 border-[#6A0DAD]">
+                                <p class="font-bold text-[#6A0DAD] text-sm">Cloud Security Posture Management (CSPM)</p>
+                                <p class="text-xs text-dark-secondary">Tools that continuously monitor cloud environments for misconfigurations and compliance issues.</p>
+                            </div>
+                            <div class="p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Multi-cloud and hybrid cloud security</p>
+                                <p class="text-xs text-dark-secondary">Organizations using multiple cloud providers face increased complexity in maintaining consistent security policies.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - Cloud Security Risks
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Common Cloud Security Risks</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#C0392B]">Misconfigured storage buckets</span> or access permissions (a leading cause of cloud data breaches)</li>
+                            <li><span class="font-bold text-[#E67E22]">Insecure APIs</span></li>
+                            <li><span class="font-bold text-[#2979FF]">Insufficient identity and access controls</span></li>
+                            <li><span class="font-bold text-[#6A0DAD]">Lack of visibility</span> across complex, multi-cloud environments</li>
+                        </ul>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-xs text-dark-muted">💡 Encryption at rest and in transit is increasingly standard practice for protecting cloud-stored and transmitted data.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 11 - The Future of Information Security
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">5. The Future of Information Security</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="p-2 bg-[#6A0DAD]/5 rounded-lg border-l-4 border-[#6A0DAD]">
+                                <p class="font-bold text-[#6A0DAD] text-sm">Increased automation and AI integration</p>
+                                <p class="text-xs text-dark-secondary">In both attack and defense strategies</p>
+                            </div>
+                            <div class="p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Greater regulatory focus</p>
+                                <p class="text-xs text-dark-secondary">On data privacy and breach accountability</p>
+                            </div>
+                            <div class="p-2 bg-[#00B4D8]/5 rounded-lg border-l-4 border-[#00B4D8]">
+                                <p class="font-bold text-[#00B4D8] text-sm">Post-quantum cryptography</p>
+                                <p class="text-xs text-dark-secondary">Preparing encryption standards for quantum computing</p>
+                            </div>
+                            <div class="p-2 bg-[#27AE60]/5 rounded-lg border-l-4 border-[#27AE60]">
+                                <p class="font-bold text-[#27AE60] text-sm">Convergence of IT and OT security</p>
+                                <p class="text-xs text-dark-secondary">Protecting industrial control systems and critical infrastructure</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - Future Trends (Continued)
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">The Future of Information Security (Continued)</h2>
+                        <div class="grid md:grid-cols-2 gap-2">
+                            <div class="p-2 bg-[#E67E22]/5 rounded-lg border-l-4 border-[#E67E22]">
+                                <p class="font-bold text-[#E67E22] text-sm">Growing emphasis on Zero Trust</p>
+                                <p class="text-xs text-dark-secondary">As a default security architecture rather than an optional add-on</p>
+                            </div>
+                            <div class="p-2 bg-[#2979FF]/5 rounded-lg border-l-4 border-[#2979FF]">
+                                <p class="font-bold text-[#2979FF] text-sm">Workforce and skills gap</p>
+                                <p class="text-xs text-dark-secondary">Continued high demand for skilled cybersecurity professionals</p>
+                            </div>
+                            <div class="p-2 bg-[#C0392B]/5 rounded-lg border-l-4 border-[#C0392B]">
+                                <p class="font-bold text-[#C0392B] text-sm">Human factor remains central</p>
+                                <p class="text-xs text-dark-secondary">Social engineering and human error remain leading causes of security incidents</p>
+                            </div>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Key Takeaway</p>
+                            <p class="text-xs text-dark-secondary">Information security is a continuously evolving discipline. Staying current requires not just technical knowledge, but <span class="font-bold">adaptability</span> — the ability to apply foundational principles to new and unfamiliar technologies as they emerge.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Course Review Introduction
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">6. Course Review and Revision</h2>
+                        <p class="text-dark-secondary">This section consolidates major themes from across the course. Use it as a checklist to guide your revision.</p>
+                        <div class="review-box p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#00B4D8] text-sm">Core Concepts to Review</p>
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">The CIA Triad</span> – Confidentiality, Integrity, Availability</li>
+                                <li><span class="font-bold">Types of cyber threats</span> – Malware, spyware/adware, social engineering, network-based attacks</li>
+                                <li><span class="font-bold">How malware spreads</span> and the shared human + technical factors</li>
+                                <li><span class="font-bold">Detection and removal principles</span>, role of antivirus/anti-malware</li>
+                                <li><span class="font-bold">The Incident Response Lifecycle</span> – Preparation, Detection, Containment, Eradication, Recovery, Lessons Learned</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Course Review Continued
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Course Review (Continued)</h2>
+                        <div class="review-box p-2 rounded-lg">
+                            <ul class="bulleted-list text-xs text-dark-secondary">
+                                <li><span class="font-bold">Disaster Recovery Planning (DRP)</span> vs. <span class="font-bold">Business Continuity Planning (BCP)</span> — scope, focus, and how they relate to incident response</li>
+                                <li><span class="font-bold">Emerging threats</span> – RaaS, supply chain attacks, deepfakes, AI-powered attacks, cloud misconfigurations</li>
+                                <li><span class="font-bold">AI's dual role</span> in cybersecurity — as both defensive tool and attack enabler</li>
+                                <li><span class="font-bold">IoT security challenges</span> — weak defaults, limited patching, large attack surface</li>
+                                <li><span class="font-bold">Cloud security</span> — shared responsibility model, Zero Trust, IAM, common misconfiguration risks</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - Suggested Revision Approach
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Suggested Revision Approach</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li><span class="font-bold text-[#6A0DAD]">Concept mapping</span> – Draw connections between related topics (e.g., how malware ties into incident response, how IoT vulnerabilities connect to broader network security).</li>
+                            <li><span class="font-bold text-[#27AE60]">Practice scenarios</span> – Walk through a hypothetical incident (e.g., "a ransomware attack hits a mid-sized company") and apply the full incident response lifecycle.</li>
+                            <li><span class="font-bold text-[#E67E22]">Compare and contrast</span> – Practice explaining the differences between related concepts (virus vs. worm; DRP vs. BCP; antivirus vs. anti-malware).</li>
+                            <li><span class="font-bold text-[#2979FF]">Current events check</span> – Look up one recent real-world cybersecurity incident and identify which concepts from the course apply to it.</li>
+                            <li><span class="font-bold text-[#C0392B]">Self-quiz</span> – Attempt to define each key term from the course from memory before checking notes.</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            // Slide 16 - Sample Review Questions
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Sample Review Questions</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li>Explain the CIA Triad and give a real-world example of a control supporting each principle.</li>
+                            <li>Compare how a virus, worm, and Trojan each spread and cause harm.</li>
+                            <li>Walk through the six steps of incident response using a ransomware scenario as an example.</li>
+                            <li>What is the difference between a DRP and a BCP, and how might a single incident require both?</li>
+                            <li>How does AI change the cybersecurity threat landscape, both offensively and defensively?</li>
+                            <li>What makes IoT devices particularly vulnerable compared to traditional computing devices?</li>
+                            <li>Explain the shared responsibility model in cloud security and why misunderstanding it leads to breaches.</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            // Slide 17 - Summary
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Summary</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>The cybersecurity threat landscape is constantly evolving, driven by new technologies like AI, IoT, and cloud computing.</li>
+                            <li><span class="font-bold text-[#6A0DAD]">AI</span> serves as both a powerful defensive capability and a growing tool for attackers.</li>
+                            <li><span class="font-bold text-[#00B4D8]">IoT devices</span> introduce unique vulnerabilities due to limited security capacity and inconsistent manufacturer practices.</li>
+                            <li><span class="font-bold text-[#27AE60]">Cloud security</span> depends heavily on understanding the shared responsibility model and adopting practices like Zero Trust and strong IAM.</li>
+                            <li>The <span class="font-bold text-[#E67E22]">future of information security</span> will be shaped by automation, regulation, quantum computing risk, and the persistent importance of human awareness.</li>
+                            <li>This course has covered threats, malware, incident response, recovery planning, and emerging trends — all built on the foundational goal of protecting the <span class="font-bold text-[#C0392B]">confidentiality, integrity, and availability</span> of information systems.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 18 - Key Takeaways
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Key Takeaways</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#6A0DAD]">Emerging threats</span> exploit new technology adoption, automation, and trust relationships.</li>
+                            <li><span class="font-bold text-[#00B4D8]">AI</span> is a force multiplier for both defenders and attackers.</li>
+                            <li><span class="font-bold text-[#27AE60]">IoT security</span> requires changing default credentials, segmenting networks, and regular updates.</li>
+                            <li><span class="font-bold text-[#2979FF]">Cloud security</span> depends on understanding the shared responsibility model.</li>
+                            <li><span class="font-bold text-[#E67E22]">The future</span> will be shaped by Zero Trust, post-quantum cryptography, and the human factor.</li>
+                            <li><span class="font-bold text-[#C0392B]">Security is continuous</span> — adapt to new threats while applying foundational principles.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 19 - Quick Quiz
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Quick Quiz</h2>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li>What is Ransomware-as-a-Service (RaaS)?</li>
+                            <li>Name two ways AI is used in cybersecurity defense.</li>
+                            <li>Name two ways AI is used as an attack tool.</li>
+                            <li>Why are IoT devices especially vulnerable?</li>
+                            <li>What is the shared responsibility model in cloud security?</li>
+                            <li>List the six steps of the incident response lifecycle.</li>
+                            <li>What is the difference between a DRP and a BCP?</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            // Slide 20 - Final Exam Preparation Tips
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#0D1B2A] mb-4">Final Exam Preparation Tips</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#6A0DAD]">Review all lesson summaries</span> — they contain the most important takeaways.</li>
+                            <li><span class="font-bold text-[#00B4D8]">Practice applying concepts</span> to real-world scenarios, not just memorizing definitions.</li>
+                            <li><span class="font-bold text-[#27AE60]">Focus on understanding relationships</span> between concepts (e.g., how malware relates to incident response).</li>
+                            <li><span class="font-bold text-[#E67E22]">Use the sample review questions</span> to test your understanding.</li>
+                            <li><span class="font-bold text-[#C0392B]">Stay current</span> — review recent cybersecurity news to see course concepts in action.</li>
+                        </ul>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="font-bold text-[#6A0DAD] text-sm">Remember</p>
+                            <p class="text-xs text-dark-secondary">Cybersecurity is not just about technology — it's about <span class="font-bold">people, processes, and continuous learning</span>.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 21 - Closing
+            content: () => `
+                    <div class="glass-card-ft rounded-3xl p-12 md:p-16 text-center">
+                        <h2 class="text-4xl md:text-5xl font-bold text-[#0D1B2A]">Thank You</h2>
+                        <div class="w-24 h-1 bg-gradient-to-r from-[#6A0DAD] to-[#00B4D8] mx-auto my-4"></div>
+                        <p class="text-dark-secondary mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#6A0DAD] mt-4 italic">"The only constant in cybersecurity is change. Stay curious, stay informed, and stay secure."</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#6A0DAD] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#00B4D8] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#6A0DAD] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-dark-muted text-sm mt-6">Stay Secure · Stay Informed · Stay Adaptable</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
