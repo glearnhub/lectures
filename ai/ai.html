@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <title>Programming for AI | Week 1: Introduction to AI Programming</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* AIU Red Theme: #C8102E */
+        .aiu-red { color: #C8102E; }
+        .aiu-red-bg { background: #C8102E; }
+        .aiu-dark { color: #1A1A2E; }
+        .aiu-dark-bg { background: #1A1A2E; }
+
+        .glass-card-aiu {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(200, 16, 46, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, monospace;
+            background: radial-gradient(circle at 20% 30%, #f5f5f5, #e8e8e8);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .slide-container {
+            perspective: 1200px;
+            transform-style: preserve-3d;
+            height: 100%;
+            width: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide-container::-webkit-scrollbar-track {
+            background: rgba(200, 16, 46, 0.06);
+            border-radius: 10px;
+        }
+        .slide-container::-webkit-scrollbar-thumb {
+            background: #C8102E;
+            border-radius: 10px;
+        }
+
+        .slide-card {
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-particles {
+            background-image:
+                linear-gradient(rgba(200, 16, 46, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(200, 16, 46, 0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: shiftGrid 20s linear infinite;
+        }
+
+        @keyframes shiftGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        .progress-fill {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C8102E;
+            border-radius: 4px;
+        }
+
+        .bulleted-list {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .bulleted-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+        .numbered-list {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        .numbered-list li {
+            margin: 0.45rem 0;
+            line-height: 1.5;
+        }
+
+        .text-dark { color: #1A1A2E; }
+        .text-dark-secondary { color: #333333; }
+        .text-dark-muted { color: #555555; }
+
+        .code-block {
+            background: #0A0A1A;
+            border-left: 4px solid #C8102E;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-block pre {
+            color: #8be9fd;
+        }
+        .code-block .kw { color: #ff79c6; }
+        .code-block .fn { color: #50fa7b; }
+        .code-block .str { color: #f1fa8c; }
+        .code-block .cm { color: #6272a4; }
+
+        .key-point {
+            background: rgba(200, 16, 46, 0.06);
+            border-left: 4px solid #C8102E;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .tip-box {
+            background: rgba(200, 16, 46, 0.04);
+            border-left: 4px solid #C8102E;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .comparison-table th {
+            background: rgba(200, 16, 46, 0.08);
+            color: #1A1A2E;
+        }
+        .comparison-table td,
+        .comparison-table th {
+            padding: 0.5rem;
+            border: 1px solid rgba(200, 16, 46, 0.12);
+            text-align: left;
+        }
+        .comparison-table td {
+            color: #333333;
+        }
+
+        .history-card {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(200, 16, 46, 0.1);
+        }
+        .history-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+        }
+    </style>
+</head>
+<body class="text-dark overflow-hidden h-screen w-screen">
+
+    <div class="relative h-full w-full overflow-hidden">
+        <div class="absolute inset-0 grid-particles opacity-60 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-gradient-to-br from-white via-red-50/10 to-white pointer-events-none"></div>
+
+        <div class="absolute top-20 left-10 w-64 h-64 bg-[#C8102E]/5 rounded-full blur-3xl animate-pulse-slow pointer-events-none"></div>
+        <div class="absolute bottom-20 right-10 w-80 h-80 bg-[#C8102E]/8 rounded-full blur-3xl animate-pulse-slow delay-1000 pointer-events-none"></div>
+
+        <div class="relative z-10 flex flex-col h-full w-full">
+            <!-- Top Bar -->
+            <div class="fixed top-0 left-0 right-0 p-4 md:p-6 z-30 bg-gradient-to-b from-white/95 to-white/80 backdrop-blur-md border-b border-[#C8102E]/20">
+                <div class="flex justify-between items-center mb-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-[#C8102E] flex items-center justify-center text-white font-bold text-lg">AIU</div>
+                        <div class="hidden md:block">
+                            <p class="text-xs text-[#C8102E] font-bold tracking-wider">AFRICA INTERNATIONAL UNIVERSITY</p>
+                            <p class="text-[10px] text-dark-muted">Programming for AI — Week 1</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span id="slideCounter" class="text-sm font-mono bg-white/80 px-3 py-1 rounded-full border border-[#C8102E]/30 text-dark">1 / 20</span>
+                        <button id="prevBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C8102E]/30 hover:bg-[#C8102E]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+                        </button>
+                        <button id="nextBtn" class="p-2 rounded-full bg-white/80 backdrop-blur border border-[#C8102E]/30 hover:bg-[#C8102E]/10 transition-all duration-300 transform hover:scale-110">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8102E" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="progressFill" class="progress-fill h-full bg-[#C8102E] rounded-full" style="width: 5%"></div>
+                </div>
+                <p class="text-[10px] text-[#C8102E]/60 text-center mt-2 font-mono tracking-wider">PROGRAMMING FOR AI — OVERVIEW · HISTORY · APPLICATIONS</p>
+            </div>
+
+            <!-- Slide Content Area -->
+            <div id="slideContainer" class="flex-1 slide-container mt-24 mb-4 px-4">
+                <div id="slidesWrapper" class="w-full max-w-6xl mx-auto transition-all duration-700" style="transform-style: preserve-3d;"></div>
+            </div>
+
+            <div class="fixed bottom-3 left-1/2 transform -translate-x-1/2 z-30 text-[#C8102E]/40 text-[10px] font-mono bg-white/80 px-3 py-1 rounded-full backdrop-blur-sm border border-[#C8102E]/20">
+                Scroll or use arrow keys to navigate
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =============================================================
+        // PROGRAMMING FOR AI - WEEK 1
+        // Introduction to AI Programming
+        // Complete 20-slide presentation with all content
+        // =============================================================
+
+        function makeCodeBlock(code) {
+            const escaped = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return `
+                <div class="code-block p-3 rounded-lg overflow-x-auto">
+                    <pre class="text-sm font-mono whitespace-pre-wrap">${escaped}</pre>
+                </div>
+            `;
+        }
+
+        const slidesData = [{
+            // Slide 1 - Title
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-12 text-center relative min-h-[55vh]">
+                        <div class="absolute -top-20 left-1/2 transform -translate-x-1/2 w-48 h-48 bg-[#C8102E]/5 rounded-full blur-3xl animate-pulse"></div>
+                        <div class="relative z-10">
+                            <div class="flex justify-center mb-4">
+                                <div class="w-20 h-20 rounded-full bg-[#C8102E] flex items-center justify-center shadow-[0_0_30px_rgba(200,16,46,0.2)]">
+                                    <span class="text-white font-extrabold text-2xl">AIU</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-[#C8102E] font-bold tracking-[0.3em] mb-1">AFRICA INTERNATIONAL UNIVERSITY</p>
+                            <p class="text-xs text-dark-muted mb-4">Programming for AI</p>
+                            <h1 class="text-3xl md:text-5xl font-extrabold text-[#1A1A2E] mb-3">Week 1: Introduction to AI Programming</h1>
+                            <div class="w-24 h-1 bg-[#C8102E] mx-auto mb-4"></div>
+                            <p class="text-xl text-dark-secondary">Overview of AI · History of AI · AI Applications</p>
+                            <p class="text-sm text-dark-muted mt-2">Outcome: Understand AI concepts and applications</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 2 - Learning Outcomes
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Learning Outcomes</h2>
+                        <p class="text-dark-secondary mb-3">By the end of this week you should be able to:</p>
+                        <ol class="numbered-list text-dark-secondary">
+                            <li>Define artificial intelligence and distinguish it from ordinary programming.</li>
+                            <li>Describe the four historical waves of AI and explain why each stalled or succeeded.</li>
+                            <li>Classify a given system as narrow or general AI, and as symbolic or learned.</li>
+                            <li>Name the main application areas of AI and give a concrete example of each.</li>
+                            <li>Install Python, verify the installation, and run your first program.</li>
+                            <li>Explain, in your own words, why Python became the dominant language of AI.</li>
+                        </ol>
+                    </div>
+                `
+        }, {
+            // Slide 3 - What is Artificial Intelligence
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.1 What is Artificial Intelligence?</h2>
+                        <div class="key-point p-3 rounded-lg">
+                            <p class="text-dark-secondary">Artificial intelligence is the branch of computer science concerned with building systems that perform tasks which, when performed by humans, we would say require intelligence.</p>
+                        </div>
+                        <p class="text-dark-secondary mt-3">That definition is deliberately slippery, and its slipperiness is the point. Notice that it defines AI by the task, not by the method. Playing chess used to require intelligence, so chess programs were AI. Today a chess engine feels like ordinary software and the interesting AI has moved elsewhere.</p>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary"><span class="font-bold text-[#C8102E]">The AI effect:</span> This retreat is so consistent it has a name. As soon as a problem is solved, it stops being called AI and starts being called "just an algorithm".</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 4 - The Four Schools
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">The Four Schools</h2>
+                        <p class="text-dark-secondary">Russell and Norvig organise the field around two axes: whether the goal is to imitate humans or to achieve rationality, and whether the target is thinking or acting.</p>
+                        <div class="overflow-x-auto mt-3">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th></th><th>Thinking</th><th>Acting</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="font-bold text-[#C8102E]">Humanly</td><td>Cognitive modelling — build systems that reason the way people do</td><td>The Turing Test tradition — behave indistinguishably from a human</td></tr>
+                                    <tr><td class="font-bold text-[#C8102E]">Rationally</td><td>Laws of thought — encode logic and infer correct conclusions</td><td>Rational agents — take the action expected to achieve the best outcome</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary">This unit sits firmly in the <span class="font-bold text-[#C8102E]">bottom-right box</span>. We build <span class="font-bold">rational agents</span>: programs that perceive some environment and choose actions that move them toward a goal.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 5 - The Agent Framing
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">The Agent Framing</h2>
+                        <p class="text-dark-secondary mb-2">An agent has:</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>a <span class="font-bold text-[#C8102E]">percept</span> — what it can observe (a board position, a sensor reading, a sentence, a row of data),</li>
+                            <li>an <span class="font-bold text-[#C8102E]">action set</span> — what it can do (move a piece, steer, output a label),</li>
+                            <li>a <span class="font-bold text-[#C8102E]">performance measure</span> — how we score it (games won, error rate, distance travelled), and</li>
+                            <li>an <span class="font-bold text-[#C8102E]">environment</span> — the world it acts in, which may be fully or partially observable, deterministic or stochastic, static or changing.</li>
+                        </ul>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary">Almost every program in this unit is an agent in this sense. In Week 6 the environment is a maze and the action is a move. In Week 7 the percept is a row of measurements and the action is a prediction. In Week 10 the percept is a sentence and the action is a sentiment label. The machinery differs; the shape does not.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 6 - AI vs Ordinary Programming
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">AI versus Ordinary Programming</h2>
+                        <p class="text-dark-secondary">The cleanest distinction is about where the rules come from.</p>
+                        ${makeCodeBlock(`# Ordinary programming: the human writes the rule.
+def is_spam(email):
+    return "free money" in email.lower()
+
+
+# Machine learning: the human writes the *learner*, and the data writes the rule.
+model.fit(emails, labels)          # the rule is discovered, not typed
+model.predict(["Claim your prize"])`)}
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary">In the first case a programmer decided what spam looks like. In the second, thousands of labelled emails decided it, and the programmer only decided how the deciding should happen. This shift — from specifying the solution to specifying the search for the solution — is the single most important idea in modern AI.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 7 - Symbolic vs Statistical AI
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Symbolic vs Statistical AI</h2>
+                        <p class="text-dark-secondary">Not all AI is machine learning. A chess engine using A* search, or an expert system using logical rules, is AI with no learning at all. The field splits roughly into:</p>
+                        <div class="grid md:grid-cols-2 gap-3 mt-3">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Symbolic AI</p>
+                                <p class="text-sm text-dark-secondary">Knowledge is written as explicit symbols and rules; the system reasons over them. Transparent, brittle. Weeks 3, 4 and 6.</p>
+                            </div>
+                            <div class="p-3 bg-[#1A1A2E]/5 rounded-lg border-l-4 border-[#1A1A2E]">
+                                <p class="font-bold text-[#1A1A2E]">Statistical / Learned AI</p>
+                                <p class="text-sm text-dark-secondary">Knowledge is stored as numbers fitted to data. Powerful, opaque. Weeks 7 to 10.</p>
+                            </div>
+                        </div>
+                        <p class="text-dark-secondary mt-3">You will build both, and by Week 11 you should be able to say which one a given problem calls for.</p>
+                    </div>
+                `
+        }, {
+            // Slide 8 - Narrow, General and Super
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Narrow, General and Super</h2>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Narrow AI (ANI)</p>
+                                <p class="text-sm text-dark-secondary">Does one thing: recognise faces, translate text, recommend a film. Every system in commercial use today is narrow AI, including the largest language models — they are extraordinarily broad within the domain of text, but they do not autonomously set their own goals across arbitrary domains.</p>
+                            </div>
+                            <div class="p-3 bg-[#1A1A2E]/5 rounded-lg border-l-4 border-[#1A1A2E]">
+                                <p class="font-bold text-[#1A1A2E]">General AI (AGI)</p>
+                                <p class="text-sm text-dark-secondary">Would match human competence across the full range of intellectual tasks. It does not exist. Whether it is imminent or distant is a genuine open dispute among serious researchers, and you should be sceptical of confident claims in either direction.</p>
+                            </div>
+                            <div class="p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E]">Superintelligence (ASI)</p>
+                                <p class="text-sm text-dark-secondary">Would exceed human ability across the board. This is speculation, not engineering, and it is out of scope for this unit — though the ethics discussion touches its edges.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 9 - History: The Founding
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.2 A Short History of AI</h2>
+                        <p class="text-dark-secondary mb-2">History matters here for a practical reason: the field has boomed and collapsed three times, and each collapse had a technical cause that you can still recognise in your own projects.</p>
+                        <div class="history-card p-3 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                            <p class="font-bold text-[#C8102E]">The Founding (1943–1956)</p>
+                            <ul class="bulleted-list text-sm text-dark-secondary">
+                                <li>McCulloch and Pitts published a mathematical model of an artificial neuron in 1943 — the direct ancestor of everything in Weeks 8 and 9.</li>
+                                <li>In 1950 Alan Turing published <span class="font-bold">Computing Machinery and Intelligence</span>, opening with "Can machines think?" and replacing that unanswerable question with an operational test.</li>
+                                <li>The field got its name at the Dartmouth Summer Research Project of 1956, organised by John McCarthy, who also coined the term artificial intelligence.</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 10 - Golden Years and First Winter
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">The Golden Years and the First Winter (1956–1980)</h2>
+                        <p class="text-dark-secondary">Early results were genuinely startling. Programs proved theorems, solved algebra word problems and played draughts at a strong amateur level. Rosenblatt's Perceptron (1958) learned to classify patterns and attracted enormous press attention.</p>
+                        <p class="text-dark-secondary mt-2">Then it stalled. Three problems, all of which you will meet again:</p>
+                        <div class="space-y-2 mt-2">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">1. Combinatorial explosion</p>
+                                <p class="text-xs text-dark-secondary">Methods that worked on toy problems collapsed when the search space grew. Week 6 is largely about managing this.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">2. Lack of commonsense knowledge</p>
+                                <p class="text-xs text-dark-secondary">Machine translation famously produced "the vodka is good but the meat is rotten" from "the spirit is willing but the flesh is weak". Words alone are not meaning.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">3. The Minsky–Papert critique (1969)</p>
+                                <p class="text-xs text-dark-secondary">Their book Perceptrons proved that a single-layer perceptron cannot learn the XOR function. Funding for neural networks evaporated for over a decade.</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-dark-muted mt-2">The 1974 Lighthill report to the UK government was scathing, funding was cut on both sides of the Atlantic, and the first AI winter set in.</p>
+                    </div>
+                `
+        }, {
+            // Slide 11 - Expert Systems and Second Winter
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Expert Systems and the Second Winter (1980–1993)</h2>
+                        <p class="text-dark-secondary">AI returned commercially through expert systems: large collections of IF … THEN rules elicited from human specialists. MYCIN diagnosed blood infections; XCON configured computer orders for DEC and reportedly saved tens of millions of dollars a year. By the mid-1980s AI was a billion-dollar industry.</p>
+                        <p class="text-dark-secondary mt-2">It collapsed again, and the reason is instructive:</p>
+                        <ul class="bulleted-list text-sm text-dark-secondary">
+                            <li>Expert systems were <span class="font-bold text-[#C8102E]">brittle</span>: they performed well inside their narrow rule set and failed absurdly one step outside it, with no way to tell which side of the line they were on.</li>
+                            <li>They were <span class="font-bold text-[#C8102E]">punishingly expensive to maintain</span> — every new case meant a human expert sitting with a knowledge engineer to write more rules, and rule sets of a few thousand entries became internally contradictory.</li>
+                            <li>The specialised Lisp machine market collapsed in 1987, and the second AI winter followed.</li>
+                        </ul>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary"><span class="font-bold text-[#C8102E]">Lesson for your projects:</span> A system that cannot say "I don't know" is more dangerous than one that is occasionally wrong, because you cannot tell when to trust it.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 12 - Statistical AI
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Statistical AI (1993–2011)</h2>
+                        <p class="text-dark-secondary">The field quietly rebuilt itself on probability and data rather than rules.</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>Judea Pearl's work on Bayesian networks gave AI a rigorous treatment of uncertainty.</li>
+                            <li>Support vector machines and ensemble methods gave it strong general-purpose classifiers.</li>
+                            <li>Deep Blue beat Kasparov in 1997 — using massive search, not learning.</li>
+                            <li>In 2011 IBM's Watson won Jeopardy!.</li>
+                        </ul>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary">Crucially, the culture changed: results now had to be demonstrated on shared benchmark datasets with reported error rates. AI became an empirical science, and the habit of holding out test data (Week 7) dates from this period.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 13 - Deep Learning
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Deep Learning (2012–Present)</h2>
+                        <p class="text-dark-secondary">In 2012 AlexNet cut the error rate on the ImageNet visual recognition challenge from about 26% to about 16% — an improvement so large the field reorganised around it within eighteen months.</p>
+                        <p class="text-dark-secondary mt-2">Nothing in AlexNet was conceptually new; backpropagation dated to the 1980s and convolutional networks to 1989. What was new was the combination:</p>
+                        <div class="grid md:grid-cols-3 gap-2 mt-2">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg text-center border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-sm">Data</p>
+                                <p class="text-xs text-dark-secondary">ImageNet's 14 million labelled images</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg text-center border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-sm">Compute</p>
+                                <p class="text-xs text-dark-secondary">GPUs, good at the matrix multiplications neural networks are made of</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg text-center border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-sm">Engineering</p>
+                                <p class="text-xs text-dark-secondary">ReLU activations, dropout, better initialisation</p>
+                            </div>
+                        </div>
+                        <p class="text-sm text-dark-secondary mt-2">The 2017 paper <span class="font-bold">Attention Is All You Need</span> introduced the Transformer, the architecture behind modern large language models. AlphaFold's protein structure predictions (2020–21) represent the field's clearest scientific contribution to date.</p>
+                        <p class="text-sm text-dark-muted mt-2">We are currently in the longest boom the field has had. Whether it ends in a fourth winter is an open question; the honest answer is that nobody knows, and that the previous three were each preceded by confident denials.</p>
+                    </div>
+                `
+        }, {
+            // Slide 14 - Where AI is Used
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.3 Where AI is Actually Used</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Healthcare</p>
+                                <p class="text-xs text-dark-secondary">Diabetic retinopathy screening from retinal photographs. Tuberculosis detection from chest X-rays. Drug candidate screening. AlphaFold for protein structure.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Finance</p>
+                                <p class="text-xs text-dark-secondary">Card fraud detection — a model scores each transaction in milliseconds, with brutal class balance (fewer than one in a thousand transactions is fraud). Credit scoring, algorithmic trading, anti-money-laundering.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Agriculture (East African relevance)</p>
+                                <p class="text-xs text-dark-secondary">PlantVillage Nuru runs a crop disease classifier offline on a mid-range Android phone, diagnosing cassava mosaic disease and fall armyworm from a leaf photograph. Satellite-based yield forecasting.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Language and speech</p>
+                                <p class="text-xs text-dark-secondary">Machine translation, speech recognition, sentiment analysis, question answering, summarisation. Coverage of Kiswahili and Kenyan languages is far weaker than for English — an interesting research problem.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 15 - AI Applications Continued
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Where AI is Actually Used (Continued)</h2>
+                        <div class="grid md:grid-cols-2 gap-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Mobility and logistics</p>
+                                <p class="text-xs text-dark-secondary">Route optimisation, demand forecasting for delivery, driver-assistance systems, warehouse robotics.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Financial inclusion</p>
+                                <p class="text-xs text-dark-secondary">Alternative credit scoring from mobile money and airtime data — as pioneered around M-Pesa. Striking example of AI extending services to people with no formal credit history. Also the standard example in discussions of algorithmic fairness.</p>
+                            </div>
+                        </div>
+                        <div class="key-point p-3 rounded-lg mt-3">
+                            <p class="font-bold text-[#C8102E]">An exercise in classification</p>
+                            <p class="text-sm text-dark-secondary">For each system below, decide: narrow or general? symbolic or learned? What is the percept, the action, and the performance measure?</p>
+                            <ol class="numbered-list text-sm text-dark-secondary mt-1">
+                                <li>A thermostat that switches on below 18 °C.</li>
+                                <li>A spam filter trained on your inbox.</li>
+                                <li>A chess engine using A* with an evaluation function.</li>
+                                <li>A chatbot answering questions about university admissions.</li>
+                            </ol>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 16 - Why Python?
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.4 Why Python?</h2>
+                        <p class="text-dark-secondary mb-2">Python is not the fastest language, not the safest, and not the most elegant. It won the AI ecosystem anyway, for reasons worth understanding:</p>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li><span class="font-bold text-[#C8102E]">Readability.</span> Python code is close to pseudocode. In a field where the algorithm is the hard part, minimising the distance between the idea and the code is worth more than raw speed.</li>
+                            <li><span class="font-bold text-[#C8102E]">The C escape hatch.</span> NumPy, TensorFlow and PyTorch are not written in Python — their heavy numerical work runs in compiled C, C++, CUDA and Fortran. Python is the steering wheel, not the engine.</li>
+                            <li><span class="font-bold text-[#C8102E]">The ecosystem.</span> NumPy → Pandas → Matplotlib → scikit-learn → TensorFlow/PyTorch, all interoperating through the same array type. Network effects did the rest.</li>
+                            <li><span class="font-bold text-[#C8102E]">Interactivity.</span> Jupyter notebooks let you inspect an intermediate result and change course, which suits the experimental nature of AI work.</li>
+                        </ul>
+                        <div class="tip-box p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary"><span class="font-bold text-[#C8102E]">A caution that costs students marks every year:</span> Python is slow when <span class="font-bold">you</span> write the loop. Adding a million numbers with a Python for loop is roughly fifty times slower than the equivalent NumPy call. The skill you are building is not "write loops in Python" but "express the computation so the library runs it".</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 17 - Ethics from Day One
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.5 Ethics from Day One</h2>
+                        <p class="text-dark-secondary">The unit's PCI strand — AI ethics, algorithmic bias, societal impact — is not a lecture bolted on at the end. Raise these questions in Week 1 and keep them live.</p>
+                        <div class="space-y-2 mt-3">
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Bias</p>
+                                <p class="text-xs text-dark-secondary">A model learns the patterns in its training data, including patterns we would rather it did not learn. If historical hiring data reflects past discrimination, a model trained to predict "good hire" reproduces that discrimination. Removing the sensitive attribute does not fix this, because other features act as proxies.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Opacity</p>
+                                <p class="text-xs text-dark-secondary">A deep network's decision is distributed across millions of parameters. When it declines someone's loan, "the model said so" is not an explanation, and in a growing number of jurisdictions it is not legally sufficient either.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Data and consent</p>
+                                <p class="text-xs text-dark-secondary">Training data comes from somewhere. Was it collected with consent? Kenya's Data Protection Act 2019 imposes real obligations on anyone processing personal data — including a student project that scrapes social media.</p>
+                            </div>
+                            <div class="p-2 bg-[#C8102E]/5 rounded-lg border-l-4 border-[#C8102E]">
+                                <p class="font-bold text-[#C8102E] text-sm">Displacement, concentration and environmental cost</p>
+                                <p class="text-xs text-dark-secondary">Automation shifts which work is valuable, and the compute needed to train frontier models concentrates capability in very few organisations. Training a large model consumes serious energy.</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 18 - Three Ethical Questions
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Three Questions to Ask of Every System</h2>
+                        <div class="space-y-3">
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-lg">1. Who is harmed if this is wrong, and how badly?</p>
+                            </div>
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-lg">2. What is in the training data, and who is missing from it?</p>
+                            </div>
+                            <div class="p-4 bg-[#C8102E]/5 rounded-xl border border-[#C8102E]/20">
+                                <p class="font-bold text-[#C8102E] text-lg">3. Can the person affected by this decision find out why it was made?</p>
+                            </div>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 19 - Setting Up Your Environment
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">1.6 Setting Up Your Environment</h2>
+                        <p class="font-bold text-[#C8102E]">Install Python</p>
+                        <p class="text-dark-secondary">Download Python 3.11 or newer from python.org. On Windows, tick "Add Python to PATH" on the first installer screen — the majority of Week 2 setup problems trace back to this box being left unticked.</p>
+                        <p class="font-bold text-[#C8102E] mt-2">Verify from a terminal:</p>
+                        ${makeCodeBlock(`$ python --version
+Python 3.12.4`)}
+                        <p class="text-dark-secondary mt-2">If python is not found, try python3. If neither works, Python is not on your PATH; reinstall with the box ticked.</p>
+                        <p class="font-bold text-[#C8102E] mt-2">The interactive shell:</p>
+                        ${makeCodeBlock(`$ python
+>>> 2 + 2
+4
+>>> print("Hello, AI")
+Hello, AI
+>>> exit()`)}
+                    </div>
+                `
+        }, {
+            // Slide 20 - Your First Program & Libraries
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Your First Program & Installing Libraries</h2>
+                        <p class="font-bold text-[#C8102E]">First program (hello_ai.py):</p>
+                        ${makeCodeBlock(`# script: hello_ai.py
+name = input("What is your name? ")
+print("Hello,", name)
+print("Welcome to Programming for AI.")
+
+goal = input("Name one thing you want AI to do: ")
+print(f"Right. By week 11 you will have built something toward: {goal}")`)}
+                        <p class="font-bold text-[#C8102E] mt-2">Install libraries:</p>
+                        ${makeCodeBlock(`$ pip install numpy pandas matplotlib scikit-learn
+$ pip list                    # what is installed`)}
+                        <p class="font-bold text-[#C8102E] mt-2">Virtual environments:</p>
+                        ${makeCodeBlock(`$ python -m venv venv
+$ source venv/bin/activate       # macOS / Linux
+$ venv\\Scripts\\activate          # Windows
+(venv) $ pip install numpy pandas
+(venv) $ deactivate`)}
+                        <p class="font-bold text-[#C8102E] mt-2">Google Colab:</p>
+                        <p class="text-dark-secondary">If your machine is underpowered, go to colab.research.google.com. NumPy, Pandas, Matplotlib, scikit-learn and TensorFlow are preinstalled, and free GPU access is available under Runtime → Change runtime type. Weeks 8 and 9 are noticeably easier there.</p>
+                    </div>
+                `
+        }, {
+            // Slide 21 - Common Errors
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Common Errors This Week</h2>
+                        <div class="overflow-x-auto">
+                            <table class="comparison-table w-full border-collapse text-sm">
+                                <thead><tr><th>Message</th><th>Cause</th><th>Fix</th></tr></thead>
+                                <tbody>
+                                    <tr><td class="text-dark-secondary">'python' is not recognized...</td><td class="text-dark-secondary">Python not on PATH (Windows)</td><td class="text-dark-secondary">Reinstall, tick "Add Python to PATH"</td></tr>
+                                    <tr><td class="text-dark-secondary">ModuleNotFoundError: No module named 'numpy'</td><td class="text-dark-secondary">Package installed into a different Python</td><td class="text-dark-secondary">python -m pip install numpy</td></tr>
+                                    <tr><td class="text-dark-secondary">SyntaxError: invalid syntax on print "hi"</td><td class="text-dark-secondary">Python 2 syntax</td><td class="text-dark-secondary">print("hi")</td></tr>
+                                    <tr><td class="text-dark-secondary">IndentationError</td><td class="text-dark-secondary">Mixed tabs and spaces</td><td class="text-dark-secondary">Set editor to insert 4 spaces for Tab</td></tr>
+                                    <tr><td class="text-dark-secondary">pip: command not found</td><td class="text-dark-secondary">pip not on PATH</td><td class="text-dark-secondary">Use python -m pip</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="key-point p-2 rounded-lg mt-3">
+                            <p class="text-sm text-dark-secondary">Getting your environment right in Week 1 saves you hours of frustration later. If something is not working, work through the "Common Errors" table methodically before asking for help.</p>
+                        </div>
+                    </div>
+                `
+        }, {
+            // Slide 22 - Week 1 Summary
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-8 md:p-10">
+                        <h2 class="text-3xl md:text-4xl font-bold text-[#1A1A2E] mb-4">Week 1 Summary</h2>
+                        <ul class="bulleted-list text-dark-secondary">
+                            <li>AI is defined by the <span class="font-bold text-[#C8102E]">task</span>, not the method — the "AI effect" means solved problems stop being called AI.</li>
+                            <li>This unit builds <span class="font-bold text-[#C8102E]">rational agents</span>: systems with a percept, action set, performance measure, and environment.</li>
+                            <li>AI splits into <span class="font-bold text-[#C8102E]">symbolic</span> (rules) and <span class="font-bold text-[#C8102E]">statistical/learned</span> (numbers fitted to data) approaches.</li>
+                            <li>Every commercial system today is <span class="font-bold text-[#C8102E]">narrow AI</span>. AGI does not exist; ASI is speculation.</li>
+                            <li>The field has had <span class="font-bold text-[#C8102E]">three waves</span> — founding, expert systems, deep learning — with two winters in between.</li>
+                            <li>AI is used across <span class="font-bold text-[#C8102E]">healthcare, finance, agriculture, language, mobility</span>, and more.</li>
+                            <li>Python won the AI ecosystem through <span class="font-bold text-[#C8102E]">readability, the C escape hatch, its ecosystem, and interactivity</span>.</li>
+                            <li>Ethics questions must be raised from <span class="font-bold text-[#C8102E]">day one</span> — bias, opacity, consent, displacement, and environmental cost.</li>
+                            <li>Getting the <span class="font-bold text-[#C8102E]">environment right</span> (Python, libraries, virtual environments) is essential groundwork.</li>
+                        </ul>
+                    </div>
+                `
+        }, {
+            // Slide 23 - Closing
+            content: () => `
+                    <div class="glass-card-aiu rounded-3xl p-12 md:p-16 text-center">
+                        <div class="flex justify-center mb-4">
+                            <div class="w-16 h-16 rounded-full bg-[#C8102E] flex items-center justify-center shadow-[0_0_30px_rgba(200,16,46,0.2)]">
+                                <span class="text-white font-extrabold text-xl">AIU</span>
+                            </div>
+                        </div>
+                        <h2 class="text-4xl md:text-5xl font-bold text-[#1A1A2E]">Thank You</h2>
+                        <div class="w-24 h-1 bg-[#C8102E] mx-auto my-4"></div>
+                        <p class="text-dark-secondary mt-4 text-xl">Questions and Answers Session</p>
+                        <p class="text-[#C8102E] mt-4 italic">"Programming for AI is not just about writing code — it is about building systems that perceive, reason, and act."</p>
+                        <div class="mt-8 flex justify-center gap-2">
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse"></div>
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse delay-150"></div>
+                            <div class="w-2 h-2 bg-[#C8102E] rounded-full animate-pulse delay-300"></div>
+                        </div>
+                        <p class="text-dark-muted text-sm mt-6">Africa International University · Programming for AI · Week 1</p>
+                    </div>
+                `
+        }];
+
+        // Slide Engine
+        let currentIndex = 0;
+        const slidesWrapper = document.getElementById('slidesWrapper');
+        const slideContainer = document.getElementById('slideContainer');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const slideCounterSpan = document.getElementById('slideCounter');
+        const progressFill = document.getElementById('progressFill');
+
+        function renderSlide() {
+            if (!slidesWrapper) return;
+            slidesWrapper.style.opacity = '0';
+            slidesWrapper.style.transform = 'rotateY(15deg) translateZ(-20px)';
+            setTimeout(() => {
+                slidesWrapper.innerHTML =
+                    `<div class="slide-card w-full transition-all duration-700">${slidesData[currentIndex].content()}</div>`;
+                slidesWrapper.style.opacity = '1';
+                slidesWrapper.style.transform = 'rotateY(0deg) translateZ(0px)';
+                slideCounterSpan.innerText = `${currentIndex+1} / ${slidesData.length}`;
+                progressFill.style.width = `${((currentIndex + 1) / slidesData.length) * 100}%`;
+                if (slideContainer) slideContainer.scrollTop = 0;
+            }, 150);
+        }
+
+        function nextSlide() {
+            if (currentIndex < slidesData.length - 1) { currentIndex++;
+                renderSlide(); }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) { currentIndex--;
+                renderSlide(); }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+        let touchStartX = 0;
+        document.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        document.addEventListener('touchend', (e) => {
+            let endX = e.changedTouches[0].screenX;
+            if (endX < touchStartX - 50) nextSlide();
+            if (endX > touchStartX + 50) prevSlide();
+        });
+        prevBtn?.addEventListener('click', prevSlide);
+        nextBtn?.addEventListener('click', nextSlide);
+
+        renderSlide();
+    </script>
+</body>
+</html>
