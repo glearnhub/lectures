@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Home Bible Study | Genesis Quiz</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        purple: {
+                            50: '#faf5ff',
+                            100: '#f3e8ff',
+                            200: '#e9d5ff',
+                            300: '#d8b4fe',
+                            400: '#c084fc',
+                            500: '#a855f7',
+                            600: '#9333ea',
+                            700: '#7e22ce',
+                            800: '#6b21a8',
+                            900: '#581c87',
+                            950: '#3b0764',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 50%, #e9d5ff 100%);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            box-shadow: 0 8px 32px rgba(107, 33, 168, 0.1);
+        }
+
+        .glass-card-dark {
+            background: rgba(59, 7, 100, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .option-btn {
+            transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 2px solid #e9d5ff;
+            background: white;
+        }
+
+        .option-btn:hover {
+            border-color: #a855f7;
+            background: #faf5ff;
+            transform: translateX(6px);
+        }
+
+        .option-btn.selected {
+            border-color: #9333ea;
+            background: #f3e8ff;
+            box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+        }
+
+        .option-btn.correct {
+            border-color: #16a34a;
+            background: #dcfce7;
+            box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.15);
+        }
+
+        .option-btn.incorrect {
+            border-color: #dc2626;
+            background: #fee2e2;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+        }
+
+        .option-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .progress-bar {
+            transition: width 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scale-in {
+            animation: scaleIn 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f3e8ff;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #a855f7;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9333ea;
+        }
+    </style>
+</head>
+<body>
+
+<div class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="w-full bg-gradient-to-r from-purple-900 via-purple-800 to-purple-900 shadow-lg">
+        <div class="max-w-6xl mx-auto px-4 py-5 flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shadow-md">
+                    <span class="text-purple-900 font-bold text-xl">✦</span>
+                </div>
+                <div>
+                    <h1 class="text-white font-bold text-xl md:text-2xl tracking-wide">Home Bible Study</h1>
+                    <p class="text-purple-200 text-xs md:text-sm tracking-wider">GENESIS QUIZ · CHAPTERS 1–7</p>
+                </div>
+            </div>
+            <div id="headerStats" class="flex items-center gap-2 text-purple-200 text-sm">
+                <!-- Stats appear dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 w-full max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Start Screen -->
+        <div id="startScreen" class="fade-in">
+            <div class="glass-card rounded-3xl p-8 md:p-12 text-center max-w-3xl mx-auto">
+                <div class="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <span class="text-white text-3xl">📖</span>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-purple-900 mb-3">Welcome to the Genesis Quiz</h2>
+                <p class="text-purple-700 mb-6 text-lg">Test your knowledge of the first seven chapters of Genesis. Each chapter has <span class="font-bold text-purple-900">25 questions</span>.</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8 max-w-lg mx-auto">
+                    <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+                        <p class="text-2xl font-bold text-purple-700">7</p>
+                        <p class="text-xs text-purple-500">Chapters</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+                        <p class="text-2xl font-bold text-purple-700">175</p>
+                        <p class="text-xs text-purple-500">Total Questions</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+                        <p class="text-2xl font-bold text-purple-700">25</p>
+                        <p class="text-xs text-purple-500">Per Chapter</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-3 border border-purple-200">
+                        <p class="text-2xl font-bold text-purple-700">∞</p>
+                        <p class="text-xs text-purple-500">Retakes</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2 text-left max-w-md mx-auto mb-8">
+                    <p class="text-purple-800 font-semibold">How it works:</p>
+                    <ul class="text-purple-600 text-sm space-y-1">
+                        <li>• Select a chapter to begin (start with Genesis 1)</li>
+                        <li>• Answer all 25 questions</li>
+                        <li>• Submit to see your score and correct answers</li>
+                        <li>• Click "Next Chapter" to continue to the next chapter</li>
+                        <li>• No sign-up required</li>
+                    </ul>
+                </div>
+
+                <button onclick="startQuiz(0)" class="bg-gradient-to-r from-purple-700 to-purple-900 hover:from-purple-600 hover:to-purple-800 text-white font-bold py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 text-lg">
+                    Begin with Genesis 1 →
+                </button>
+            </div>
+        </div>
+
+        <!-- Chapter Selection -->
+        <div id="chapterSelection" class="hidden fade-in">
+            <div class="glass-card rounded-3xl p-8 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-purple-900 mb-6 text-center">Select a Chapter</h2>
+                <div id="chapterGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+                    <!-- Chapters generated dynamically -->
+                </div>
+                <div class="mt-6 text-center">
+                    <p class="text-purple-500 text-xs">More chapters can be added as you continue your study</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="hidden">
+            <!-- Chapter Header -->
+            <div class="glass-card rounded-2xl p-4 md:p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div>
+                    <h2 id="chapterTitle" class="text-xl md:text-2xl font-bold text-purple-900">Genesis 1</h2>
+                    <p id="chapterSubtitle" class="text-purple-500 text-sm">The Creation</p>
+                </div>
+                <div class="flex items-center gap-4 text-sm">
+                    <div class="text-center">
+                        <p id="questionCounter" class="font-bold text-purple-800 text-lg">1 / 25</p>
+                        <p class="text-purple-400 text-xs">Question</p>
+                    </div>
+                    <div class="text-center">
+                        <p id="scoreCounter" class="font-bold text-purple-800 text-lg">0</p>
+                        <p class="text-purple-400 text-xs">Correct</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="w-full h-2 bg-purple-100 rounded-full mb-6 overflow-hidden">
+                <div id="progressBar" class="progress-bar h-full bg-gradient-to-r from-purple-500 to-purple-700 rounded-full" style="width: 4%"></div>
+            </div>
+
+            <!-- Question Card -->
+            <div class="glass-card rounded-3xl p-6 md:p-10 mb-6 max-w-3xl mx-auto">
+                <div id="questionText" class="text-xl md:text-2xl font-semibold text-purple-900 mb-6 leading-relaxed">
+                    <!-- Question text -->
+                </div>
+                <div id="optionsContainer" class="space-y-3">
+                    <!-- Options -->
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <div class="flex justify-center gap-3 max-w-3xl mx-auto">
+                <button id="prevBtn" onclick="prevQuestion()" class="hidden bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-6 rounded-full transition-all duration-300">
+                    ← Previous
+                </button>
+                <button id="nextBtn" onclick="nextQuestion()" class="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+                    Next Question →
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" class="hidden fade-in">
+            <div class="glass-card rounded-3xl p-8 md:p-12 max-w-3xl mx-auto text-center">
+                <div id="resultsIcon" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                    <!-- Icon -->
+                </div>
+                <h2 id="resultsTitle" class="text-3xl font-bold text-purple-900 mb-2">Chapter Complete!</h2>
+                <p id="resultsChapter" class="text-purple-500 mb-6">Genesis 1</p>
+
+                <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-8">
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                        <p id="finalScore" class="text-3xl font-bold text-purple-700">0</p>
+                        <p class="text-xs text-purple-500">Score</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                        <p id="finalPercentage" class="text-3xl font-bold text-purple-700">0%</p>
+                        <p class="text-xs text-purple-500">Percentage</p>
+                    </div>
+                    <div class="bg-purple-50 rounded-xl p-4 border border-purple-200">
+                        <p id="finalGrade" class="text-3xl font-bold text-purple-700">-</p>
+                        <p class="text-xs text-purple-500">Grade</p>
+                    </div>
+                </div>
+
+                <div id="resultsMessage" class="text-purple-600 mb-8 text-lg">
+                    <!-- Message -->
+                </div>
+
+                <!-- Answer Review -->
+                <div class="text-left max-w-2xl mx-auto mb-8">
+                    <button onclick="toggleReview()" class="w-full bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-6 rounded-xl transition-all duration-300 mb-4">
+                        <span id="reviewToggleText">Show Answer Review</span>
+                    </button>
+                    <div id="reviewContainer" class="hidden space-y-3 max-h-96 overflow-y-auto pr-2">
+                        <!-- Review items generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-3">
+                    <button onclick="retakeChapter()" class="bg-purple-100 hover:bg-purple-200 text-purple-700 font-semibold py-3 px-6 rounded-full transition-all duration-300">
+                        Retake Chapter
+                    </button>
+                    <button id="nextChapterBtn" onclick="nextChapter()" class="bg-gradient-to-r from-purple-600 to-purple-800 hover:from-purple-500 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+                        Next Chapter →
+                    </button>
+                    <button onclick="showChapterSelection()" class="bg-white border-2 border-purple-200 hover:border-purple-400 text-purple-700 font-semibold py-3 px-6 rounded-full transition-all duration-300">
+                        All Chapters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="w-full bg-purple-900 text-purple-200 py-4 text-center text-xs">
+        <p>Home Bible Study · Genesis Quiz · Chapters 1–7 · Built for study and reflection</p>
+    </footer>
+
+</div>
+
+<script>
+    // ============================================================
+    // QUIZ DATA
+    // ============================================================
+    // Structure:
+    // genesisData[chapterIndex] = {
+    //   title: "Genesis X",
+    //   subtitle: "Description",
+    //   questions: [
+    //     { question: "...", options: ["A","B","C","D"], correct: 0 }, // correct = index
+    //     ...
+    //   ]
+    // }
+    //
+    // TO ADD A NEW CHAPTER:
+    //   1. Add a new object to the genesisData array with the same structure
+    //   2. The chapter grid and navigation will update automatically
+    // ============================================================
+
+    const genesisData = [
+        // ============ GENESIS 1 ============
+        {
+            title: "Genesis 1",
+            subtitle: "The Creation",
+            questions: [
+                { question: "In the beginning, what did God create?", options: ["The heavens and the earth", "The sun and moon", "Man and woman", "The garden"], correct: 0 },
+                { question: "What was the earth like in the beginning?", options: ["Full of life", "Formless and empty", "Covered in water", "A garden"], correct: 1 },
+                { question: "What was moving over the surface of the waters?", options: ["A mighty wind", "The Spirit of God", "An angel", "Light"], correct: 1 },
+                { question: "What did God say on the first day?", options: ["Let there be light", "Let there be land", "Let there be stars", "Let there be fish"], correct: 0 },
+                { question: "What did God separate the light from?", options: ["Water", "Darkness", "The sky", "The land"], correct: 1 },
+                { question: "What did God call the light?", options: ["Morning", "Day", "Sunshine", "Brightness"], correct: 1 },
+                { question: "What did God call the darkness?", options: ["Evening", "Night", "Shadow", "Dusk"], correct: 1 },
+                { question: "On which day did God create the sky?", options: ["First day", "Second day", "Third day", "Fourth day"], correct: 1 },
+                { question: "What did God separate the waters above from?", options: ["The waters below", "The land", "The sky", "The light"], correct: 0 },
+                { question: "What did God call the sky?", options: ["Heaven", "Firmament", "Expanse", "Clouds"], correct: 1 },
+                { question: "On the third day, what did God gather to one place?", options: ["The waters", "The land", "The stars", "The trees"], correct: 0 },
+                { question: "What did God call the dry ground?", options: ["Earth", "Land", "Soil", "Field"], correct: 1 },
+                { question: "What did God call the gathered waters?", options: ["Seas", "Oceans", "Rivers", "Lakes"], correct: 0 },
+                { question: "What did God say the land should produce?", options: ["Animals", "Vegetation", "Buildings", "Gold"], correct: 1 },
+                { question: "On the fourth day, what did God create to separate day from night?", options: ["The sun", "Lights in the sky", "The moon only", "Clouds"], correct: 1 },
+                { question: "What are the two great lights God made?", options: ["Sun and stars", "Greater and lesser lights", "Moon and planets", "Fire and ice"], correct: 1 },
+                { question: "What did God create on the fifth day?", options: ["Land animals", "Birds and sea creatures", "Humans", "Plants"], correct: 1 },
+                { question: "What did God bless the sea creatures and birds to do?", options: ["Rest", "Be fruitful and multiply", "Hide", "Sing"], correct: 1 },
+                { question: "On the sixth day, what did God create alongside humans?", options: ["Stars", "Land animals", "Oceans", "Mountains"], correct: 1 },
+                { question: "In whose image was man created?", options: ["Angels", "God's image", "Animals", "The stars"], correct: 1 },
+                { question: "What did God give humans dominion over?", options: ["Only the garden", "The fish, birds, and every living creature", "Only the land", "The heavens"], correct: 1 },
+                { question: "What did God give humans for food?", options: ["Only meat", "Every seed-bearing plant and fruit", "Only bread", "Manna"], correct: 1 },
+                { question: "What did God see when He looked at all He had made?", options: ["It was good", "It was very good", "It was incomplete", "It was perfect"], correct: 1 },
+                { question: "What did God do on the seventh day?", options: ["Created more", "Rested from His work", "Blessed the animals", "Walked in the garden"], correct: 1 },
+                { question: "What did God do to the seventh day?", options: ["Ignored it", "Blessed it and made it holy", "Made it a workday", "Gave it to angels"], correct: 1 }
+            ]
+        },
+        // ============ GENESIS 2 ============
+        {
+            title: "Genesis 2",
+            subtitle: "The Garden of Eden",
+            questions: [
+                { question: "What did God do by the seventh day?", options: ["Created the stars", "Finished His work", "Rested forever", "Made the garden"], correct: 1 },
+                { question: "From what did the Lord God form the man?", options: ["Water", "Dust of the ground", "Fire", "Clay and stone"], correct: 1 },
+                { question: "What did God breathe into the man's nostrils?", options: ["Air", "The breath of life", "Water", "Fire"], correct: 1 },
+                { question: "What did the man become when God breathed into him?", options: ["A spirit", "A living being", "An angel", "A giant"], correct: 1 },
+                { question: "Where did God plant a garden?", options: ["In Egypt", "In Eden, in the east", "In Canaan", "In Babylon"], correct: 1 },
+                { question: "What did God make grow out of the ground?", options: ["Only flowers", "Trees pleasing to the eye and good for food", "Only fruit trees", "Only wheat"], correct: 1 },
+                { question: "What two trees were in the middle of the garden?", options: ["Olive and fig", "Tree of life and tree of knowledge of good and evil", "Apple and pear", "Vine and palm"], correct: 1 },
+                { question: "What flowed from Eden to water the garden?", options: ["A stream", "A river", "A spring", "Rain"], correct: 1 },
+                { question: "What was the first river mentioned?", options: ["Nile", "Pishon", "Gihon", "Euphrates"], correct: 1 },
+                { question: "What land does the Pishon wind through?", options: ["Havilah", "Cush", "Assyria", "Babylon"], correct: 0 },
+                { question: "What is found in the land of Havilah?", options: ["Gold", "Silver", "Copper", "Iron"], correct: 0 },
+                { question: "What is the name of the second river?", options: ["Tigris", "Gihon", "Pishon", "Jordan"], correct: 1 },
+                { question: "What is the name of the third river?", options: ["Tigris", "Nile", "Euphrates", "Gihon"], correct: 0 },
+                { question: "What is the name of the fourth river?", options: ["Euphrates", "Pishon", "Gihon", "Jordan"], correct: 0 },
+                { question: "What did God tell the man to do in the garden?", options: ["Build a house", "Work it and take care of it", "Plant more trees", "Rest"], correct: 1 },
+                { question: "What command did God give about the trees?", options: ["Eat from every tree", "Eat from any tree except the tree of knowledge", "Don't eat from any tree", "Only eat from the tree of life"], correct: 1 },
+                { question: "What would happen if the man ate from the forbidden tree?", options: ["He would become wise", "He would surely die", "He would become a god", "Nothing"], correct: 1 },
+                { question: "What did God say was not good?", options: ["The trees", "Man being alone", "The garden", "The rivers"], correct: 1 },
+                { question: "What did God make to help the man?", options: ["A house", "A helper suitable for him", "A garden", "A book"], correct: 1 },
+                { question: "What did God form from the ground to show the man?", options: ["Trees", "All the animals and birds", "Fish", "Flowers"], correct: 1 },
+                { question: "What did the man do with the animals?", options: ["Fed them", "Named them", "Counted them", "Built shelters for them"], correct: 1 },
+                { question: "How many helpers were found for the man among animals?", options: ["One", "None", "Two", "Many"], correct: 1 },
+                { question: "What did God cause to fall on the man?", options: ["Rain", "A deep sleep", "Night", "A vision"], correct: 1 },
+                { question: "From what did God make the woman?", options: ["Dust", "A rib from the man", "Water", "Clay"], correct: 1 },
+                { question: "What did the man say about the woman?", options: ["She is my servant", "Bone of my bones and flesh of my flesh", "She is my daughter", "She is my sister"], correct: 1 }
+            ]
+        },
+        // ============ GENESIS 3 ============
+        {
+            title: "Genesis 3",
+            subtitle: "The Fall of Man",
+            questions: [
+                { question: "What was the serpent more crafty than?", options: ["All the birds", "Any of the wild animals", "The fish", "The angels"], correct: 1 },
+                { question: "What did the serpent ask the woman?", options: ["Did God really say you must not eat from any tree?", "Where is your husband?", "Do you know God?", "Why are you in the garden?"], correct: 0 },
+                { question: "What did the woman say about the fruit in the middle of the garden?", options: ["We can eat it", "We must not eat it or touch it or we will die", "It is poisonous", "It is delicious"], correct: 1 },
+                { question: "What did the serpent say would happen if they ate?", options: ["They would die", "They would not surely die", "They would get sick", "They would be punished"], correct: 1 },
+                { question: "What did the serpent say their eyes would be opened to?", options: ["The world", "They would be like God, knowing good and evil", "The future", "Hidden treasures"], correct: 1 },
+                { question: "What did the woman see about the fruit?", options: ["It was ugly", "It was good for food and pleasing to the eye", "It was rotten", "It was small"], correct: 1 },
+                { question: "What did the woman do after eating the fruit?", options: ["She hid", "She gave some to her husband", "She prayed", "She planted the seed"], correct: 1 },
+                { question: "What happened to their eyes when they ate?", options: ["They went blind", "Both of their eyes were opened", "They saw visions", "Nothing"], correct: 1 },
+                { question: "What did they realize about themselves?", options: ["They were hungry", "They were naked", "They were lost", "They were powerful"], correct: 1 },
+                { question: "What did they make to cover themselves?", options: ["Robes", "Coverings of fig leaves", "Wool garments", "Animal skins"], correct: 1 },
+                { question: "Where did the man and woman hide from God?", options: ["In the river", "Among the trees of the garden", "In a cave", "Behind a wall"], correct: 1 },
+                { question: "What did God call to the man?", options: ["Where are you?", "What have you done?", "Why are you hiding?", "Come out"], correct: 0 },
+                { question: "What did the man say he was afraid of?", options: ["Punishment", "Being naked", "The serpent", "The dark"], correct: 1 },
+                { question: "Who did the man blame for his nakedness?", options: ["The serpent", "The woman", "Himself", "The trees"], correct: 1 },
+                { question: "Who did the woman blame?", options: ["The man", "The serpent deceived me", "God", "Herself"], correct: 1 },
+                { question: "What did God curse above all animals?", options: ["The lion", "The serpent", "The eagle", "The ox"], correct: 1 },
+                { question: "What will the serpent eat all its life?", options: ["Fruit", "Dust", "Meat", "Grass"], correct: 1 },
+                { question: "What will the woman's offspring crush?", options: ["The man's head", "The serpent's head", "The garden", "The stars"], correct: 1 },
+                { question: "What will the serpent strike?", options: ["The woman's heel", "The offspring's heel", "The man's hand", "The garden gate"], correct: 1 },
+                { question: "What did God multiply for the woman?", options: ["Her riches", "Her pains in childbearing", "Her wisdom", "Her years"], correct: 1 },
+                { question: "What did God say about the ground because of Adam?", options: ["It was blessed", "It was cursed", "It was flooded", "It was moved"], correct: 1 },
+                { question: "What will the man eat all the days of his life?", options: ["Fruit only", "Food by the sweat of his brow", "Manna", "Vegetables only"], correct: 1 },
+                { question: "What did God make for Adam and Eve to wear?", options: ["Fig leaves", "Garments of skin", "Wool robes", "Linen clothes"], correct: 1 },
+                { question: "What did God say about the man becoming like one of them?", options: ["He must be worshipped", "He must not be allowed to eat from the tree of life and live forever", "He must rule the garden", "He must be praised"], correct: 1 },
+                { question: "What did God place east of Eden to guard the way to the tree of life?", options: ["An angel", "Cherubim and a flaming sword", "A wall of fire", "A great eagle"], correct: 1 }
+            ]
+        },
+        // ============ GENESIS 4 ============
+        {
+            title: "Genesis 4",
+            subtitle: "Cain and Abel",
+            questions: [
+                { question: "Who did Adam lie with to conceive Cain?", options: ["Sarah", "Eve his wife", "Rebekah", "Rachel"], correct: 1 },
+                { question: "What did Eve say when Cain was born?", options: ["God has given me a son", "With the help of the LORD I have brought forth a man", "He is my firstborn", "He will be great"], correct: 1 },
+                { question: "What was Abel's occupation?", options: ["Farmer", "Keeper of sheep", "Builder", "Hunter"], correct: 1 },
+                { question: "What was Cain's occupation?", options: ["Shepherd", "Worker of the soil", "Fisherman", "Trader"], correct: 1 },
+                { question: "What did Cain bring as an offering to the LORD?", options: ["A lamb", "Fruits of the soil", "A dove", "Gold"], correct: 1 },
+                { question: "What did Abel bring as an offering?", options: ["Vegetables", "Fat portions from some of the firstborn of his flock", "Grain", "Wine"], correct: 1 },
+                { question: "Whose offering did the LORD look with favor on?", options: ["Cain's", "Abel's", "Both", "Neither"], correct: 1 },
+                { question: "How did Cain react to God's rejection of his offering?", options: ["He rejoiced", "He was very angry and his face was downcast", "He prayed", "He gave more"], correct: 1 },
+                { question: "What did God ask Cain?", options: ["Why are you angry?", "Where is Abel?", "What have you done?", "Why are you here?"], correct: 0 },
+                { question: "What did God say sin was doing?", options: ["Waiting at the door", "Crouching at the door", "Hiding in the field", "Flying away"], correct: 1 },
+                { question: "What did God say Cain must do about sin?", options: ["Ignore it", "Rule over it", "Embrace it", "Flee from it"], correct: 1 },
+                { question: "What did Cain say to Abel?", options: ["Let's pray", "Let's go out to the field", "Let's eat", "Let's build"], correct: 1 },
+                { question: "What did Cain do to Abel in the field?", options: ["Blessed him", "Attacked and killed him", "Left him", "Hugged him"], correct: 1 },
+                { question: "What did God ask Cain after Abel died?", options: ["What have you done?", "Where is your brother Abel?", "Why are you angry?", "Where are you going?"], correct: 1 },
+                { question: "What did Cain say?", options: ["He is in the field", "I don't know. Am I my brother's keeper?", "He is safe", "He went away"], correct: 1 },
+                { question: "What did God say Abel's blood was doing?", options: ["Crying out to Him from the ground", "Soaking the earth", "Disappearing", "Running like a river"], correct: 0 },
+                { question: "What did God say Cain was now under?", options: ["A blessing", "A curse and driven from the ground", "A new name", "A promise"], correct: 1 },
+                { question: "What would the ground no longer do for Cain?", options: ["Grow food for him", "Yield its strength to him", "Give water", "Keep him"], correct: 1 },
+                { question: "What did Cain become?", options: ["A king", "A restless wanderer on the earth", "A prophet", "A shepherd"], correct: 1 },
+                { question: "What did Cain fear would happen to him?", options: ["He would be rich", "Whoever finds me will kill me", "He would be blessed", "He would forget"], correct: 1 },
+                { question: "What did the LORD put on Cain so no one would kill him?", options: ["A crown", "A mark", "A ring", "A sword"], correct: 1 },
+                { question: "Where did Cain live after leaving God's presence?", options: ["In Eden", "In the land of Nod, east of Eden", "In Canaan", "In Egypt"], correct: 1 },
+                { question: "Who did Cain lie with and who did she bear?", options: ["Eve, Seth", "His wife, Enoch", "Sarah, Isaac", "Rebekah, Jacob"], correct: 1 },
+                { question: "Who did Adam and Eve have after Abel died?", options: ["Cain", "Seth", "Enosh", "Kenan"], correct: 1 },
+                { question: "What did Eve say about Seth?", options: ["He is my firstborn", "God has granted me another child in place of Abel", "He will be great", "He is a gift"], correct: 1 }
+            ]
+        },
+        // ============ GENESIS 5 ============
+        {
+            title: "Genesis 5",
+            subtitle: "From Adam to Noah",
+            questions: [
+                { question: "In whose likeness did God make man?", options: ["Angels", "God's own likeness", "Animals", "The stars"], correct: 1 },
+                { question: "How long did Adam live?", options: ["800 years", "930 years", "900 years", "1000 years"], correct: 1 },
+                { question: "Who did Adam have in his own likeness and image?", options: ["Cain", "A son named Seth", "Abel", "Enoch"], correct: 1 },
+                { question: "How long did Seth live?", options: ["912 years", "930 years", "895 years", "905 years"], correct: 0 },
+                { question: "Who was Seth's son?", options: ["Enoch", "Enosh", "Kenan", "Mahalalel"], correct: 1 },
+                { question: "How long did Enosh live?", options: ["905 years", "910 years", "815 years", "895 years"], correct: 0 },
+                { question: "Who was Enosh's son?", options: ["Kenan", "Mahalalel", "Jared", "Enoch"], correct: 0 },
+                { question: "How long did Kenan live?", options: ["910 years", "905 years", "895 years", "840 years"], correct: 0 },
+                { question: "Who was Kenan's son?", options: ["Mahalalel", "Jared", "Enoch", "Methuselah"], correct: 0 },
+                { question: "How long did Mahalalel live?", options: ["895 years", "900 years", "830 years", "910 years"], correct: 0 },
+                { question: "Who was Mahalalel's son?", options: ["Jared", "Enoch", "Methuselah", "Lamech"], correct: 0 },
+                { question: "How long did Jared live?", options: ["962 years", "930 years", "910 years", "895 years"], correct: 0 },
+                { question: "Who was Jared's son?", options: ["Enoch", "Methuselah", "Lamech", "Noah"], correct: 0 },
+                { question: "How long did Enoch live before he walked with God?", options: ["65 years", "60 years", "70 years", "80 years"], correct: 0 },
+                { question: "How many years did Enoch walk with God?", options: ["300 years", "200 years", "365 years", "400 years"], correct: 0 },
+                { question: "What happened to Enoch?", options: ["He died", "He was no more, because God took him away", "He became king", "He went to Egypt"], correct: 1 },
+                { question: "Who was Enoch's son?", options: ["Methuselah", "Lamech", "Noah", "Shem"], correct: 0 },
+                { question: "How long did Methuselah live?", options: ["969 years", "930 years", "962 years", "777 years"], correct: 0 },
+                { question: "Who was Methuselah's son?", options: ["Lamech", "Noah", "Enoch", "Jared"], correct: 0 },
+                { question: "How long did Lamech live?", options: ["777 years", "969 years", "930 years", "895 years"], correct: 0 },
+                { question: "What did Lamech name his son?", options: ["Shem", "Noah", "Ham", "Japheth"], correct: 1 },
+                { question: "What did Lamech say Noah would do?", options: ["Build a city", "Comfort us in the labor and painful toil of our hands caused by the ground the LORD has cursed", "Be a king", "Be a prophet"], correct: 1 },
+                { question: "How old was Noah when he became the father of Shem, Ham, and Japheth?", options: ["500 years", "600 years", "400 years", "450 years"], correct: 0 },
+                { question: "What phrase is repeated about Enoch?", options: ["He walked faithfully with God", "He was a mighty hunter", "He was very rich", "He was wise"], correct: 0 },
+                { question: "What is the recurring pattern in Genesis 5?", options: ["And he died", "And he was blessed", "And he built", "And he prayed"], correct: 0 }
+            ]
+        },
+        // ============ GENESIS 6 ============
+        {
+            title: "Genesis 6",
+            subtitle: "Wickedness and the Flood",
+            questions: [
+                { question: "What did the sons of God see about the daughters of humans?", options: ["They were tall", "They were beautiful", "They were wise", "They were strong"], correct: 1 },
+                { question: "What did the LORD say about His Spirit?", options: ["It will remain forever", "It will not contend with humans forever", "It will depart", "It will grow"], correct: 1 },
+                { question: "How many years did God give humans?", options: ["100 years", "120 years", "150 years", "200 years"], correct: 1 },
+                { question: "What were the Nephilim?", options: ["Angels", "Heroes of old, men of renown", "Kings", "Prophets"], correct: 1 },
+                { question: "What did the LORD see about the human race?", options: ["They were blessed", "How great their wickedness had become", "They were wise", "They were multiplying"], correct: 1 },
+                { question: "What did every inclination of the thoughts of the human heart tend toward?", options: ["Good", "Only evil all the time", "Wisdom", "Love"], correct: 1 },
+                { question: "How did the LORD feel about creating humans?", options: ["Pleased", "He regretted it and His heart was deeply troubled", "Indifferent", "Joyful"], correct: 1 },
+                { question: "What did the LORD say He would do?", options: ["Bless them", "Wipe from the face of the earth the human race I have created", "Save them all", "Teach them"], correct: 1 },
+                { question: "Who found favor in the eyes of the LORD?", options: ["Methuselah", "Noah", "Lamech", "Enoch"], correct: 1 },
+                { question: "How is Noah described?", options: ["A mighty warrior", "A righteous man, blameless among the people of his time", "A wealthy man", "A wise king"], correct: 1 },
+                { question: "How did Noah walk?", options: ["In wealth", "Faithfully with God", "In power", "In wisdom"], correct: 1 },
+                { question: "How many sons did Noah have?", options: ["Two", "Three", "Four", "Five"], correct: 1 },
+                { question: "What was the earth like in God's sight?", options: ["Blessed", "Corrupt", "Peaceful", "Rich"], correct: 1 },
+                { question: "What was the earth full of?", options: ["Fruit", "Violence", "Gold", "Animals"], correct: 1 },
+                { question: "What did God tell Noah He was going to do?", options: ["Bless the earth", "Put an end to all people, for the earth is filled with violence", "Send rain", "Build a city"], correct: 1 },
+                { question: "What did God tell Noah to make?", options: ["A tower", "An ark of cypress wood", "A house", "A bridge"], correct: 1 },
+                { question: "How many rooms were to be in the ark?", options: ["Many rooms", "Rooms", "Three rooms", "One room"], correct: 1 },
+                { question: "What was to cover the ark inside and out?", options: ["Gold", "Pitch", "Silver", "Oil"], correct: 1 },
+                { question: "What were the dimensions of the ark?", options: ["300 cubits long, 50 wide, 30 high", "200 cubits long, 40 wide, 20 high", "400 cubits long, 60 wide, 40 high", "150 cubits long, 30 wide, 15 high"], correct: 0 },
+                { question: "Where was the ark's door to be placed?", options: ["On the side", "On the top", "In the front", "At the back"], correct: 0 },
+                { question: "How many decks was the ark to have?", options: ["One", "Lower, middle, and upper decks", "Two", "Four"], correct: 1 },
+                { question: "What was God going to bring on the earth?", options: ["Fire", "Floodwaters to destroy all life under the heavens", "Earthquake", "Plague"], correct: 1 },
+                { question: "What was God going to establish with Noah?", options: ["A kingdom", "A covenant", "A law", "A temple"], correct: 1 },
+                { question: "What was Noah to bring into the ark?", options: ["Gold and silver", "Two of every kind of living creature, male and female", "Food only", "Weapons"], correct: 1 },
+                { question: "What did Noah do after God gave him instructions?", options: ["He questioned God", "He did everything just as God commanded him", "He waited", "He complained"], correct: 1 }
+            ]
+        },
+        // ============ GENESIS 7 ============
+        {
+            title: "Genesis 7",
+            subtitle: "The Flood",
+            questions: [
+                { question: "What did the LORD tell Noah to do?", options: ["Wait", "Go into the ark, you and your whole family", "Build another ark", "Pray"], correct: 1 },
+                { question: "Why was Noah to go into the ark?", options: ["Because he was rich", "Because I have found you righteous in this generation", "Because he was strong", "Because he was wise"], correct: 1 },
+                { question: "How many of each clean animal was Noah to take?", options: ["One pair", "Seven pairs", "Three pairs", "Five pairs"], correct: 1 },
+                { question: "How many of each unclean animal was Noah to take?", options: ["Seven pairs", "One pair", "Three pairs", "Two pairs"], correct: 1 },
+                { question: "How many of each kind of bird was Noah to take?", options: ["One pair", "Seven pairs", "Three pairs", "Five pairs"], correct: 1 },
+                { question: "Why was Noah to take seven pairs of clean animals?", options: ["For sacrifice", "To keep their various kinds alive throughout the earth", "For food", "For trade"], correct: 1 },
+                { question: "How many days did God say He would send rain?", options: ["7 days and nights", "40 days and 40 nights", "100 days", "30 days"], correct: 1 },
+                { question: "What was God going to wipe from the face of the earth?", options: ["Every living thing", "Every building", "Every tree", "Every mountain"], correct: 1 },
+                { question: "How old was Noah when the floodwaters came?", options: ["500 years old", "600 years old", "700 years old", "450 years old"], correct: 1 },
+                { question: "What did Noah do about God's commands?", options: ["He obeyed partially", "He did all that the LORD commanded him", "He questioned", "He delayed"], correct: 1 },
+                { question: "Who went into the ark with Noah?", options: ["Only his sons", "His sons, his wife, and his sons' wives", "Only his wife", "His servants"], correct: 1 },
+                { question: "What happened after the seven days?", options: ["The sun came out", "The floodwaters came on the earth", "The wind blew", "The animals multiplied"], correct: 1 },
+                { question: "On what day did the springs of the great deep burst forth?", options: ["The 10th day", "The 17th day of the second month", "The 1st day", "The 30th day"], correct: 1 },
+                { question: "What were opened in the heavens?", options: ["The windows", "The floodgates", "The doors", "The clouds"], correct: 1 },
+                { question: "How long did the rain fall on the earth?", options: ["40 days and 40 nights", "100 days", "7 days", "30 days"], correct: 0 },
+                { question: "What happened on the very day Noah entered the ark?", options: ["The sun rose", "The flood came", "The animals multiplied", "The wind stopped"], correct: 1 },
+                { question: "What was the ark lifted above?", options: ["The mountains", "The earth", "The trees", "The clouds"], correct: 1 },
+                { question: "What did the waters do to the ark?", options: ["Sank it", "Rose greatly and the ark floated on the surface", "Damaged it", "Turned it over"], correct: 1 },
+                { question: "What did the waters cover?", options: ["Only the valleys", "All the high mountains under the entire heavens", "Only the plains", "Only the cities"], correct: 1 },
+                { question: "How high did the waters rise above the mountains?", options: ["5 cubits", "More than fifteen cubits", "10 cubits", "20 cubits"], correct: 1 },
+                { question: "What died according to Genesis 7?", options: ["Only humans", "Every living thing that moved on land", "Only animals", "Only birds"], correct: 1 },
+                { question: "Who was blotted out from the earth?", options: ["Only the wicked", "Every living thing; only Noah and those with him in the ark remained", "Only animals", "Only plants"], correct: 1 },
+                { question: "How long did the waters prevail on the earth?", options: ["40 days", "150 days", "100 days", "200 days"], correct: 1 },
+                { question: "Who was spared from the flood?", options: ["Only Noah", "Noah and those with him in the ark", "Only his sons", "Only the animals"], correct: 1 },
+                { question: "What does the flood story demonstrate about God?", options: ["His indifference", "Both His judgment on sin and His preservation of the righteous", "His weakness", "His distance"], correct: 1 }
+            ]
+        }
+    ];
+
+    // ============================================================
+    // QUIZ STATE
+    // ============================================================
+    let currentChapter = 0;
+    let currentQuestion = 0;
+    let userAnswers = []; // stores index of selected option, -1 if unanswered
+    let quizSubmitted = false;
+
+    // ============================================================
+    // SCREEN MANAGEMENT
+    // ============================================================
+    function showScreen(screenId) {
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('chapterSelection').classList.add('hidden');
+        document.getElementById('quizScreen').classList.add('hidden');
+        document.getElementById('resultsScreen').classList.add('hidden');
+        document.getElementById(screenId).classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startQuiz(chapterIndex) {
+        currentChapter = chapterIndex;
+        currentQuestion = 0;
+        quizSubmitted = false;
+        userAnswers = new Array(genesisData[chapterIndex].questions.length).fill(-1);
+        showScreen('quizScreen');
+        renderQuestion();
+        updateHeaderStats();
+    }
+
+    function showChapterSelection() {
+        renderChapterGrid();
+        showScreen('chapterSelection');
+    }
+
+    function renderChapterGrid() {
+        const grid = document.getElementById('chapterGrid');
+        grid.innerHTML = '';
+        genesisData.forEach((chapter, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'glass-card rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300 transform hover:scale-105 border-2 border-purple-200 hover:border-purple-500';
+            btn.innerHTML = `
+                <p class="text-2xl font-bold text-purple-800 mb-1">${idx + 1}</p>
+                <p class="text-xs text-purple-500 font-semibold">${chapter.title}</p>
+                <p class="text-[10px] text-purple-400 mt-1">${chapter.questions.length} questions</p>
+            `;
+            btn.onclick = () => startQuiz(idx);
+            grid.appendChild(btn);
+        });
+    }
+
+    // ============================================================
+    // QUESTION RENDERING
+    // ============================================================
+    function renderQuestion() {
+        const chapter = genesisData[currentChapter];
+        const question = chapter.questions[currentQuestion];
+
+        document.getElementById('chapterTitle').textContent = chapter.title;
+        document.getElementById('chapterSubtitle').textContent = chapter.subtitle;
+        document.getElementById('questionCounter').textContent = `${currentQuestion + 1} / ${chapter.questions.length}`;
+
+        // Count correct so far
+        let correctCount = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            if (userAnswers[i] === chapter.questions[i].correct) correctCount++;
+        }
+        document.getElementById('scoreCounter').textContent = correctCount;
+
+        // Progress
+        const progress = ((currentQuestion + 1) / chapter.questions.length) * 100;
+        document.getElementById('progressBar').style.width = progress + '%';
+
+        // Question text
+        document.getElementById('questionText').textContent = question.question;
+
+        // Options
+        const optionsContainer = document.getElementById('optionsContainer');
+        optionsContainer.innerHTML = '';
+        question.options.forEach((option, idx) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn w-full text-left p-4 rounded-xl font-medium text-purple-800 flex items-center gap-3';
+            
+            const letter = String.fromCharCode(65 + idx); // A, B, C, D
+            btn.innerHTML = `
+                <span class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center font-bold text-purple-700 flex-shrink-0">${letter}</span>
+                <span>${option}</span>
+            `;
+
+            if (userAnswers[currentQuestion] === idx) {
+                btn.classList.add('selected');
+            }
+
+            btn.onclick = () => selectOption(idx);
+            optionsContainer.appendChild(btn);
+        });
+
+        // Navigation buttons
+        document.getElementById('prevBtn').classList.toggle('hidden', currentQuestion === 0);
+        
+        const nextBtn = document.getElementById('nextBtn');
+        if (currentQuestion === chapter.questions.length - 1) {
+            nextBtn.textContent = 'Submit Quiz ✓';
+            nextBtn.onclick = submitQuiz;
+        } else {
+            nextBtn.textContent = 'Next Question →';
+            nextBtn.onclick = nextQuestion;
+        }
+    }
+
+    function selectOption(optionIndex) {
+        userAnswers[currentQuestion] = optionIndex;
+
+        // Update button visuals
+        const optionsContainer = document.getElementById('optionsContainer');
+        const buttons = optionsContainer.querySelectorAll('.option-btn');
+        buttons.forEach((btn, idx) => {
+            btn.classList.remove('selected');
+            if (idx === optionIndex) btn.classList.add('selected');
+        });
+
+        // Update score counter live
+        const chapter = genesisData[currentChapter];
+        let correctCount = 0;
+        for (let i = 0; i < userAnswers.length; i++) {
+            if (userAnswers[i] === chapter.questions[i].correct) correctCount++;
+        }
+        document.getElementById('scoreCounter').textContent = correctCount;
+
+        // Auto-advance after a short delay
+        setTimeout(() => {
+            if (currentQuestion < chapter.questions.length - 1) {
+                nextQuestion();
+            }
+        }, 400);
+    }
+
+    function nextQuestion() {
+        const chapter = genesisData[currentChapter];
+        if (currentQuestion < chapter.questions.length - 1) {
+            currentQuestion++;
+            renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestion > 0) {
+            currentQuestion--;
+            renderQuestion();
+        }
+    }
+
+    // ============================================================
+    // QUIZ SUBMISSION & RESULTS
+    // ============================================================
+    function submitQuiz() {
+        const chapter = genesisData[currentChapter];
+        const total = chapter.questions.length;
+        let correct = 0;
+        const reviewItems = [];
+
+        chapter.questions.forEach((q, idx) => {
+            const userAnswer = userAnswers[idx];
+            const isCorrect = userAnswer === q.correct;
+            if (isCorrect) correct++;
+
+            reviewItems.push({
+                index: idx,
+                question: q.question,
+                userAnswer: userAnswer >= 0 ? q.options[userAnswer] : "Not answered",
+                correctAnswer: q.options[q.correct],
+                isCorrect: isCorrect
+            });
+        });
+
+        const percentage = Math.round((correct / total) * 100);
+        let grade = 'F';
+        if (percentage >= 90) grade = 'A';
+        else if (percentage >= 80) grade = 'B';
+        else if (percentage >= 70) grade = 'C';
+        else if (percentage >= 60) grade = 'D';
+
+        // Update results screen
+        document.getElementById('resultsChapter').textContent = chapter.title;
+        document.getElementById('finalScore').textContent = `${correct}/${total}`;
+        document.getElementById('finalPercentage').textContent = `${percentage}%`;
+        document.getElementById('finalGrade').textContent = grade;
+
+        // Icon & message
+        const icon = document.getElementById('resultsIcon');
+        const title = document.getElementById('resultsTitle');
+        const message = document.getElementById('resultsMessage');
+
+        if (percentage >= 90) {
+            icon.className = 'w-24 h-24 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6 text-4xl';
+            icon.textContent = '🏆';
+            title.textContent = 'Outstanding!';
+            message.textContent = 'Excellent work! You have a strong grasp of this chapter.';
+        } else if (percentage >= 70) {
+            icon.className = 'w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-6 text-4xl';
+            icon.textContent = '👏';
+            title.textContent = 'Well Done!';
+            message.textContent = 'Good job! Review the answers you missed and continue to the next chapter.';
+        } else if (percentage >= 50) {
+            icon.className = 'w-24 h-24 rounded-full bg-yellow-100 flex items-center justify-center mx-auto mb-6 text-4xl';
+            icon.textContent = '📖';
+            title.textContent = 'Keep Studying!';
+            message.textContent = 'You are getting there. Review this chapter and try again.';
+        } else {
+            icon.className = 'w-24 h-24 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6 text-4xl';
+            icon.textContent = '📚';
+            title.textContent = 'Time to Review';
+            message.textContent = 'Read through this chapter again and retake the quiz. You will improve!';
+        }
+
+        // Review
+        const reviewContainer = document.getElementById('reviewContainer');
+        reviewContainer.innerHTML = '';
+        reviewItems.forEach(item => {
+            const div = document.createElement('div');
+            div.className = `p-3 rounded-lg border-l-4 ${item.isCorrect ? 'bg-green-50 border-green-500' : 'bg-red-50 border-red-500'}`;
+            div.innerHTML = `
+                <p class="font-semibold text-purple-900 text-sm">${item.index + 1}. ${item.question}</p>
+                <p class="text-xs mt-1 ${item.isCorrect ? 'text-green-700' : 'text-red-700'}">
+                    <span class="font-bold">Your answer:</span> ${item.userAnswer}
+                </p>
+                ${!item.isCorrect ? `<p class="text-xs text-green-700"><span class="font-bold">Correct answer:</span> ${item.correctAnswer}</p>` : ''}
+            `;
+            reviewContainer.appendChild(div);
+        });
+
+        // Next chapter button
+        const nextBtn = document.getElementById('nextChapterBtn');
+        if (currentChapter < genesisData.length - 1) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = `Next: ${genesisData[currentChapter + 1].title} →`;
+        } else {
+            nextBtn.classList.add('hidden');
+        }
+
+        // Reset review toggle
+        document.getElementById('reviewContainer').classList.add('hidden');
+        document.getElementById('reviewToggleText').textContent = 'Show Answer Review';
+
+        quizSubmitted = true;
+        showScreen('resultsScreen');
+        updateHeaderStats();
+    }
+
+    function toggleReview() {
+        const container = document.getElementById('reviewContainer');
+        const text = document.getElementById('reviewToggleText');
+        if (container.classList.contains('hidden')) {
+            container.classList.remove('hidden');
+            text.textContent = 'Hide Answer Review';
+        } else {
+            container.classList.add('hidden');
+            text.textContent = 'Show Answer Review';
+        }
+    }
+
+    function retakeChapter() {
+        startQuiz(currentChapter);
+    }
+
+    function nextChapter() {
+        if (currentChapter < genesisData.length - 1) {
+            startQuiz(currentChapter + 1);
+        }
+    }
+
+    function updateHeaderStats() {
+        const stats = document.getElementById('headerStats');
+        if (quizSubmitted) {
+            const chapter = genesisData[currentChapter];
+            let correct = 0;
+            chapter.questions.forEach((q, idx) => {
+                if (userAnswers[idx] === q.correct) correct++;
+            });
+            stats.innerHTML = `<span class="bg-purple-800 px-3 py-1 rounded-full text-xs">${chapter.title}: ${correct}/${chapter.questions.length}</span>`;
+        } else {
+            stats.innerHTML = `<span class="bg-purple-800 px-3 py-1 rounded-full text-xs">${genesisData[currentChapter]?.title || 'Genesis 1'}</span>`;
+        }
+    }
+
+    // ============================================================
+    // INITIAL LOAD
+    // ============================================================
+    window.addEventListener('DOMContentLoaded', () => {
+        renderChapterGrid();
+    });
+
+    // Keyboard navigation
+    window.addEventListener('keydown', (e) => {
+        if (document.getElementById('quizScreen').classList.contains('hidden')) return;
+        if (e.key === 'ArrowRight') nextQuestion();
+        if (e.key === 'ArrowLeft') prevQuestion();
+    });
+</script>
+
+</body>
+</html>
